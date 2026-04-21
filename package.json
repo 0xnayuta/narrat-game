@@ -28,6 +28,7 @@
     "electron": "cross-env VITE_DEBUG=true electron .",
     "=========== TEST COMMANDS ===========": "",
     "type-check": "tsc --noEmit",
+    "test:time": "tsc -p tsconfig.time-tests.json && node --test tests/time-system.test.cjs",
     "=========== BUILD COMMANDS ===========": "",
     "build": "cross-env VITE_BUILD=true vite build",
     "build-debug": "cross-env VITE_BUILD=true VITE_DEBUG=true vite build",
