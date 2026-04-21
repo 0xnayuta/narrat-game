@@ -9,7 +9,13 @@ export type {
   QuestProgress,
   InventoryState,
 } from "./state";
-export type { LocationDefinition, LocationConnection, NPCDefinition } from "./world";
+export type {
+  LocationDefinition,
+  LocationConnection,
+  NPCDefinition,
+  NPCInteractionConditions,
+  NPCInteractionRule,
+} from "./world";
 export type {
   EventDefinition,
   EventTrigger,

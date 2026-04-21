@@ -19,12 +19,32 @@ export interface LocationDefinition {
 }
 
 /**
+ * Reusable condition set for content that gates NPC interactions by runtime state.
+ */
+export interface NPCInteractionConditions {
+  requiredFlags?: Record<string, boolean>;
+  requiredQuests?: Record<string, "inactive" | "active" | "completed" | "failed">;
+  requiredVars?: Record<string, string | number | boolean>;
+  requiredTimeOfDay?: "morning" | "afternoon" | "evening" | "night";
+}
+
+/**
+ * Minimal NPC interaction rule resolved from current game state.
+ */
+export interface NPCInteractionRule extends NPCInteractionConditions {
+  id: string;
+  label: string;
+  nodeId: string;
+}
+
+/**
  * Static NPC definition used by world and narrative modules.
  */
 export interface NPCDefinition {
   id: string;
   name: string;
   homeLocationId?: string;
+  interactions?: NPCInteractionRule[];
   tags?: string[];
   // TODO: Add schedule/relationship schema after time + social systems are defined.
 }

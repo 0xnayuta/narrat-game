@@ -9,6 +9,38 @@ export const demoNpcs: NPCDefinition[] = [
     id: "npc_vendor_01",
     name: "Vendor",
     homeLocationId: "market",
+    interactions: [
+      {
+        id: "vendor-first-talk",
+        label: "Talk to Vendor",
+        nodeId: "node_vendor_intro",
+        requiredFlags: {
+          vendor_met: false,
+        },
+        requiredQuests: {
+          quest_intro_walk: "completed",
+        },
+        requiredVars: {
+          current_goal: "market_visited",
+        },
+        requiredTimeOfDay: "morning",
+      },
+      {
+        id: "vendor-repeat-talk",
+        label: "Talk to Vendor again",
+        nodeId: "node_vendor_repeat",
+        requiredFlags: {
+          vendor_met: true,
+        },
+        requiredQuests: {
+          quest_intro_walk: "completed",
+        },
+        requiredVars: {
+          current_goal: "market_visited",
+        },
+        requiredTimeOfDay: "morning",
+      },
+    ],
     tags: ["shop"],
   },
 ];

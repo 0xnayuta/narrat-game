@@ -6,8 +6,9 @@
 import { applyNarrativeChoiceEffects, NarrativeRuntime } from "../narrative";
 import type { NarrativeViewModel } from "../narrative";
 import { GameStateStore } from "../state/GameState";
-import type { EventDefinition, GameState } from "../types";
-import { LocationService } from "../world";
+import type { EventDefinition, GameState, NPCDefinition } from "../types";
+import { getAvailableNpcInteractions, getNpcInteractionDebugInfo, LocationService } from "../world";
+import type { AvailableNpcInteraction, NpcInteractionDebugEntry } from "../world";
 import type { AppMode } from "./appMode";
 import { runTravelEventFlow, runTriggeredEventFlow } from "./travelEventFlow";
 
@@ -25,6 +26,7 @@ export class GameSession {
     private readonly locationService: LocationService,
     private readonly events: EventDefinition[],
     private readonly narrativeRuntime: NarrativeRuntime,
+    private readonly npcs: NPCDefinition[] = [],
   ) {}
 
   getState(): GameState {
@@ -58,6 +60,14 @@ export class GameSession {
     return this.getMode() === "free-roam";
   }
 
+  getAvailableNpcs(): AvailableNpcInteraction[] {
+    return getAvailableNpcInteractions(this.store.getState(), this.npcs);
+  }
+
+  getNpcDebugInfo(): NpcInteractionDebugEntry[] {
+    return getNpcInteractionDebugInfo(this.store.getState(), this.npcs);
+  }
+
   canCloseScene(): boolean {
     return this.activeScene !== null && this.activeScene.choices.length === 0;
   }
@@ -81,6 +91,26 @@ export class GameSession {
       state: this.store.getState(),
       scene: this.activeScene,
       triggeredEventId: result.triggeredEvent?.id ?? null,
+    };
+  }
+
+  interactWithNpc(npcId: string): SessionActionResult {
+    if (!this.canTravel()) {
+      throw new Error("Cannot start NPC interaction while a narrative scene is active");
+    }
+
+    const interaction = this.getAvailableNpcs().find((entry) => entry.npcId === npcId);
+    if (!interaction) {
+      throw new Error(`NPC not available at current location: ${npcId}`);
+    }
+
+    this.narrativeRuntime.jumpTo(interaction.nodeId);
+    this.activeScene = this.narrativeRuntime.getCurrentView();
+
+    return {
+      state: this.store.getState(),
+      scene: this.activeScene,
+      triggeredEventId: null,
     };
   }
 

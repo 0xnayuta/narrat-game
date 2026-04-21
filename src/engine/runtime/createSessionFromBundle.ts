@@ -26,5 +26,11 @@ export function createGameSessionFromBundle(bundle: ContentBundle): GameSession 
   const locationService = new LocationService(validBundle.locations);
   const narrativeRuntime = new NarrativeRuntime(validBundle.narrative);
 
-  return new GameSession(store, locationService, validBundle.events, narrativeRuntime);
+  return new GameSession(
+    store,
+    locationService,
+    validBundle.events,
+    narrativeRuntime,
+    validBundle.npcs,
+  );
 }

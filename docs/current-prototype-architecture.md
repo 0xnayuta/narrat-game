@@ -91,6 +91,11 @@ Purpose:
 - Defines the engine-facing content boundary
 - Bundles locations, events, narrative, quests, NPCs, and initial flags
 
+Note:
+- In the current prototype, location runtime state is intentionally represented by
+  `GameState.currentLocationId` rather than a separate `LocationState` object.
+- This is the current first-version boundary for active location state.
+
 ### `GameSession`
 File:
 - `src/engine/runtime/GameSession.ts`
@@ -103,6 +108,10 @@ Purpose:
   - `choose(...)`
   - `closeScene()`
   - `restoreState(...)`
+
+Note:
+- `GameSession` is the current top-level runtime boundary for the active prototype path.
+- `src/engine/core/Engine.ts` is still retained as a future skeleton and is not the current live runtime entry.
 
 ### `NarrativeRuntime`
 File:

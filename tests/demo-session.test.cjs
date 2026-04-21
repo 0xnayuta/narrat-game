@@ -35,6 +35,7 @@ test("demo session should support manual travel and choice flow", () => {
   assert.equal(closePlan.scene, null);
   assert.equal(session.getMode(), "free-roam");
   assert.equal(session.canTravel(), true);
+  assert.deepEqual(session.getAvailableNpcs(), []);
 
   const travelMarket = session.travelTo("market");
   assert.equal(travelMarket.triggeredEventId, "evt_market_morning");
@@ -58,6 +59,124 @@ test("demo session should support manual travel and choice flow", () => {
   assert.equal(session.hasActiveScene(), false);
   assert.equal(session.getMode(), "free-roam");
   assert.equal(session.canTravel(), true);
+
+  assert.deepEqual(session.getAvailableNpcs(), [
+    {
+      npcId: "npc_vendor_01",
+      npcName: "Vendor",
+      label: "Talk to Vendor",
+      nodeId: "node_vendor_intro",
+    },
+  ]);
+
+  const restoredWrongVarNpc = session.restoreState({
+    ...session.getState(),
+    currentLocationId: "market",
+    vars: {
+      ...session.getState().vars,
+      current_goal: "visit_market",
+    },
+  });
+  assert.equal(restoredWrongVarNpc.scene, null);
+  assert.deepEqual(session.getAvailableNpcs(), []);
+
+  session.restoreState({
+    ...session.getState(),
+    currentLocationId: "market",
+    vars: {
+      ...session.getState().vars,
+      current_goal: "market_visited",
+    },
+  });
+
+  assert.deepEqual(session.getAvailableNpcs(), [
+    {
+      npcId: "npc_vendor_01",
+      npcName: "Vendor",
+      label: "Talk to Vendor",
+      nodeId: "node_vendor_intro",
+    },
+  ]);
+
+  const restoredWrongTimeNpc = session.restoreState({
+    ...session.getState(),
+    currentLocationId: "market",
+    time: {
+      ...session.getState().time,
+      hour: 18,
+      minute: 0,
+    },
+  });
+  assert.equal(restoredWrongTimeNpc.scene, null);
+  assert.deepEqual(session.getAvailableNpcs(), []);
+  const npcDebug = session.getNpcDebugInfo();
+  assert.equal(npcDebug.length, 1);
+  assert.equal(npcDebug[0].resolvedInteractionId, null);
+  assert.equal(npcDebug[0].rules[0].matched, false);
+  assert.ok(npcDebug[0].rules[0].reasons.some((reason) => reason.code === "timeOfDay"));
+
+  session.restoreState({
+    ...session.getState(),
+    currentLocationId: "market",
+    time: {
+      ...session.getState().time,
+      hour: 8,
+      minute: 25,
+    },
+  });
+
+  assert.deepEqual(session.getAvailableNpcs(), [
+    {
+      npcId: "npc_vendor_01",
+      npcName: "Vendor",
+      label: "Talk to Vendor",
+      nodeId: "node_vendor_intro",
+    },
+  ]);
+
+  const npcScene = session.interactWithNpc("npc_vendor_01");
+  assert.equal(npcScene.scene?.nodeId, "node_vendor_intro");
+  assert.deepEqual(npcScene.scene?.choices, [
+    { id: "ask_vendor", text: "Ask how business is going" },
+  ]);
+
+  const npcChoice = session.choose("ask_vendor");
+  assert.equal(npcChoice.state.flags.vendor_met, true);
+  assert.equal(npcChoice.state.vars.last_npc_spoken, "npc_vendor_01");
+  assert.equal(npcChoice.scene?.nodeId, "node_vendor_done");
+  assert.deepEqual(npcChoice.scene?.choices, []);
+
+  const npcClosed = session.closeScene();
+  assert.equal(npcClosed.scene, null);
+  assert.equal(session.getMode(), "free-roam");
+
+  assert.deepEqual(session.getAvailableNpcs(), [
+    {
+      npcId: "npc_vendor_01",
+      npcName: "Vendor",
+      label: "Talk to Vendor again",
+      nodeId: "node_vendor_repeat",
+    },
+  ]);
+
+  const npcRepeat = session.interactWithNpc("npc_vendor_01");
+  assert.equal(npcRepeat.scene?.nodeId, "node_vendor_repeat");
+  assert.deepEqual(npcRepeat.scene?.choices, []);
+  session.closeScene();
+
+  const restoredLockedNpc = session.restoreState({
+    ...session.getState(),
+    currentLocationId: "market",
+    quests: {
+      ...session.getState().quests,
+      quest_intro_walk: {
+        status: "active",
+        currentStepId: "step_go_market",
+      },
+    },
+  });
+  assert.equal(restoredLockedNpc.scene, null);
+  assert.deepEqual(session.getAvailableNpcs(), []);
 
   const restored = session.restoreState({
     ...session.getState(),

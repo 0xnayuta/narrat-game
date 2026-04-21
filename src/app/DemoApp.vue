@@ -40,6 +40,23 @@
     </section>
 
     <section class="demo-app__save-actions">
+      <h2>NPCs</h2>
+      <div class="demo-app__travel-buttons">
+        <button
+          v-for="npc in availableNpcs"
+          :key="npc.npcId"
+          type="button"
+          class="demo-app__button"
+          :disabled="!canTravel"
+          @click="handleNpcInteraction(npc.npcId)"
+        >
+          {{ npc.label }}
+        </button>
+      </div>
+      <p v-if="availableNpcs.length === 0" class="demo-app__hint">No NPCs available here.</p>
+    </section>
+
+    <section class="demo-app__save-actions">
       <h2>Save / Load</h2>
       <div class="demo-app__travel-buttons">
         <button type="button" class="demo-app__button" @click="handleSave">Save</button>
@@ -64,6 +81,7 @@
       :active-flags="activeFlagEntries"
       :vars="varEntries"
       :quests="questEntries"
+      :npc-debug="npcDebug"
     />
   </main>
 </template>
@@ -95,6 +113,7 @@ const adjacentLocations = computed(() =>
 );
 const locationName = computed(() => currentLocation.value?.name ?? state.value.currentLocationId);
 const timeLabel = computed(() => getCurrentTimeLabel(state.value.time));
+const availableNpcs = computed(() => session.getAvailableNpcs());
 const sceneText = computed(() => scene.value?.text ?? "Travel to a nearby location to trigger the demo.");
 const sceneChoices = computed(() => scene.value?.choices ?? []);
 const appMode = computed(() => session.getMode());
@@ -135,6 +154,7 @@ const questEntries = computed(() =>
     stepId: quest.currentStepId ?? null,
   })),
 );
+const npcDebug = computed(() => session.getNpcDebugInfo());
 
 function syncFromSession() {
   state.value = session.getState();
@@ -156,6 +176,12 @@ function handleChoice(choiceId: string) {
 function handleCloseScene() {
   session.closeScene();
   lastEventId.value = null;
+  syncFromSession();
+}
+
+function handleNpcInteraction(npcId: string) {
+  const result = session.interactWithNpc(npcId);
+  lastEventId.value = result.triggeredEventId;
   syncFromSession();
 }
 

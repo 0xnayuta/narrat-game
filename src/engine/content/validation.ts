@@ -17,6 +17,16 @@ function isBooleanRecord(value: unknown): value is Record<string, boolean> {
   return isRecord(value) && Object.values(value).every((entry) => typeof entry === "boolean");
 }
 
+function isScalarRecord(value: unknown): value is Record<string, string | number | boolean> {
+  return (
+    isRecord(value) &&
+    Object.values(value).every(
+      (entry) =>
+        typeof entry === "string" || typeof entry === "number" || typeof entry === "boolean",
+    )
+  );
+}
+
 function hasValidNarrative(value: unknown): boolean {
   if (!isRecord(value)) {
     return false;
@@ -71,7 +81,48 @@ function hasValidNpcs(value: unknown): boolean {
     if (!isRecord(npc)) {
       return false;
     }
-    return typeof npc.id === "string" && typeof npc.name === "string";
+
+    const interactionsValid =
+      npc.interactions === undefined ||
+      (Array.isArray(npc.interactions) &&
+        npc.interactions.every((rule) => {
+          if (!isRecord(rule)) {
+            return false;
+          }
+          const requiredQuestsValid =
+            rule.requiredQuests === undefined ||
+            (isRecord(rule.requiredQuests) &&
+              Object.values(rule.requiredQuests).every(
+                (status) =>
+                  status === "inactive" ||
+                  status === "active" ||
+                  status === "completed" ||
+                  status === "failed",
+              ));
+
+          const requiredTimeOfDayValid =
+            rule.requiredTimeOfDay === undefined ||
+            rule.requiredTimeOfDay === "morning" ||
+            rule.requiredTimeOfDay === "afternoon" ||
+            rule.requiredTimeOfDay === "evening" ||
+            rule.requiredTimeOfDay === "night";
+
+          return (
+            typeof rule.id === "string" &&
+            typeof rule.label === "string" &&
+            typeof rule.nodeId === "string" &&
+            (rule.requiredFlags === undefined || isBooleanRecord(rule.requiredFlags)) &&
+            requiredQuestsValid &&
+            (rule.requiredVars === undefined || isScalarRecord(rule.requiredVars)) &&
+            requiredTimeOfDayValid
+          );
+        }));
+
+    return (
+      typeof npc.id === "string" &&
+      typeof npc.name === "string" &&
+      interactionsValid
+    );
   });
 }
 

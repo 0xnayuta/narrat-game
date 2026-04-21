@@ -69,5 +69,34 @@ export const demoNarrativeGraph: NarrativeGraph = {
       text: "You have seen enough for now.",
       choices: [],
     },
+    {
+      id: "node_vendor_intro",
+      text: "The vendor watches you approach and offers a quick greeting.",
+      choices: [
+        {
+          id: "ask_vendor",
+          text: "Ask how business is going",
+          nextNodeId: "node_vendor_done",
+          effects: {
+            setFlags: {
+              vendor_met: true,
+            },
+            setVars: {
+              last_npc_spoken: "npc_vendor_01",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_vendor_done",
+      text: "The vendor says the market has been quiet today.",
+      choices: [],
+    },
+    {
+      id: "node_vendor_repeat",
+      text: "The vendor nods. \"Still quiet, but at least people are showing up.\"",
+      choices: [],
+    },
   ],
 };
