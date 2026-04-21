@@ -4,7 +4,7 @@
 export interface ChoiceOption {
   id: string;
   text: string;
-  to: string;
+  nextNodeId: string;
   // TODO: Add condition/effect fields once expression/effect system is defined.
 }
 

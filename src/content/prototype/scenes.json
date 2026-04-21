@@ -8,7 +8,7 @@
         {
           "id": "continue",
           "text": "Continue",
-          "to": "next"
+          "nextNodeId": "next"
         }
       ]
     },
