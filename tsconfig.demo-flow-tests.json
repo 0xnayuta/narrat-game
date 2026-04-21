@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/app/demo-content-flow.ts", "src/content/demo/**/*.ts", "src/engine/**/*.ts"],
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": ".tmp-demo-tests",
+    "module": "commonjs",
+    "target": "es2019",
+    "declaration": false,
+    "sourceMap": false
+  }
+}

@@ -17,5 +17,5 @@ export type {
   EventTimeRange,
 } from "./events";
 export type { QuestDefinition } from "./quests";
-export type { NarrativeNode, ChoiceOption } from "./narrative";
+export type { NarrativeNode, ChoiceOption, NarrativeChoiceEffects } from "./narrative";
 export type { SaveFile } from "./save";

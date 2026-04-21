@@ -3,7 +3,7 @@
  * TODO: Add command/effect execution and conditional choices.
  */
 
-import type { ChoiceOption, NarrativeNode } from "../types";
+import type { ChoiceOption, NarrativeChoiceEffects, NarrativeNode } from "../types";
 
 export interface NarrativeGraph {
   startNodeId: string;
@@ -14,6 +14,11 @@ export interface NarrativeViewModel {
   nodeId: string;
   text: string;
   choices: Array<Pick<ChoiceOption, "id" | "text">>;
+}
+
+export interface NarrativeChoiceResult {
+  node: NarrativeNode;
+  effects?: NarrativeChoiceEffects;
 }
 
 export class NarrativeRuntime {
@@ -53,7 +58,7 @@ export class NarrativeRuntime {
     };
   }
 
-  choose(choiceId: string): NarrativeNode {
+  choose(choiceId: string): NarrativeChoiceResult {
     const current = this.getCurrentNode();
     const choice = current.choices.find((item) => item.id === choiceId);
     if (!choice) {
@@ -63,7 +68,10 @@ export class NarrativeRuntime {
       throw new Error(`Next node not found: ${choice.nextNodeId}`);
     }
     this.currentNodeId = choice.nextNodeId;
-    return this.getCurrentNode();
+    return {
+      node: this.getCurrentNode(),
+      effects: choice.effects,
+    };
   }
 
   jumpTo(nodeId: string): NarrativeNode {

@@ -1,6 +1,5 @@
 .build
-.tmp-save-tests
-.tmp-tests
+.tmp-*/
 build
 web_modules
 node_modules

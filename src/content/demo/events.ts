@@ -28,6 +28,7 @@ export const demoEvents: EventDefinition[] = [
       locationIds: ["market"],
       flags: {
         quest_intro_started: true,
+        market_visit_intent: true,
       },
       timeRange: { startHour: 8, endHour: 18 },
     },
