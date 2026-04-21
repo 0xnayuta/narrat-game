@@ -10,7 +10,12 @@ export type {
   InventoryState,
 } from "./state";
 export type { LocationDefinition, LocationConnection, NPCDefinition } from "./world";
-export type { EventDefinition } from "./events";
+export type {
+  EventDefinition,
+  EventTrigger,
+  EventConditions,
+  EventTimeRange,
+} from "./events";
 export type { QuestDefinition } from "./quests";
 export type { NarrativeNode, ChoiceOption } from "./narrative";
 export type { SaveFile } from "./save";
