@@ -1,17 +1,24 @@
 /**
- * Responsibility: Save/load game snapshots (localStorage-first).
- * TODO: Add save slots, migration and integrity checks.
+ * Responsibility: localStorage persistence wrapper for versioned SaveFile payloads.
+ * TODO: Add multi-slot listing APIs and storage backends.
  */
 
+import type { GameState } from "../types";
+import { deserializeSaveFile, serializeGameState } from "./serializer";
+
 export class SaveService {
-  save(key: string, data: unknown): void {
-    // TODO: Add robust serialization and error handling.
-    localStorage.setItem(key, JSON.stringify(data));
+  save(slotId: string, state: GameState): void {
+    const saveFile = serializeGameState({ slotId, state });
+    localStorage.setItem(slotId, JSON.stringify(saveFile));
   }
 
-  load<T>(key: string): T | null {
-    // TODO: Add robust parsing and schema validation.
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : null;
+  load(slotId: string): GameState | null {
+    const raw = localStorage.getItem(slotId);
+    if (!raw) {
+      return null;
+    }
+
+    const parsed = JSON.parse(raw) as unknown;
+    return deserializeSaveFile(parsed);
   }
 }

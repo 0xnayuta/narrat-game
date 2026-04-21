@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/engine/save/**/*.ts", "src/engine/types/**/*.ts"],
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": ".tmp-save-tests",
+    "module": "commonjs",
+    "target": "es2019",
+    "declaration": false,
+    "sourceMap": false
+  }
+}
