@@ -1,12 +1,21 @@
 /**
+ * Directed connection between two locations in the world graph.
+ */
+export interface LocationConnection {
+  to: string;
+  travelMinutes: number;
+  // TODO: Add travel requirements (costs, conditions) when gating is implemented.
+}
+
+/**
  * Static location definition for navigation and scene placement.
  */
 export interface LocationDefinition {
   id: string;
   name: string;
   description: string;
+  connections: LocationConnection[];
   tags?: string[];
-  // TODO: Add links/exits once travel model is implemented.
 }
 
 /**

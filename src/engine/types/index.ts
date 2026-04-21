@@ -9,7 +9,7 @@ export type {
   QuestProgress,
   InventoryState,
 } from "./state";
-export type { LocationDefinition, NPCDefinition } from "./world";
+export type { LocationDefinition, LocationConnection, NPCDefinition } from "./world";
 export type { EventDefinition } from "./events";
 export type { QuestDefinition } from "./quests";
 export type { NarrativeNode, ChoiceOption } from "./narrative";
