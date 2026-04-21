@@ -1,4 +1,5 @@
 .build
+.tmp-tests
 build
 web_modules
 node_modules
