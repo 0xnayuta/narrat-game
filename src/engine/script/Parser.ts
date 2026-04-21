@@ -3,7 +3,7 @@
  * TODO: Support validated schema parsing and compile-time checks.
  */
 
-import type { SceneCollection } from "@/engine/content/schema";
+import type { SceneCollection } from "../content/schema";
 
 export class Parser {
   parse(raw: unknown): SceneCollection {

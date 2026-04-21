@@ -3,7 +3,7 @@
  * TODO: Execute conditions, effects and command hooks.
  */
 
-import type { SceneCollection } from "@/engine/content/schema";
+import type { SceneCollection } from "../content/schema";
 
 export class ScriptRunner {
   private scenes: SceneCollection | null = null;

@@ -3,17 +3,10 @@
  * TODO: Add conditions, effects, tags and metadata fields.
  */
 
-export interface SceneChoice {
-  id: string;
-  text: string;
-  to: string;
-}
+import type { ChoiceOption, NarrativeNode } from "../types";
 
-export interface SceneNode {
-  id: string;
-  text: string;
-  choices: SceneChoice[];
-}
+export type SceneChoice = ChoiceOption;
+export type SceneNode = NarrativeNode;
 
 export interface SceneCollection {
   start: string;

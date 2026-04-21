@@ -3,7 +3,7 @@
  * TODO: Wire Engine + repos + UI bridge, then expose app start flow.
  */
 
-import { Engine } from "@/engine/core/Engine";
+import { Engine } from "../engine/core/Engine";
 
 export function createBootstrapEngine(): Engine {
   // TODO: Replace with full dependency wiring.
