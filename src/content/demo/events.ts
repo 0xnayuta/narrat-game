@@ -10,6 +10,7 @@ export const demoEvents: EventDefinition[] = [
     type: "arrival",
     trigger: "on-location-enter",
     once: true,
+    priority: 10,
     conditions: {
       locationIds: ["street"],
       flags: {
@@ -26,6 +27,7 @@ export const demoEvents: EventDefinition[] = [
     type: "follow-up",
     trigger: "after-choice",
     once: true,
+    priority: 10,
     conditions: {
       locationIds: ["street"],
       flags: {
@@ -42,6 +44,7 @@ export const demoEvents: EventDefinition[] = [
     type: "ambient",
     trigger: "on-time-check",
     once: true,
+    priority: 10,
     conditions: {
       locationIds: ["market"],
       flags: {
@@ -52,6 +55,25 @@ export const demoEvents: EventDefinition[] = [
     },
     payload: {
       narrativeNodeId: "node_market_morning",
+    },
+  },
+  {
+    id: "evt_market_morning_low_priority_example",
+    type: "ambient",
+    trigger: "on-time-check",
+    once: true,
+    priority: 1,
+    conditions: {
+      locationIds: ["market"],
+      flags: {
+        quest_intro_started: true,
+        market_visit_intent: true,
+        vendor_met: false,
+      },
+      timeRange: { startHour: 8, endHour: 18 },
+    },
+    payload: {
+      narrativeNodeId: "node_market_plan",
     },
   },
 ];

@@ -1,6 +1,6 @@
 /**
  * Responsibility: Event candidate filtering and minimal selection strategy.
- * TODO: Replace first-hit strategy with priority/weight model.
+ * TODO: Extend priority selection with weight/cooldown model.
  */
 
 import type { EventDefinition, EventTrigger } from "../types/events";
@@ -24,8 +24,28 @@ export function getCandidateEvents(
   });
 }
 
+function getEventPriority(event: EventDefinition): number {
+  return Number.isFinite(event.priority) ? (event.priority as number) : 0;
+}
+
 export function selectFirstEvent(candidates: EventDefinition[]): EventDefinition | null {
-  return candidates.length > 0 ? candidates[0] : null;
+  if (candidates.length === 0) {
+    return null;
+  }
+
+  let best = candidates[0];
+  let bestPriority = getEventPriority(best);
+
+  for (let index = 1; index < candidates.length; index += 1) {
+    const candidate = candidates[index];
+    const candidatePriority = getEventPriority(candidate);
+    if (candidatePriority > bestPriority) {
+      best = candidate;
+      bestPriority = candidatePriority;
+    }
+  }
+
+  return best;
 }
 
 export function selectEvent(

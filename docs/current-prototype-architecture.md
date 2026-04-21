@@ -142,6 +142,14 @@ Purpose:
    - starts narrative if an event hits
 4. UI receives updated state + current scene
 
+### Event selection rule (current)
+- Event candidates are filtered by trigger/conditions/once history.
+- Selection is deterministic:
+  - higher `priority` wins
+  - if priorities are equal, original content order wins
+- `priority` defaults to `0` when omitted.
+- `weight`/`cooldown` are not implemented yet in the active path.
+
 ### Choice flow
 1. UI calls `session.choose(choiceId)`
 2. `NarrativeRuntime` advances to the next node

@@ -57,7 +57,8 @@ function hasValidEvents(value: unknown): boolean {
     return (
       typeof event.id === "string" &&
       typeof event.type === "string" &&
-      typeof event.trigger === "string"
+      typeof event.trigger === "string" &&
+      (event.priority === undefined || typeof event.priority === "number")
     );
   });
 }

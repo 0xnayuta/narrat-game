@@ -72,3 +72,50 @@ test("event selector should skip once events already marked as triggered", () =>
   const candidates = getCandidateEvents(events, state, "on-location-enter");
   assert.deepEqual(candidates.map((event) => event.id), ["street-morning"]);
 });
+
+test("event selector should prioritize higher priority while keeping stable tie order", () => {
+  const priorityEvents = [
+    {
+      id: "low-priority-first",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+    {
+      id: "high-priority-second",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: { locationIds: ["street"] },
+    },
+    {
+      id: "high-priority-third",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const selectedHigh = selectEvent(priorityEvents, baseState, "on-location-enter");
+  assert.equal(selectedHigh?.id, "high-priority-second");
+
+  const defaultPriorityEvents = [
+    {
+      id: "default-priority-a",
+      type: "ambient",
+      trigger: "on-location-enter",
+      conditions: { locationIds: ["street"] },
+    },
+    {
+      id: "default-priority-b",
+      type: "ambient",
+      trigger: "on-location-enter",
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const selectedDefault = selectEvent(defaultPriorityEvents, baseState, "on-location-enter");
+  assert.equal(selectedDefault?.id, "default-priority-a");
+});

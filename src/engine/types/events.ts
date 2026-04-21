@@ -29,7 +29,8 @@ export interface EventDefinition {
   type: string;
   trigger: EventTrigger;
   once?: boolean;
+  priority?: number;
   conditions?: EventConditions;
   payload?: Record<string, unknown>;
-  // TODO: Add priority/weight and cooldown fields when balancing starts.
+  // TODO: Add weight and cooldown fields when balancing starts.
 }
