@@ -3,11 +3,11 @@
  * TODO: Extend with failure results, cooldowns and multi-event resolution strategies.
  */
 
-import { getCandidateEvents, selectFirstEvent } from "../events";
+import { getCandidateEvents, markEventTriggered, selectFirstEvent } from "../events";
 import { NarrativeRuntime } from "../narrative";
 import type { NarrativeViewModel } from "../narrative";
 import { advanceGameStateMinutes } from "../time";
-import type { EventDefinition, GameState } from "../types";
+import type { EventDefinition, EventTrigger, GameState } from "../types";
 import { LocationService } from "../world";
 
 export interface TravelEventFlowResult {
@@ -22,6 +22,30 @@ function readNarrativeNodeId(event: EventDefinition | null): string | null {
   }
   const nodeId = event.payload["narrativeNodeId"];
   return typeof nodeId === "string" ? nodeId : null;
+}
+
+export function runTriggeredEventFlow(
+  state: GameState,
+  events: EventDefinition[],
+  trigger: EventTrigger,
+  narrativeRuntime: NarrativeRuntime,
+): Pick<TravelEventFlowResult, "state" | "triggeredEvent" | "scene"> {
+  const candidates = getCandidateEvents(events, state, trigger);
+  const triggeredEvent = selectFirstEvent(candidates);
+  const stateAfterEventMark = triggeredEvent ? markEventTriggered(state, triggeredEvent) : state;
+
+  let scene: NarrativeViewModel | null = null;
+  const targetNodeId = readNarrativeNodeId(triggeredEvent);
+  if (targetNodeId) {
+    narrativeRuntime.jumpTo(targetNodeId);
+    scene = narrativeRuntime.getCurrentView();
+  }
+
+  return {
+    state: stateAfterEventMark,
+    triggeredEvent,
+    scene,
+  };
 }
 
 /**
@@ -52,16 +76,13 @@ export function runTravelEventFlow(
   const triggeredEvent = selectFirstEvent([...locationCandidates, ...timeCandidates]);
 
   // 3) Narrative startup
-  let scene: NarrativeViewModel | null = null;
-  const targetNodeId = readNarrativeNodeId(triggeredEvent);
-  if (targetNodeId) {
-    narrativeRuntime.jumpTo(targetNodeId);
-    scene = narrativeRuntime.getCurrentView();
+  if (!triggeredEvent) {
+    return {
+      state: advancedState,
+      triggeredEvent: null,
+      scene: null,
+    };
   }
 
-  return {
-    state: advancedState,
-    triggeredEvent,
-    scene,
-  };
+  return runTriggeredEventFlow(advancedState, [triggeredEvent], triggeredEvent.trigger, narrativeRuntime);
 }

@@ -1,6 +1,8 @@
 /**
- * Responsibility: Engine root object, lifecycle orchestration and future event hub mounting.
- * TODO: Inject subsystems and coordinate update loop.
+ * Responsibility: Future engine root/lifecycle coordinator.
+ * Status: Skeleton only. The current demo prototype is driven by GameSession and app-level Vue
+ * wiring rather than a central Engine instance.
+ * TODO: Reintroduce as the top-level orchestrator once multiple subsystems need one runtime shell.
  */
 
 import type { EngineContext, EngineLifecycle, EngineStatus } from "./types";

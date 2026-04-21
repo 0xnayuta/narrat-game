@@ -6,6 +6,7 @@
 import type { EventDefinition, EventTrigger } from "../types/events";
 import type { GameState } from "../types";
 import { matchesAllEventConditions } from "./conditions";
+import { hasTriggeredOnceEvent } from "./history";
 
 export function getCandidateEvents(
   events: EventDefinition[],
@@ -14,6 +15,9 @@ export function getCandidateEvents(
 ): EventDefinition[] {
   return events.filter((event) => {
     if (trigger && event.trigger !== trigger) {
+      return false;
+    }
+    if (hasTriggeredOnceEvent(state, event)) {
       return false;
     }
     return matchesAllEventConditions(state, event.conditions);

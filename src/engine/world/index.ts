@@ -4,4 +4,3 @@
 
 export type { LocationEnterHookContext, SwitchLocationOptions } from "./LocationService";
 export { LocationService } from "./LocationService";
-export { mockLocations } from "./mockLocations";

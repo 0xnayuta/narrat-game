@@ -1,6 +1,8 @@
 /**
- * Responsibility: Parse narrative source data into runtime-friendly scene nodes.
- * TODO: Support validated schema parsing and compile-time checks.
+ * Responsibility: Parse scene/script source data into runtime-friendly collections.
+ * Status: Skeleton only. Not connected to the current demo UI/content path, which uses
+ * direct ContentBundle objects and NarrativeRuntime instead of a parser pipeline.
+ * TODO: Revisit when external JSON/YAML/script loading is introduced.
  */
 
 import type { SceneCollection } from "../content/schema";

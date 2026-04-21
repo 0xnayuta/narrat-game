@@ -1,7 +1,7 @@
 /**
  * Supported event trigger phases for the minimal event framework.
  */
-export type EventTrigger = "manual" | "on-location-enter" | "on-time-check";
+export type EventTrigger = "manual" | "on-location-enter" | "on-time-check" | "after-choice";
 
 /**
  * Time range condition used by events (hour-based, end exclusive).
@@ -28,6 +28,7 @@ export interface EventDefinition {
   id: string;
   type: string;
   trigger: EventTrigger;
+  once?: boolean;
   conditions?: EventConditions;
   payload?: Record<string, unknown>;
   // TODO: Add priority/weight and cooldown fields when balancing starts.

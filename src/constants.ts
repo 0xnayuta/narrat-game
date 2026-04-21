@@ -2,6 +2,7 @@ export const VERSION = import.meta.env.VITE_BUILD_VERSION;
 export const BUILD_DATE = new Date(import.meta.env.VITE_BUILD_DATE);
 export const GAME_NAME = import.meta.env.VITE_GAME_NAME;
 const USE_STEAM_IMPORT = import.meta.env.VITE_STEAM;
+export const USE_DEMO_UI = import.meta.env.VITE_DEMO_UI === "true";
 
 console.log(
   `%c ${GAME_NAME} v${VERSION} - Built at ${BUILD_DATE.toLocaleString()}`,

@@ -1,6 +1,8 @@
 /**
- * Responsibility: Drive narrative progression (show text, select choice, jump nodes).
- * TODO: Execute conditions, effects and command hooks.
+ * Responsibility: Legacy skeleton for script-driven scene progression.
+ * Status: Not used by the current demo main path. The active prototype uses NarrativeRuntime
+ * for node progression and GameSession for orchestration.
+ * TODO: Either evolve this into a real content pipeline adapter or remove/merge later.
  */
 
 import type { SceneCollection } from "../content/schema";

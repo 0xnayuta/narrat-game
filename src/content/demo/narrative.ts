@@ -38,6 +38,11 @@ export const demoNarrativeGraph: NarrativeGraph = {
       ],
     },
     {
+      id: "node_market_plan",
+      text: "You decide to head to the market next.",
+      choices: [],
+    },
+    {
       id: "node_market_morning",
       text: "The market is open and calm.",
       choices: [

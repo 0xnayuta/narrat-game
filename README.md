@@ -1,55 +1,117 @@
-# Narrat Template
+# narrat-game prototype
 
-Template app for [Narrat](https://github.com/nialna/narrat).
+This repository started from a Narrat template, but it is now being reshaped into a **new web text RPG engine prototype**.
 
-> ✨ Bootstrapped with Create Snowpack App (CSA).
+Current direction:
+- keep the old Narrat path available
+- build a new engine/runtime path in parallel
+- gradually replace template/demo content with the new stack
 
-## Usage
+## Current project status
 
-You can clone, fork or download this to get it in a local folder, then:
+The **active prototype path** is the demo UI/runtime flow built around:
+- `ContentBundle`
+- `GameSession`
+- `NarrativeRuntime`
+- Vue demo UI
 
-1. `npm install`
-2. `npm start`
+The old Narrat template entry is still present, but it is no longer the main focus of current prototype work.
 
-## Building for the web
+## Recommended way to run
 
-`npm run build`
+### Prototype demo UI
+This is the recommended entry for current work:
 
-Builds the app for production to the `build/` folder.
-It correctly bundles Vue in production mode and optimizes the build for the best performance.
+```bash
+npm install
+npm run dev:demo-ui
+```
 
-It should be easy to host the built result as a static website on a service like [Netlify](https://www.netlify.com)
+This runs the current prototype UI with:
+- travel between locations
+- time advancement
+- event triggering
+- narrative choices
+- quest/flag/var updates
+- save/load
+- debug/status panel
 
-## Building as an app
+### Original Narrat template path
+If you want to run the old template path:
 
-This template has [electron](https://www.electronjs.org) already setup to create a built app of your game.
+```bash
+npm install
+npm run dev
+```
 
-To run it:
+## Architecture document
 
-`npm run electron`
+Current main-path architecture is documented here:
 
-To build it (it will come out in the `out` folder):
+- `docs/current-prototype-architecture.md`
 
-`npm run package`
+Read that file if you want to understand:
+- which runtime path is active
+- content layer vs engine layer vs app/UI layer
+- what is part of the live prototype
+- which files are still skeleton-only
 
-This should work on Windows, Mac and Linux
+## Useful scripts
 
-## Narrat documentation
+### Development
 
-[See docs](https://docs.narrat.dev)
+```bash
+npm run dev
+npm run dev:demo-ui
+```
 
-## Changing game code
+### Type check
 
-You can edit game code and config in the data folder (`data/example.narrat`).
+```bash
+npm run type-check
+```
 
-[See docs](https://docs.narrat.dev) for more usage info
+### Tests
 
-## Available Scripts
+```bash
+npm run test:content
+npm run test:demo-session
+npm run test:demo-flow
+npm run test:time
+npm run test:save
+```
 
-### npm start
+### Build demo UI path
 
-Runs the app in the development mode.
-Open http://localhost:8080 to view it in the browser.
+```bash
+npx cross-env VITE_DEMO_UI=true vite build
+```
 
-The page will reload if you make edits.
-You will also see any lint errors in the console.
+### Existing build/package scripts
+The repository still contains existing web/electron build scripts inherited from the template and previous setup.
+Those remain available, but the prototype workflow currently centers on the demo UI path.
+
+## Repository structure (current mental model)
+
+- `src/content/`
+  - demo content bundles and loaders
+- `src/engine/`
+  - engine runtime, state, events, narrative, save, time, world
+- `src/app/`
+  - app-level session wiring and demo UI entry
+- `src/ui/`
+  - Vue UI components for the prototype
+- `tests/`
+  - current automated tests
+- `docs/`
+  - project architecture notes
+
+## Notes
+
+- This is **not** a finished game.
+- This is **not** yet a full replacement for Narrat.
+- The current goal is to keep the prototype:
+  - small
+  - testable
+  - structurally clear
+  - easy to extend incrementally

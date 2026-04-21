@@ -12,3 +12,106 @@
 }
 
 /* Add any other CSS you want here */
+
+body {
+  margin: 0;
+  background: #10131a;
+  color: #d9e1f2;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+#game-holder {
+  min-height: 100vh;
+}
+
+.demo-app {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.demo-app__header,
+.hud-stats,
+.text-panel,
+.choice-list,
+.demo-app__travel,
+.demo-app__save-actions,
+.demo-app__meta,
+.debug-panel {
+  background: #171c26;
+  border: 1px solid #2a3240;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.demo-app__header h1,
+.demo-app__travel h2,
+.demo-app__save-actions h2 {
+  margin: 0 0 8px;
+}
+
+.demo-app__header p,
+.hud-stats p,
+.demo-app__meta p,
+.text-panel p,
+.choice-list__empty,
+.demo-app__hint {
+  margin: 0;
+}
+
+.hud-stats,
+.demo-app__meta,
+.debug-panel__grid {
+  display: grid;
+  gap: 8px;
+}
+
+.debug-panel__grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.debug-panel h2,
+.debug-panel h3 {
+  margin: 0 0 8px;
+}
+
+.debug-panel ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.debug-panel li,
+.debug-panel p {
+  margin: 0;
+}
+
+.choice-list__items,
+.demo-app__travel-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.choice-list__button,
+.demo-app__button {
+  border: 1px solid #56637a;
+  background: #243046;
+  color: #eef4ff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.choice-list__button:hover,
+.demo-app__button:hover {
+  background: #31415f;
+}
+
+.choice-list__button:disabled,
+.demo-app__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
