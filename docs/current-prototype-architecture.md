@@ -4,6 +4,9 @@
 This document describes the **current active prototype path** only.
 It does not describe every skeleton file in `src/engine`; some files are intentionally retained as future placeholders and are not part of the running demo.
 
+Related note:
+- `docs/black-sail-quest-current-goal-boundary.md` — current boundary for `quest_black_sail_trail` vs `vars.current_goal` in the Black Sail demo branch.
+
 ## Current runtime entry
 Two runtime entries currently exist:
 

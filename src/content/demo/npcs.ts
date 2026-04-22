@@ -54,4 +54,35 @@ export const demoNpcs: NPCDefinition[] = [
     ],
     tags: ["shop"],
   },
+  {
+    id: "npc_harbor_watch_01",
+    name: "Mira",
+    homeLocationId: "harbor",
+    interactions: [
+      {
+        id: "harbor-watch-intro",
+        label: "Ask for Mira at the harbor watch",
+        nodeId: "node_harbor_watch_intro",
+        requiredFlags: {
+          compass_vendor_reacted: true,
+          harbor_watch_contacted: false,
+        },
+        requiredQuestSteps: {
+          quest_black_sail_trail: "step_find_mira",
+        },
+      },
+      {
+        id: "harbor-watch-repeat",
+        label: "Speak with Mira again",
+        nodeId: "node_harbor_watch_repeat",
+        requiredFlags: {
+          harbor_watch_contacted: true,
+        },
+        requiredQuests: {
+          quest_black_sail_trail: "active",
+        },
+      },
+    ],
+    tags: ["guard"],
+  },
 ];

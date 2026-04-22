@@ -247,6 +247,12 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "investigate_compass",
             },
+            setQuests: {
+              quest_black_sail_trail: {
+                status: "active",
+                currentStepId: "step_find_mira",
+              },
+            },
           },
         },
         {
@@ -273,6 +279,12 @@ export const demoNarrativeGraph: NarrativeGraph = {
             },
             setVars: {
               current_goal: "investigate_compass",
+            },
+            setQuests: {
+              quest_black_sail_trail: {
+                status: "active",
+                currentStepId: "step_find_mira",
+              },
             },
           },
         },
@@ -311,6 +323,285 @@ export const demoNarrativeGraph: NarrativeGraph = {
     {
       id: "node_compass_lead",
       text: "The vendor taps the compass casing. \"If that symbol is what I think it is, you should speak to the harbor watch before nightfall.\"",
+      choices: [],
+    },
+    {
+      id: "node_harbor_arrival",
+      text: "At the harbor, a watch post overlooks the damp planks. A dockhand points you toward an officer named Mira.",
+      choices: [],
+    },
+    {
+      id: "node_harbor_watch_intro",
+      text: "A stern woman in a weathered coat looks up from a ledger. \"Mira. What do you need?\"",
+      choices: [
+        {
+          id: "show_compass_to_mira",
+          text: "Show the compass and repeat the vendor's warning",
+          nextNodeId: "node_harbor_watch_clue",
+          effects: {
+            setFlags: {
+              harbor_watch_contacted: true,
+            },
+            setVars: {
+              current_goal: "investigate_signal_tower",
+            },
+            advanceQuestStep: ["quest_black_sail_trail"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_watch_clue",
+      text: "Mira studies the casing, then nods once. \"Old tide-marking guild work. If that needle pulls off true north tonight, follow the old signal tower above the docks. Quietly.\"",
+      choices: [],
+    },
+    {
+      id: "node_signal_tower_arrival",
+      text: "The old signal tower creaks in the harbor wind. Inside, dust covers the stairs, but there are fresher marks near the lantern room.",
+      choices: [
+        {
+          id: "search_signal_tower",
+          text: "Search the lantern room",
+          nextNodeId: "node_signal_tower_clue",
+          effects: {
+            setFlags: {
+              signal_tower_clue_found: true,
+            },
+            setVars: {
+              current_goal: "signal_tower_investigated",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_signal_tower_clue",
+      text: "Behind the old beacon housing, you find a scrap of oilskin marked with tide times and a hand-drawn symbol matching the compass casing.",
+      choices: [],
+    },
+    {
+      id: "node_harbor_watch_repeat",
+      text: "Mira keeps her voice low. \"If the compass shifts again, don't chase it alone. Come straight back to the watch.\"",
+      choices: [
+        {
+          id: "report_signal_tower_clue",
+          text: "Show Mira the oilskin scrap from the tower",
+          conditions: {
+            flags: {
+              signal_tower_clue_found: true,
+            },
+            questSteps: {
+              quest_black_sail_trail: "step_search_signal_tower",
+            },
+          },
+          nextNodeId: "node_harbor_watch_night_tip",
+          effects: {
+            setVars: {
+              current_goal: "wait_for_harbor_signal",
+            },
+            advanceQuestStep: ["quest_black_sail_trail"],
+          },
+        },
+        {
+          id: "show_pier_message_to_mira",
+          text: "Show Mira the note from the tin capsule",
+          conditions: {
+            flags: {
+              pier_message_found: true,
+            },
+            questSteps: {
+              quest_black_sail_trail: "step_decode_pier_message",
+            },
+          },
+          nextNodeId: "node_harbor_watch_channel_tip",
+          effects: {
+            setFlags: {
+              north_channel_decoded: true,
+            },
+            setVars: {
+              current_goal: "investigate_north_channel",
+            },
+            advanceQuestStep: ["quest_black_sail_trail"],
+          },
+        },
+        {
+          id: "report_north_channel_marker",
+          text: "Describe the torn sailcloth and marked cord from the north channel",
+          conditions: {
+            flags: {
+              north_channel_marker_found: true,
+            },
+            questSteps: {
+              quest_black_sail_trail: "step_investigate_north_channel",
+            },
+          },
+          nextNodeId: "node_harbor_watch_black_sail_tip",
+          effects: {
+            setFlags: {
+              black_sail_berth_identified: true,
+            },
+            setVars: {
+              current_goal: "investigate_black_sail_berth",
+            },
+            advanceQuestStep: ["quest_black_sail_trail"],
+          },
+        },
+        {
+          id: "report_coal_berth_ledger",
+          text: "Show Mira the ledger scrap from the coal berth",
+          conditions: {
+            flags: {
+              coal_berth_clue_found: true,
+            },
+            questSteps: {
+              quest_black_sail_trail: "step_investigate_black_sail_berth",
+            },
+          },
+          nextNodeId: "node_harbor_watch_smuggling_confirmed",
+          effects: {
+            setFlags: {
+              black_sail_network_confirmed: true,
+            },
+            setVars: {
+              current_goal: "black_sail_network_confirmed",
+            },
+            completeQuest: ["quest_black_sail_trail"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_watch_night_tip",
+      text: "Mira studies the tide marks, then points toward the dark water. \"These notes match the late watch. Stay near the harbor after full dark and watch for a lantern signal from the waterline.\"",
+      choices: [],
+    },
+    {
+      id: "node_harbor_night_signal",
+      text: "Well after dark, a shuttered lantern flashes twice from beneath the far pier. The compass needle jerks toward the water before going still again.",
+      choices: [
+        {
+          id: "follow_pier_signal",
+          text: "Head for the far pier before the light disappears",
+          nextNodeId: "node_harbor_night_signal_end",
+          effects: {
+            setVars: {
+              current_goal: "investigate_pier_signal",
+            },
+            advanceQuestStep: ["quest_black_sail_trail"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_night_signal_end",
+      text: "You keep low and move along the docks, counting the pilings until the far pier comes into view.",
+      choices: [],
+    },
+    {
+      id: "node_pier_arrival",
+      text: "At the far pier, the water slaps against the posts below. Someone has wedged a small tin capsule beneath the railing, still damp from the spray.",
+      choices: [
+        {
+          id: "open_tin_capsule",
+          text: "Open the tin capsule",
+          nextNodeId: "node_pier_capsule_clue",
+          effects: {
+            setFlags: {
+              pier_message_found: true,
+            },
+            setVars: {
+              current_goal: "pier_message_found",
+            },
+            advanceQuestStep: ["quest_black_sail_trail"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_pier_capsule_clue",
+      text: "Inside is a tightly rolled note: \"Third bell. Black sail. North channel.\" A smear beside the words matches the oilskin symbol from the tower.",
+      choices: [],
+    },
+    {
+      id: "node_harbor_watch_channel_tip",
+      text: "Mira reads the note once and exhales. \"Black Sail is no ship name. It's a smuggler mark. North channel means the narrow waterway past the outer marker. If they move on third bell, that's where you watch next.\"",
+      choices: [],
+    },
+    {
+      id: "node_north_channel_arrival",
+      text: "The north channel is colder and quieter than the inner harbor. Near the outer marker, you spot fresh rope scuffs and a scrap of black sailcloth snagged on a rusted cleat.",
+      choices: [
+        {
+          id: "inspect_channel_marker",
+          text: "Inspect the marker and the torn sailcloth",
+          nextNodeId: "node_north_channel_clue",
+          effects: {
+            setFlags: {
+              north_channel_marker_found: true,
+            },
+            setVars: {
+              current_goal: "north_channel_investigated",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_north_channel_clue",
+      text: "Wrapped inside the torn cloth is a tar-stiff cord stamped with the same smugglers' mark. Someone used this marker as a handoff point not long ago.",
+      choices: [],
+    },
+    {
+      id: "node_harbor_watch_black_sail_tip",
+      text: "Mira's expression hardens. \"Black sailcloth, tar cord, outer marker—then they're not meeting in open water. They favor the old coal berth past the customs sheds. If Black Sail has a physical anchor in this harbor, that's the place to look.\"",
+      choices: [],
+    },
+    {
+      id: "node_coal_berth_arrival",
+      text: "The old coal berth sits in shadow beyond the customs sheds. Fresh boot marks cut through the soot, and a skiff rope has been looped around a bollard polished by recent use.",
+      choices: [
+        {
+          id: "search_coal_berth",
+          text: "Search the berth and the customs-side crates",
+          nextNodeId: "node_coal_berth_clue",
+          effects: {
+            setFlags: {
+              coal_berth_clue_found: true,
+            },
+            setVars: {
+              current_goal: "coal_berth_investigated",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_coal_berth_clue",
+      text: "Behind a stack of rotting coal sacks, you find a ledger scrap listing night deliveries under a single mark: a black triangle stitched over a sail line. Someone is still using this berth as cover.",
+      choices: [],
+    },
+    {
+      id: "node_harbor_watch_smuggling_confirmed",
+      text: "Mira studies the ledger scrap in silence, then folds it into her coat. \"That seal and those delivery marks are enough. Black Sail isn't a rumor anymore—it's an active smuggling line using the coal berth as cover. You've given us something we can act on.\"",
+      choices: [
+        {
+          id: "offer_help_with_sting",
+          text: "Tell Mira you'll help watch the berth on the next tide",
+          nextNodeId: "node_harbor_watch_sting_plan",
+          effects: {
+            setFlags: {
+              black_sail_sting_prepared: true,
+            },
+            setVars: {
+              current_goal: "prepare_black_sail_sting",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_watch_sting_plan",
+      text: "Mira gives a short nod. \"Good. Keep your head down and be here before the next late tide. If Black Sail uses the berth again, we'll be ready for them.\"",
       choices: [],
     },
   ],

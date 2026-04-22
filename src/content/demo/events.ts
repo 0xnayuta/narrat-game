@@ -128,12 +128,130 @@ export const demoEvents: EventDefinition[] = [
       flags: {
         compass_vendor_reacted: true,
       },
-      vars: {
-        current_goal: "investigate_compass",
+      questSteps: {
+        quest_black_sail_trail: "step_find_mira",
       },
     },
     payload: {
       narrativeNodeId: "node_compass_lead",
+    },
+  },
+  {
+    id: "evt_harbor_arrival",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 10,
+    conditions: {
+      locationIds: ["harbor"],
+      flags: {
+        compass_vendor_reacted: true,
+      },
+      questSteps: {
+        quest_black_sail_trail: "step_find_mira",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_harbor_arrival",
+    },
+  },
+  {
+    id: "evt_signal_tower_arrival",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 10,
+    conditions: {
+      locationIds: ["signal_tower"],
+      flags: {
+        harbor_watch_contacted: true,
+      },
+      questSteps: {
+        quest_black_sail_trail: "step_search_signal_tower",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_signal_tower_arrival",
+    },
+  },
+  {
+    id: "evt_harbor_night_signal",
+    type: "ambient",
+    trigger: "on-time-check",
+    once: true,
+    priority: 10,
+    conditions: {
+      locationIds: ["harbor"],
+      timeRange: { startHour: 22, endHour: 6 },
+      flags: {
+        harbor_watch_contacted: true,
+        signal_tower_clue_found: true,
+      },
+      questSteps: {
+        quest_black_sail_trail: "step_watch_harbor_at_night",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_harbor_night_signal",
+    },
+  },
+  {
+    id: "evt_pier_arrival",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 10,
+    conditions: {
+      locationIds: ["pier"],
+      timeRange: { startHour: 22, endHour: 6 },
+      flags: {
+        harbor_watch_contacted: true,
+        signal_tower_clue_found: true,
+      },
+      questSteps: {
+        quest_black_sail_trail: "step_follow_pier_signal",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_pier_arrival",
+    },
+  },
+  {
+    id: "evt_north_channel_arrival",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 10,
+    conditions: {
+      locationIds: ["north_channel"],
+      flags: {
+        north_channel_decoded: true,
+      },
+      questSteps: {
+        quest_black_sail_trail: "step_investigate_north_channel",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_north_channel_arrival",
+    },
+  },
+  {
+    id: "evt_coal_berth_arrival",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 10,
+    conditions: {
+      locationIds: ["coal_berth"],
+      flags: {
+        black_sail_berth_identified: true,
+      },
+      questSteps: {
+        quest_black_sail_trail: "step_investigate_black_sail_berth",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_coal_berth_arrival",
     },
   },
 ];
