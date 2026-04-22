@@ -30,7 +30,12 @@ export interface EventDefinition {
   trigger: EventTrigger;
   once?: boolean;
   priority?: number;
+  /**
+   * Only used when multiple candidates share the same highest priority.
+   * Invalid values (NaN/negative) are treated as 0 by the selector.
+   */
+  weight?: number;
   conditions?: EventConditions;
   payload?: Record<string, unknown>;
-  // TODO: Add weight and cooldown fields when balancing starts.
+  // TODO: Add cooldown fields when balancing starts.
 }

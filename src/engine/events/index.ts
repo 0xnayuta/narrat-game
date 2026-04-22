@@ -9,5 +9,5 @@ export {
   matchesTimeCondition,
 } from "./conditions";
 
-export { getCandidateEvents, selectEvent, selectFirstEvent } from "./selector";
+export { getCandidateEvents, selectEvent, selectResolvedEvent, selectFirstEvent } from "./selector";
 export { getEventTriggeredFlagId, hasTriggeredOnceEvent, markEventTriggered } from "./history";

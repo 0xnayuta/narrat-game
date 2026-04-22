@@ -144,11 +144,19 @@ Purpose:
 
 ### Event selection rule (current)
 - Event candidates are filtered by trigger/conditions/once history.
-- Selection is deterministic:
+- Selection is priority-first:
   - higher `priority` wins
-  - if priorities are equal, original content order wins
-- `priority` defaults to `0` when omitted.
-- `weight`/`cooldown` are not implemented yet in the active path.
+  - `priority` defaults to `0` when omitted.
+- When multiple candidates share the same highest `priority`, selector applies `weight`.
+  - invalid `weight` (negative/NaN) is treated as `0`
+  - if all effective weights are `0`, it falls back to original content order
+  - runtime can inject RNG for deterministic tests; default session path uses `RngService.nextFloat()`
+- `cooldown` is not implemented yet in the active path.
+
+Content author notes:
+- `priority` decides which candidate group is considered first; `weight` never overrides a lower-priority event.
+- `weight` is evaluated only after trigger/conditions/once filtering is complete.
+- If multiple highest-priority events all have effective `weight = 0`, content order is used as deterministic fallback.
 
 ### Choice flow
 1. UI calls `session.choose(choiceId)`

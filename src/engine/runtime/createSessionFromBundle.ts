@@ -6,12 +6,20 @@ import type { ContentBundle } from "../content/bundle";
 import { validateContentBundle } from "../content/validation";
 import { NarrativeRuntime } from "../narrative";
 import { createQuestStateFromDefinitions } from "../quests";
+import { RngService } from "../rng/RngService";
 import { GameStateStore, createInitialGameState } from "../state/GameState";
 import type { GameState } from "../types";
 import { LocationService } from "../world";
-import { GameSession } from "./GameSession";
+import { GameSession, type GameSessionOptions } from "./GameSession";
 
-export function createGameSessionFromBundle(bundle: ContentBundle): GameSession {
+export interface CreateGameSessionOptions {
+  randomFloat?: GameSessionOptions["randomFloat"];
+}
+
+export function createGameSessionFromBundle(
+  bundle: ContentBundle,
+  options: CreateGameSessionOptions = {},
+): GameSession {
   const validBundle = validateContentBundle(bundle);
 
   const initialState: GameState = {
@@ -25,12 +33,9 @@ export function createGameSessionFromBundle(bundle: ContentBundle): GameSession 
   const store = new GameStateStore(initialState);
   const locationService = new LocationService(validBundle.locations);
   const narrativeRuntime = new NarrativeRuntime(validBundle.narrative);
+  const rngService = new RngService();
 
-  return new GameSession(
-    store,
-    locationService,
-    validBundle.events,
-    narrativeRuntime,
-    validBundle.npcs,
-  );
+  return new GameSession(store, locationService, validBundle.events, narrativeRuntime, validBundle.npcs, {
+    randomFloat: options.randomFloat ?? (() => rngService.nextFloat()),
+  });
 }

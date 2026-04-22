@@ -58,7 +58,8 @@ function hasValidEvents(value: unknown): boolean {
       typeof event.id === "string" &&
       typeof event.type === "string" &&
       typeof event.trigger === "string" &&
-      (event.priority === undefined || typeof event.priority === "number")
+      (event.priority === undefined || typeof event.priority === "number") &&
+      (event.weight === undefined || typeof event.weight === "number")
     );
   });
 }

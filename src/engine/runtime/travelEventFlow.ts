@@ -3,7 +3,7 @@
  * TODO: Extend with failure results, cooldowns and multi-event resolution strategies.
  */
 
-import { getCandidateEvents, markEventTriggered, selectFirstEvent } from "../events";
+import { getCandidateEvents, markEventTriggered, selectResolvedEvent } from "../events";
 import { NarrativeRuntime } from "../narrative";
 import type { NarrativeViewModel } from "../narrative";
 import { advanceGameStateMinutes } from "../time";
@@ -15,6 +15,8 @@ export interface TravelEventFlowResult {
   triggeredEvent: EventDefinition | null;
   scene: NarrativeViewModel | null;
 }
+
+export type RuntimeRandomFloat = () => number;
 
 function readNarrativeNodeId(event: EventDefinition | null): string | null {
   if (!event?.payload) {
@@ -29,9 +31,10 @@ export function runTriggeredEventFlow(
   events: EventDefinition[],
   trigger: EventTrigger,
   narrativeRuntime: NarrativeRuntime,
+  randomFloat?: RuntimeRandomFloat,
 ): Pick<TravelEventFlowResult, "state" | "triggeredEvent" | "scene"> {
   const candidates = getCandidateEvents(events, state, trigger);
-  const triggeredEvent = selectFirstEvent(candidates);
+  const triggeredEvent = selectResolvedEvent(candidates, randomFloat);
   const stateAfterEventMark = triggeredEvent ? markEventTriggered(state, triggeredEvent) : state;
 
   let scene: NarrativeViewModel | null = null;
@@ -49,7 +52,12 @@ export function runTriggeredEventFlow(
 }
 
 /**
- * Runs a minimal deterministic flow after a location change.
+ * Runs a minimal travel flow after a location change.
+ *
+ * Resolution behavior:
+ * - deterministic candidate filtering (trigger/conditions/once)
+ * - priority-first event resolution
+ * - optional weighted tie-breaking (uses default RNG when not injected)
  *
  * Phase 1: state update (location + time)
  * Phase 2: event filtering
@@ -61,6 +69,7 @@ export function runTravelEventFlow(
   locationService: LocationService,
   events: EventDefinition[],
   narrativeRuntime: NarrativeRuntime,
+  randomFloat?: RuntimeRandomFloat,
 ): TravelEventFlowResult {
   // 1) State update
   const travelMinutes = locationService.getTravelMinutes(state.currentLocationId, toLocationId);
@@ -73,7 +82,7 @@ export function runTravelEventFlow(
   // 2) Event filtering
   const locationCandidates = getCandidateEvents(events, advancedState, "on-location-enter");
   const timeCandidates = getCandidateEvents(events, advancedState, "on-time-check");
-  const triggeredEvent = selectFirstEvent([...locationCandidates, ...timeCandidates]);
+  const triggeredEvent = selectResolvedEvent([...locationCandidates, ...timeCandidates], randomFloat);
 
   // 3) Narrative startup
   if (!triggeredEvent) {
@@ -84,5 +93,11 @@ export function runTravelEventFlow(
     };
   }
 
-  return runTriggeredEventFlow(advancedState, [triggeredEvent], triggeredEvent.trigger, narrativeRuntime);
+  return runTriggeredEventFlow(
+    advancedState,
+    [triggeredEvent],
+    triggeredEvent.trigger,
+    narrativeRuntime,
+    randomFloat,
+  );
 }

@@ -2,6 +2,180 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 
 const { createDemoSession } = require("../.tmp-demo-tests/app/createDemoSession.js");
+const engineModule = require("../.tmp-demo-tests/engine/index.js");
+const { createGameSessionFromBundle } = engineModule;
+
+test("createDemoSession should pass options through to createGameSessionFromBundle", () => {
+  const originalCreate = engineModule.createGameSessionFromBundle;
+  const markerRng = () => 0.123;
+  const fakeSession = { __test: "fake-session" };
+  let capturedBundle = null;
+  let capturedOptions = null;
+
+  try {
+    engineModule.createGameSessionFromBundle = (bundle, options) => {
+      capturedBundle = bundle;
+      capturedOptions = options;
+      return fakeSession;
+    };
+
+    const result = createDemoSession({ randomFloat: markerRng });
+    assert.equal(result, fakeSession);
+    assert.ok(capturedBundle && typeof capturedBundle.id === "string");
+    assert.equal(capturedOptions?.randomFloat, markerRng);
+  } finally {
+    engineModule.createGameSessionFromBundle = originalCreate;
+  }
+});
+
+test("demo session should use injected RNG for weighted event tie-break in travel flow", () => {
+  const weightedBundle = {
+    id: "weighted-session-test",
+    title: "Weighted Session Test",
+    version: 1,
+    locations: [
+      {
+        id: "home",
+        name: "Home",
+        description: "Test home",
+        connections: [{ to: "street", travelMinutes: 5 }],
+      },
+      {
+        id: "street",
+        name: "Street",
+        description: "Test street",
+        connections: [{ to: "home", travelMinutes: 5 }],
+      },
+    ],
+    events: [
+      {
+        id: "weighted-a",
+        type: "ambient",
+        trigger: "on-location-enter",
+        priority: 10,
+        weight: 1,
+        conditions: { locationIds: ["street"] },
+        payload: { narrativeNodeId: "node_weighted_a" },
+      },
+      {
+        id: "weighted-b",
+        type: "ambient",
+        trigger: "on-location-enter",
+        priority: 10,
+        weight: 3,
+        conditions: { locationIds: ["street"] },
+        payload: { narrativeNodeId: "node_weighted_b" },
+      },
+    ],
+    narrative: {
+      startNodeId: "node_start",
+      nodes: [
+        { id: "node_start", text: "Start", choices: [] },
+        { id: "node_weighted_a", text: "Picked A", choices: [] },
+        { id: "node_weighted_b", text: "Picked B", choices: [] },
+      ],
+    },
+    quests: [],
+    npcs: [],
+    initialFlags: {},
+  };
+
+  const pickA = createGameSessionFromBundle(weightedBundle, { randomFloat: () => 0.0 });
+  const pickAResult = pickA.travelTo("street");
+  assert.equal(pickAResult.triggeredEventId, "weighted-a");
+  assert.equal(pickAResult.scene?.nodeId, "node_weighted_a");
+
+  const pickB = createGameSessionFromBundle(weightedBundle, { randomFloat: () => 0.99 });
+  const pickBResult = pickB.travelTo("street");
+  assert.equal(pickBResult.triggeredEventId, "weighted-b");
+  assert.equal(pickBResult.scene?.nodeId, "node_weighted_b");
+});
+
+test("demo session should use injected RNG for weighted event tie-break in after-choice flow", () => {
+  const weightedAfterChoiceBundle = {
+    id: "weighted-after-choice-session-test",
+    title: "Weighted After Choice Session Test",
+    version: 1,
+    locations: [
+      {
+        id: "home",
+        name: "Home",
+        description: "Test home",
+        connections: [{ to: "street", travelMinutes: 5 }],
+      },
+      {
+        id: "street",
+        name: "Street",
+        description: "Test street",
+        connections: [{ to: "home", travelMinutes: 5 }],
+      },
+    ],
+    events: [
+      {
+        id: "enter-street-scene",
+        type: "ambient",
+        trigger: "on-location-enter",
+        priority: 10,
+        conditions: { locationIds: ["street"] },
+        payload: { narrativeNodeId: "node_intro" },
+      },
+      {
+        id: "after-choice-a",
+        type: "follow-up",
+        trigger: "after-choice",
+        priority: 10,
+        weight: 1,
+        conditions: { locationIds: ["street"], flags: { after_choice_ready: true } },
+        payload: { narrativeNodeId: "node_after_a" },
+      },
+      {
+        id: "after-choice-b",
+        type: "follow-up",
+        trigger: "after-choice",
+        priority: 10,
+        weight: 3,
+        conditions: { locationIds: ["street"], flags: { after_choice_ready: true } },
+        payload: { narrativeNodeId: "node_after_b" },
+      },
+    ],
+    narrative: {
+      startNodeId: "node_start",
+      nodes: [
+        { id: "node_start", text: "Start", choices: [] },
+        {
+          id: "node_intro",
+          text: "Intro",
+          choices: [
+            {
+              id: "pick",
+              text: "Pick",
+              nextNodeId: "node_post_pick",
+              effects: { setFlags: { after_choice_ready: true } },
+            },
+          ],
+        },
+        { id: "node_post_pick", text: "Post pick", choices: [] },
+        { id: "node_after_a", text: "After choice A", choices: [] },
+        { id: "node_after_b", text: "After choice B", choices: [] },
+      ],
+    },
+    quests: [],
+    npcs: [],
+    initialFlags: {},
+  };
+
+  const pickA = createGameSessionFromBundle(weightedAfterChoiceBundle, { randomFloat: () => 0.0 });
+  pickA.travelTo("street");
+  const pickAChoice = pickA.choose("pick");
+  assert.equal(pickAChoice.triggeredEventId, "after-choice-a");
+  assert.equal(pickAChoice.scene?.nodeId, "node_after_a");
+
+  const pickB = createGameSessionFromBundle(weightedAfterChoiceBundle, { randomFloat: () => 0.99 });
+  pickB.travelTo("street");
+  const pickBChoice = pickB.choose("pick");
+  assert.equal(pickBChoice.triggeredEventId, "after-choice-b");
+  assert.equal(pickBChoice.scene?.nodeId, "node_after_b");
+});
 
 test("demo session should support manual travel and choice flow", () => {
   const session = createDemoSession();

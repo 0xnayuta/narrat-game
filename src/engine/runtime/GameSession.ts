@@ -10,12 +10,20 @@ import type { EventDefinition, GameState, NPCDefinition } from "../types";
 import { getAvailableNpcInteractions, getNpcInteractionDebugInfo, LocationService } from "../world";
 import type { AvailableNpcInteraction, NpcInteractionDebugEntry } from "../world";
 import type { AppMode } from "./appMode";
-import { runTravelEventFlow, runTriggeredEventFlow } from "./travelEventFlow";
+import {
+  runTravelEventFlow,
+  runTriggeredEventFlow,
+  type RuntimeRandomFloat,
+} from "./travelEventFlow";
 
 export interface SessionActionResult {
   state: GameState;
   scene: NarrativeViewModel | null;
   triggeredEventId: string | null;
+}
+
+export interface GameSessionOptions {
+  randomFloat?: RuntimeRandomFloat;
 }
 
 export class GameSession {
@@ -27,6 +35,7 @@ export class GameSession {
     private readonly events: EventDefinition[],
     private readonly narrativeRuntime: NarrativeRuntime,
     private readonly npcs: NPCDefinition[] = [],
+    private readonly options: GameSessionOptions = {},
   ) {}
 
   getState(): GameState {
@@ -82,6 +91,7 @@ export class GameSession {
       this.locationService,
       this.events,
       this.narrativeRuntime,
+      this.options.randomFloat,
     );
 
     this.store.setState(result.state);
@@ -126,6 +136,7 @@ export class GameSession {
       this.events,
       "after-choice",
       this.narrativeRuntime,
+      this.options.randomFloat,
     );
 
     this.store.setState(postChoiceResult.state);
