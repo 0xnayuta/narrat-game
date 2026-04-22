@@ -5,27 +5,13 @@ const { createDemoSession } = require("../.tmp-demo-tests/app/createDemoSession.
 const engineModule = require("../.tmp-demo-tests/engine/index.js");
 const { createGameSessionFromBundle } = engineModule;
 
-test("createDemoSession should pass options through to createGameSessionFromBundle", () => {
-  const originalCreate = engineModule.createGameSessionFromBundle;
-  const markerRng = () => 0.123;
-  const fakeSession = { __test: "fake-session" };
-  let capturedBundle = null;
-  let capturedOptions = null;
+test("createDemoSession should pass options through to runtime behavior", () => {
+  const session = createDemoSession({ eventHistoryWriteStrategy: "slice-only" });
 
-  try {
-    engineModule.createGameSessionFromBundle = (bundle, options) => {
-      capturedBundle = bundle;
-      capturedOptions = options;
-      return fakeSession;
-    };
-
-    const result = createDemoSession({ randomFloat: markerRng });
-    assert.equal(result, fakeSession);
-    assert.ok(capturedBundle && typeof capturedBundle.id === "string");
-    assert.equal(capturedOptions?.randomFloat, markerRng);
-  } finally {
-    engineModule.createGameSessionFromBundle = originalCreate;
-  }
+  const travelStreet = session.travelTo("street");
+  assert.equal(travelStreet.triggeredEventId, "evt_street_arrival");
+  assert.equal(travelStreet.state.flags["event.once.evt_street_arrival"], undefined);
+  assert.equal(travelStreet.state.eventHistory?.onceTriggeredByEventId.evt_street_arrival, true);
 });
 
 test("demo session should use injected RNG for weighted event tie-break in travel flow", () => {
@@ -177,6 +163,213 @@ test("demo session should use injected RNG for weighted event tie-break in after
   assert.equal(pickBChoice.scene?.nodeId, "node_after_b");
 });
 
+test("demo session should block repeated travel trigger while cooldown is active", () => {
+  const cooldownTravelBundle = {
+    id: "cooldown-travel-session-test",
+    title: "Cooldown Travel Session Test",
+    version: 1,
+    locations: [
+      {
+        id: "home",
+        name: "Home",
+        description: "Test home",
+        connections: [{ to: "street", travelMinutes: 5 }],
+      },
+      {
+        id: "street",
+        name: "Street",
+        description: "Test street",
+        connections: [{ to: "home", travelMinutes: 5 }],
+      },
+    ],
+    events: [
+      {
+        id: "cooldown-travel-event",
+        type: "ambient",
+        trigger: "on-location-enter",
+        priority: 10,
+        cooldownMinutes: 20,
+        conditions: { locationIds: ["street"] },
+        payload: { narrativeNodeId: "node_travel_event" },
+      },
+    ],
+    narrative: {
+      startNodeId: "node_start",
+      nodes: [
+        { id: "node_start", text: "Start", choices: [] },
+        { id: "node_travel_event", text: "Travel Event", choices: [] },
+      ],
+    },
+    quests: [],
+    npcs: [],
+    initialFlags: {},
+  };
+
+  const session = createGameSessionFromBundle(cooldownTravelBundle);
+
+  const first = session.travelTo("street");
+  assert.equal(first.triggeredEventId, "cooldown-travel-event");
+  session.closeScene();
+
+  const backHome = session.travelTo("home");
+  assert.equal(backHome.triggeredEventId, null);
+
+  const second = session.travelTo("street");
+  assert.equal(second.triggeredEventId, null);
+});
+
+test("demo session should block repeated after-choice trigger while cooldown is active", () => {
+  const cooldownAfterChoiceBundle = {
+    id: "cooldown-after-choice-session-test",
+    title: "Cooldown After Choice Session Test",
+    version: 1,
+    locations: [
+      {
+        id: "home",
+        name: "Home",
+        description: "Test home",
+        connections: [{ to: "street", travelMinutes: 5 }],
+      },
+      {
+        id: "street",
+        name: "Street",
+        description: "Test street",
+        connections: [{ to: "home", travelMinutes: 5 }],
+      },
+    ],
+    events: [
+      {
+        id: "enter-choice-scene",
+        type: "ambient",
+        trigger: "on-location-enter",
+        priority: 10,
+        conditions: { locationIds: ["street"] },
+        payload: { narrativeNodeId: "node_intro" },
+      },
+      {
+        id: "after-choice-cooldown",
+        type: "follow-up",
+        trigger: "after-choice",
+        priority: 10,
+        cooldownMinutes: 30,
+        conditions: { locationIds: ["street"], flags: { after_choice_ready: true } },
+        payload: { narrativeNodeId: "node_after" },
+      },
+    ],
+    narrative: {
+      startNodeId: "node_start",
+      nodes: [
+        { id: "node_start", text: "Start", choices: [] },
+        {
+          id: "node_intro",
+          text: "Intro",
+          choices: [
+            {
+              id: "pick",
+              text: "Pick",
+              nextNodeId: "node_post_pick",
+              effects: { setFlags: { after_choice_ready: true } },
+            },
+          ],
+        },
+        { id: "node_post_pick", text: "Post pick", choices: [] },
+        { id: "node_after", text: "After", choices: [] },
+      ],
+    },
+    quests: [],
+    npcs: [],
+    initialFlags: {},
+  };
+
+  const session = createGameSessionFromBundle(cooldownAfterChoiceBundle);
+
+  session.travelTo("street");
+  const firstChoice = session.choose("pick");
+  assert.equal(firstChoice.triggeredEventId, "after-choice-cooldown");
+  session.closeScene();
+
+  const reset = session.restoreState({
+    ...session.getState(),
+    currentLocationId: "street",
+    flags: {
+      ...session.getState().flags,
+      after_choice_ready: false,
+    },
+  });
+  assert.equal(reset.scene, null);
+
+  session.travelTo("home");
+  session.travelTo("street");
+  const secondChoice = session.choose("pick");
+  assert.equal(secondChoice.triggeredEventId, null);
+  assert.equal(secondChoice.scene?.nodeId, "node_post_pick");
+});
+
+test("demo session should support slice-only event history writes", () => {
+  const sliceOnlyBundle = {
+    id: "slice-only-session-test",
+    title: "Slice Only Session Test",
+    version: 1,
+    locations: [
+      {
+        id: "home",
+        name: "Home",
+        description: "Test home",
+        connections: [{ to: "street", travelMinutes: 5 }],
+      },
+      {
+        id: "street",
+        name: "Street",
+        description: "Test street",
+        connections: [{ to: "home", travelMinutes: 5 }],
+      },
+    ],
+    events: [
+      {
+        id: "slice-only-once-cooldown",
+        type: "ambient",
+        trigger: "on-location-enter",
+        once: true,
+        cooldownMinutes: 20,
+        priority: 10,
+        conditions: { locationIds: ["street"] },
+        payload: { narrativeNodeId: "node_slice_only" },
+      },
+    ],
+    narrative: {
+      startNodeId: "node_start",
+      nodes: [
+        { id: "node_start", text: "Start", choices: [] },
+        { id: "node_slice_only", text: "Slice only", choices: [] },
+      ],
+    },
+    quests: [],
+    npcs: [],
+    initialFlags: {},
+  };
+
+  const session = createGameSessionFromBundle(sliceOnlyBundle, {
+    eventHistoryWriteStrategy: "slice-only",
+  });
+
+  const first = session.travelTo("street");
+  assert.equal(first.triggeredEventId, "slice-only-once-cooldown");
+  assert.equal(first.state.flags["event.once.slice-only-once-cooldown"], undefined);
+  assert.equal(
+    first.state.vars["event.cooldown.slice-only-once-cooldown.lastTriggeredMinute"],
+    undefined,
+  );
+  assert.deepEqual(first.state.eventHistory, {
+    onceTriggeredByEventId: { "slice-only-once-cooldown": true },
+    cooldownLastTriggeredMinuteByEventId: { "slice-only-once-cooldown": 485 },
+  });
+
+  session.closeScene();
+  session.travelTo("home");
+  const second = session.travelTo("street");
+  assert.equal(second.triggeredEventId, null);
+});
+
 test("demo session should support manual travel and choice flow", () => {
   const session = createDemoSession();
 
@@ -189,7 +382,8 @@ test("demo session should support manual travel and choice flow", () => {
   assert.equal(session.canTravel(), false);
   assert.throws(() => session.travelTo("home"), /Cannot travel while a narrative scene is active/);
   assert.equal(travelStreet.state.currentLocationId, "street");
-  assert.equal(travelStreet.state.flags["event.once.evt_street_arrival"], true);
+  assert.equal(travelStreet.state.flags["event.once.evt_street_arrival"], undefined);
+  assert.equal(travelStreet.state.eventHistory?.onceTriggeredByEventId.evt_street_arrival, true);
   assert.equal(travelStreet.scene?.nodeId, "node_street_arrival");
   assert.deepEqual(travelStreet.scene?.choices, [
     { id: "go_market", text: "Head to the market" },
@@ -198,7 +392,8 @@ test("demo session should support manual travel and choice flow", () => {
   const chooseStreet = session.choose("go_market");
   assert.equal(chooseStreet.triggeredEventId, "evt_market_plan");
   assert.equal(chooseStreet.state.flags.market_visit_intent, true);
-  assert.equal(chooseStreet.state.flags["event.once.evt_market_plan"], true);
+  assert.equal(chooseStreet.state.flags["event.once.evt_market_plan"], undefined);
+  assert.equal(chooseStreet.state.eventHistory?.onceTriggeredByEventId.evt_market_plan, true);
   assert.equal(chooseStreet.state.vars.current_goal, "visit_market");
   assert.equal(chooseStreet.state.quests.quest_intro_walk?.status, "active");
   assert.equal(chooseStreet.scene?.nodeId, "node_market_plan");
@@ -214,7 +409,8 @@ test("demo session should support manual travel and choice flow", () => {
   const travelMarket = session.travelTo("market");
   assert.equal(travelMarket.triggeredEventId, "evt_market_morning");
   assert.equal(travelMarket.state.currentLocationId, "market");
-  assert.equal(travelMarket.state.flags["event.once.evt_market_morning"], true);
+  assert.equal(travelMarket.state.flags["event.once.evt_market_morning"], undefined);
+  assert.equal(travelMarket.state.eventHistory?.onceTriggeredByEventId.evt_market_morning, true);
   assert.equal(travelMarket.scene?.nodeId, "node_market_morning");
   assert.deepEqual(travelMarket.scene?.choices, [
     { id: "finish_walk", text: "Look around the stalls" },

@@ -29,6 +29,17 @@ function isVarsRecord(value: unknown): value is GameState["vars"] {
   return isRecord(value) && Object.values(value).every(isScalarVar);
 }
 
+function isEventHistoryState(value: unknown): value is NonNullable<GameState["eventHistory"]> {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  const onceTriggered = value.onceTriggeredByEventId;
+  const cooldownLastTriggered = value.cooldownLastTriggeredMinuteByEventId;
+
+  return isBooleanRecord(onceTriggered) && isNumberRecord(cooldownLastTriggered);
+}
+
 function isQuestProgressRecord(value: unknown): value is GameState["quests"] {
   if (!isRecord(value)) {
     return false;
@@ -83,7 +94,8 @@ export function isValidGameState(value: unknown): value is GameState {
     isBooleanRecord(value.flags) &&
     isQuestProgressRecord(value.quests) &&
     isNumberRecord(value.inventory) &&
-    isVarsRecord(value.vars)
+    isVarsRecord(value.vars) &&
+    (value.eventHistory === undefined || isEventHistoryState(value.eventHistory))
   );
 }
 

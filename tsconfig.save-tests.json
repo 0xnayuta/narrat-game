@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/engine/save/**/*.ts", "src/engine/types/**/*.ts"],
+  "include": ["src/engine/save/**/*.ts", "src/engine/types/**/*.ts", "src/engine/events/history.ts"],
   "compilerOptions": {
     "noEmit": false,
     "outDir": ".tmp-save-tests",

@@ -270,3 +270,118 @@ test("event selector should apply once filtering before weight selection", () =>
   const selected = selectEvent(weightedOnceEvents, state, "on-location-enter", () => 0.0);
   assert.equal(selected?.id, "repeatable-weighted");
 });
+
+test("event selector should filter out events with active cooldown", () => {
+  const cooldownEvents = [
+    {
+      id: "cooldown-active",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      cooldownMinutes: 30,
+      conditions: { locationIds: ["street"] },
+    },
+    {
+      id: "cooldown-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const state = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      "event.cooldown.cooldown-active.lastTriggeredMinute": 540,
+    },
+  };
+
+  const selected = selectEvent(cooldownEvents, state, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "cooldown-fallback");
+});
+
+test("event selector should allow event again when cooldown has expired", () => {
+  const cooldownEvent = [
+    {
+      id: "cooldown-expired",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      cooldownMinutes: 30,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const state = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      "event.cooldown.cooldown-expired.lastTriggeredMinute": 500,
+    },
+  };
+
+  const selected = selectEvent(cooldownEvent, state, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "cooldown-expired");
+});
+
+test("event selector should treat invalid cooldown values as disabled", () => {
+  const invalidCooldownEvents = [
+    {
+      id: "invalid-cooldown-a",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      cooldownMinutes: Number.NaN,
+      conditions: { locationIds: ["street"] },
+    },
+    {
+      id: "invalid-cooldown-b",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      cooldownMinutes: -5,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const selected = selectEvent(invalidCooldownEvents, baseState, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "invalid-cooldown-a");
+});
+
+test("event selector should still exclude once events even if cooldown has expired", () => {
+  const onceCooldownEvents = [
+    {
+      id: "once-with-cooldown",
+      type: "ambient",
+      trigger: "on-location-enter",
+      once: true,
+      priority: 10,
+      cooldownMinutes: 1,
+      conditions: { locationIds: ["street"] },
+    },
+    {
+      id: "fallback-after-once",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const state = {
+    ...baseState,
+    flags: {
+      ...baseState.flags,
+      "event.once.once-with-cooldown": true,
+    },
+    vars: {
+      ...baseState.vars,
+      "event.cooldown.once-with-cooldown.lastTriggeredMinute": 1,
+    },
+  };
+
+  const selected = selectEvent(onceCooldownEvents, state, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "fallback-after-once");
+});

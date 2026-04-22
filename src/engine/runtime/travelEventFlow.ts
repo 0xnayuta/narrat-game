@@ -3,7 +3,13 @@
  * TODO: Extend with failure results, cooldowns and multi-event resolution strategies.
  */
 
-import { getCandidateEvents, markEventTriggered, selectResolvedEvent } from "../events";
+import {
+  getCandidateEvents,
+  markEventCooldownTimestamp,
+  markEventTriggered,
+  selectResolvedEvent,
+  type EventHistoryWriteStrategy,
+} from "../events";
 import { NarrativeRuntime } from "../narrative";
 import type { NarrativeViewModel } from "../narrative";
 import { advanceGameStateMinutes } from "../time";
@@ -17,6 +23,10 @@ export interface TravelEventFlowResult {
 }
 
 export type RuntimeRandomFloat = () => number;
+
+export interface RuntimeEventHistoryOptions {
+  eventHistoryWriteStrategy?: EventHistoryWriteStrategy;
+}
 
 function readNarrativeNodeId(event: EventDefinition | null): string | null {
   if (!event?.payload) {
@@ -32,10 +42,17 @@ export function runTriggeredEventFlow(
   trigger: EventTrigger,
   narrativeRuntime: NarrativeRuntime,
   randomFloat?: RuntimeRandomFloat,
+  eventHistoryOptions: RuntimeEventHistoryOptions = {},
 ): Pick<TravelEventFlowResult, "state" | "triggeredEvent" | "scene"> {
   const candidates = getCandidateEvents(events, state, trigger);
   const triggeredEvent = selectResolvedEvent(candidates, randomFloat);
-  const stateAfterEventMark = triggeredEvent ? markEventTriggered(state, triggeredEvent) : state;
+  const stateAfterEventMark = triggeredEvent
+    ? markEventCooldownTimestamp(
+        markEventTriggered(state, triggeredEvent, eventHistoryOptions.eventHistoryWriteStrategy),
+        triggeredEvent,
+        eventHistoryOptions.eventHistoryWriteStrategy,
+      )
+    : state;
 
   let scene: NarrativeViewModel | null = null;
   const targetNodeId = readNarrativeNodeId(triggeredEvent);
@@ -70,6 +87,7 @@ export function runTravelEventFlow(
   events: EventDefinition[],
   narrativeRuntime: NarrativeRuntime,
   randomFloat?: RuntimeRandomFloat,
+  eventHistoryOptions: RuntimeEventHistoryOptions = {},
 ): TravelEventFlowResult {
   // 1) State update
   const travelMinutes = locationService.getTravelMinutes(state.currentLocationId, toLocationId);
@@ -99,5 +117,6 @@ export function runTravelEventFlow(
     triggeredEvent.trigger,
     narrativeRuntime,
     randomFloat,
+    eventHistoryOptions,
   );
 }

@@ -14,6 +14,7 @@ import {
   runTravelEventFlow,
   runTriggeredEventFlow,
   type RuntimeRandomFloat,
+  type RuntimeEventHistoryOptions,
 } from "./travelEventFlow";
 
 export interface SessionActionResult {
@@ -22,7 +23,7 @@ export interface SessionActionResult {
   triggeredEventId: string | null;
 }
 
-export interface GameSessionOptions {
+export interface GameSessionOptions extends RuntimeEventHistoryOptions {
   randomFloat?: RuntimeRandomFloat;
 }
 
@@ -92,6 +93,7 @@ export class GameSession {
       this.events,
       this.narrativeRuntime,
       this.options.randomFloat,
+      { eventHistoryWriteStrategy: this.options.eventHistoryWriteStrategy },
     );
 
     this.store.setState(result.state);
@@ -137,6 +139,7 @@ export class GameSession {
       "after-choice",
       this.narrativeRuntime,
       this.options.randomFloat,
+      { eventHistoryWriteStrategy: this.options.eventHistoryWriteStrategy },
     );
 
     this.store.setState(postChoiceResult.state);

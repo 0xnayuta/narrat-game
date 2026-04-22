@@ -48,6 +48,14 @@ function cloneGameState(state: GameState): GameState {
     ),
     inventory: { ...state.inventory },
     vars: { ...state.vars },
+    eventHistory: state.eventHistory
+      ? {
+          onceTriggeredByEventId: { ...state.eventHistory.onceTriggeredByEventId },
+          cooldownLastTriggeredMinuteByEventId: {
+            ...state.eventHistory.cooldownLastTriggeredMinuteByEventId,
+          },
+        }
+      : undefined,
   };
 }
 

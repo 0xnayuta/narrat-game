@@ -14,6 +14,7 @@ import { GameSession, type GameSessionOptions } from "./GameSession";
 
 export interface CreateGameSessionOptions {
   randomFloat?: GameSessionOptions["randomFloat"];
+  eventHistoryWriteStrategy?: GameSessionOptions["eventHistoryWriteStrategy"];
 }
 
 export function createGameSessionFromBundle(
@@ -37,5 +38,6 @@ export function createGameSessionFromBundle(
 
   return new GameSession(store, locationService, validBundle.events, narrativeRuntime, validBundle.npcs, {
     randomFloat: options.randomFloat ?? (() => rngService.nextFloat()),
+    eventHistoryWriteStrategy: options.eventHistoryWriteStrategy,
   });
 }

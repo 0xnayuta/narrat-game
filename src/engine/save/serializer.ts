@@ -6,6 +6,7 @@
 import { CURRENT_SAVE_VERSION } from "./constants";
 import { migrateSaveFile } from "./migration";
 import { isValidSaveFile } from "./validation";
+import { migrateLegacyEventHistoryToSlice } from "../events/history";
 import type { GameState, SaveFile } from "../types";
 
 export interface SerializeSaveInput {
@@ -33,5 +34,5 @@ export function deserializeSaveFile(payload: unknown): GameState {
     throw new Error("Invalid save payload after migration");
   }
 
-  return migrated.state;
+  return migrateLegacyEventHistoryToSlice(migrated.state);
 }

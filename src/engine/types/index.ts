@@ -21,6 +21,7 @@ export type {
   EventTrigger,
   EventConditions,
   EventTimeRange,
+  EventHistoryState,
 } from "./events";
 export type { QuestDefinition } from "./quests";
 export type { NarrativeNode, ChoiceOption, NarrativeChoiceEffects } from "./narrative";

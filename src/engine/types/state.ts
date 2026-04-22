@@ -1,3 +1,5 @@
+import type { EventHistoryState } from "./events";
+
 /**
  * Player runtime state used by systems, narrative checks and UI.
  */
@@ -44,5 +46,10 @@ export interface GameState {
   quests: Record<string, QuestProgress>;
   inventory: InventoryState;
   vars: Record<string, number | string | boolean>;
-  // TODO: Add event/narrative runtime slices when module contracts stabilize.
+  /**
+   * Optional forward-compatible event history slice.
+   * Runtime currently keeps legacy flags/vars keys for compatibility.
+   */
+  eventHistory?: EventHistoryState;
+  // TODO: Move once/cooldown history fully from flags/vars into eventHistory.
 }

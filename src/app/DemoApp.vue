@@ -89,7 +89,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { createDemoSession } from "./createDemoSession";
-import { getCurrentTimeLabel, LocationService, SaveService } from "../engine";
+import { getCurrentTimeLabel, LocationService, readEventHistoryState, SaveService } from "../engine";
 import { demoContentBundle } from "../content/demo";
 import TextPanel from "../ui/text-rpg/TextPanel.vue";
 import ChoiceList from "../ui/text-rpg/ChoiceList.vue";
@@ -138,12 +138,12 @@ const activeFlagSummary = computed(() =>
     ? activeFlagEntries.value.map((entry) => entry.key).join(", ")
     : "none",
 );
-const triggeredOnceEvents = computed(() =>
-  activeFlagEntries.value
-    .map((entry) => entry.key)
-    .filter((key) => key.startsWith("event.once."))
-    .map((key) => key.replace("event.once.", "")),
-);
+const triggeredOnceEvents = computed(() => {
+  const history = readEventHistoryState(state.value);
+  return Object.keys(history.onceTriggeredByEventId).filter(
+    (eventId) => history.onceTriggeredByEventId[eventId] === true,
+  );
+});
 const varEntries = computed(() =>
   Object.entries(state.value.vars).map(([key, value]) => ({ key, value })),
 );

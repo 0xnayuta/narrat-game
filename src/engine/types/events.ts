@@ -22,6 +22,17 @@ export interface EventConditions {
 }
 
 /**
+ * Event history aggregate for future dedicated runtime state migration.
+ *
+ * Current implementation still stores once/cooldown history in GameState flags/vars,
+ * while this type defines the intended logical boundary.
+ */
+export interface EventHistoryState {
+  onceTriggeredByEventId: Record<string, boolean>;
+  cooldownLastTriggeredMinuteByEventId: Record<string, number>;
+}
+
+/**
  * Domain event definition for candidate filtering and trigger selection.
  */
 export interface EventDefinition {
@@ -35,7 +46,12 @@ export interface EventDefinition {
    * Invalid values (NaN/negative) are treated as 0 by the selector.
    */
   weight?: number;
+  /**
+   * Cooldown in minutes since last trigger of the same event id.
+   * Invalid values (NaN/negative) are treated as 0 (disabled).
+   */
+  cooldownMinutes?: number;
   conditions?: EventConditions;
   payload?: Record<string, unknown>;
-  // TODO: Add cooldown fields when balancing starts.
+  // TODO: Move cooldown history out of generic vars into a dedicated event history slice.
 }

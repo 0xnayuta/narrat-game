@@ -34,7 +34,7 @@
     "test:world": "tsc -p tsconfig.demo-flow-tests.json && node --test tests/world-location.test.cjs",
     "test:npc": "tsc -p tsconfig.demo-flow-tests.json && node --test tests/npc-service.test.cjs",
     "test:npc-matcher": "tsc -p tsconfig.demo-flow-tests.json && node --test tests/npc-interaction-matcher.test.cjs",
-    "test:events": "tsc -p tsconfig.demo-flow-tests.json && node --test tests/events-selector.test.cjs",
+    "test:events": "tsc -p tsconfig.demo-flow-tests.json && node --test tests/events-selector.test.cjs tests/events-history.test.cjs",
     "test:narrative": "tsc -p tsconfig.demo-flow-tests.json && node --test tests/narrative-runtime.test.cjs",
     "test:demo-flow": "tsc -p tsconfig.demo-flow-tests.json && node --test tests/demo-flow.test.cjs",
     "test:demo-session": "tsc -p tsconfig.demo-flow-tests.json && node --test tests/demo-session.test.cjs",
