@@ -24,4 +24,7 @@ export const demoContentBundle: DemoContentBundle = {
     demo_enabled: true,
     quest_intro_started: true,
   },
+  initialVars: {
+    gold: 50,
+  },
 };

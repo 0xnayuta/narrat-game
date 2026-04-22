@@ -4,9 +4,13 @@
 
 export {
   matchesAllEventConditions,
+  matchesAnyConditionGroup,
   matchesFlagCondition,
   matchesLocationCondition,
+  matchesQuestCondition,
+  matchesQuestStepCondition,
   matchesTimeCondition,
+  matchesVarCondition,
 } from "./conditions";
 
 export { getCandidateEvents, selectEvent, selectResolvedEvent, selectFirstEvent } from "./selector";

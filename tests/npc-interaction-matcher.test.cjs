@@ -84,6 +84,95 @@ test("matchesNpcInteractionRule should return false when any condition group mis
   );
 });
 
+test("matchesNpcInteractionRule should support numeric comparison predicates in requiredVars", () => {
+  assert.equal(
+    matchesNpcInteractionRule(baseState, {
+      id: "var-comparison-match",
+      label: "Var comparison match",
+      nodeId: "node",
+      requiredVars: {
+        reputation: { ">=": 1, "<": 5 },
+      },
+    }),
+    true,
+  );
+
+  assert.equal(
+    matchesNpcInteractionRule(baseState, {
+      id: "var-comparison-mismatch",
+      label: "Var comparison mismatch",
+      nodeId: "node",
+      requiredVars: {
+        reputation: { ">": 5 },
+      },
+    }),
+    false,
+  );
+});
+
+test("matchesNpcInteractionRule should support != and in predicates in requiredVars", () => {
+  assert.equal(
+    matchesNpcInteractionRule(baseState, {
+      id: "var-predicate-match",
+      label: "Var predicate match",
+      nodeId: "node",
+      requiredVars: {
+        current_goal: { "!=": "rest" },
+        current_goal_alias: { in: ["market_visited", "visit_market"] },
+      },
+    }),
+    false,
+  );
+
+  const state = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      current_goal_alias: "market_visited",
+    },
+  };
+
+  assert.equal(
+    matchesNpcInteractionRule(state, {
+      id: "var-predicate-match-2",
+      label: "Var predicate match 2",
+      nodeId: "node",
+      requiredVars: {
+        current_goal: { "!=": "rest" },
+        current_goal_alias: { in: ["market_visited", "visit_market"] },
+      },
+    }),
+    true,
+  );
+});
+
+test("matchesNpcInteractionRule should support minimal not predicate in requiredVars", () => {
+  assert.equal(
+    matchesNpcInteractionRule(baseState, {
+      id: "var-not-match",
+      label: "Var not match",
+      nodeId: "node",
+      requiredVars: {
+        current_goal: { not: "rest" },
+        reputation: { not: { ">=": 5 } },
+      },
+    }),
+    true,
+  );
+
+  assert.equal(
+    matchesNpcInteractionRule(baseState, {
+      id: "var-not-mismatch",
+      label: "Var not mismatch",
+      nodeId: "node",
+      requiredVars: {
+        current_goal: { not: "market_visited" },
+      },
+    }),
+    false,
+  );
+});
+
 test("matchesNpcInteractionRule should allow rules without conditions", () => {
   assert.equal(
     matchesNpcInteractionRule(baseState, {
@@ -108,4 +197,53 @@ test("evaluateNpcInteractionConditions should provide mismatch reasons for debug
     result.reasons.map((reason) => reason.code),
     ["flag", "quest", "var", "timeOfDay"],
   );
+});
+
+test("matchesNpcInteractionRule should match by required quest step", () => {
+  assert.equal(
+    matchesNpcInteractionRule(baseState, {
+      id: "step-match",
+      label: "Step match",
+      nodeId: "node",
+      requiredQuestSteps: { quest_intro_walk: "step_go_market" },
+    }),
+    true,
+  );
+
+  assert.equal(
+    matchesNpcInteractionRule(baseState, {
+      id: "step-mismatch",
+      label: "Step mismatch",
+      nodeId: "node",
+      requiredQuestSteps: { quest_intro_walk: "step_return" },
+    }),
+    false,
+  );
+
+  assert.equal(
+    matchesNpcInteractionRule(baseState, {
+      id: "step-missing",
+      label: "Step missing",
+      nodeId: "node",
+      requiredQuestSteps: { quest_unknown: "step_any" },
+    }),
+    false,
+  );
+});
+
+test("evaluateNpcInteractionConditions should report questStep mismatch reasons", () => {
+  const result = evaluateNpcInteractionConditions(baseState, {
+    requiredQuestSteps: { quest_intro_walk: "step_return", quest_unknown: "step_any" },
+  });
+
+  assert.equal(result.matched, false);
+  assert.deepEqual(
+    result.reasons.map((reason) => reason.code),
+    ["questStep", "questStep"],
+  );
+  assert.equal(result.reasons[0].key, "quest_intro_walk");
+  assert.equal(result.reasons[0].expected, "step_return");
+  assert.equal(result.reasons[0].actual, "step_go_market");
+  assert.equal(result.reasons[1].key, "quest_unknown");
+  assert.equal(result.reasons[1].actual, "missing");
 });

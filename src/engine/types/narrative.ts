@@ -11,7 +11,16 @@ export interface NarrativeChoiceEffects {
       currentStepId?: string;
     }
   >;
-  // TODO: Add inventory/stat deltas once effect model expands.
+  /** Quest IDs to advance to the next step (based on stepIds order in QuestDefinition). */
+  advanceQuestStep?: string[];
+  /** Quest IDs to mark as completed. */
+  completeQuest?: string[];
+  /** Quest IDs to mark as failed. */
+  failQuest?: string[];
+  /** Add numeric deltas to vars. Missing keys or non-number existing values are treated as 0. */
+  addVars?: Record<string, number>;
+  /** Add numeric deltas to player stats. Missing keys are treated as 0. */
+  addStats?: Record<string, number>;
 }
 
 /**
@@ -22,6 +31,8 @@ export interface ChoiceOption {
   text: string;
   nextNodeId: string;
   effects?: NarrativeChoiceEffects;
+  /** Only show this choice when all conditions match. Omit to always show. */
+  conditions?: import("./events").EventConditions;
 }
 
 /**

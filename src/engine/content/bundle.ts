@@ -20,4 +20,6 @@ export interface ContentBundle {
   quests: QuestDefinition[];
   npcs: NPCDefinition[];
   initialFlags: Record<string, boolean>;
+  /** Initial variable values set at session creation. Omit to start with empty vars. */
+  initialVars?: Record<string, string | number | boolean>;
 }

@@ -508,12 +508,14 @@ test("demo session should support manual travel and choice flow", () => {
   assert.equal(npcScene.scene?.nodeId, "node_vendor_intro");
   assert.deepEqual(npcScene.scene?.choices, [
     { id: "ask_vendor", text: "Ask how business is going" },
+    { id: "ask_vendor_for_rumors", text: "Ask for local rumors" },
   ]);
 
   const npcChoice = session.choose("ask_vendor");
   assert.equal(npcChoice.state.flags.vendor_met, true);
   assert.equal(npcChoice.state.vars.last_npc_spoken, "npc_vendor_01");
-  assert.equal(npcChoice.scene?.nodeId, "node_vendor_done");
+  assert.equal(npcChoice.triggeredEventId, "evt_vendor_aftermath");
+  assert.equal(npcChoice.scene?.nodeId, "node_vendor_aftermath");
   assert.deepEqual(npcChoice.scene?.choices, []);
 
   const npcClosed = session.closeScene();

@@ -29,6 +29,9 @@ export function createGameSessionFromBundle(
     flags: {
       ...validBundle.initialFlags,
     },
+    vars: {
+      ...validBundle.initialVars,
+    },
   };
 
   const store = new GameStateStore(initialState);
@@ -36,7 +39,7 @@ export function createGameSessionFromBundle(
   const narrativeRuntime = new NarrativeRuntime(validBundle.narrative);
   const rngService = new RngService();
 
-  return new GameSession(store, locationService, validBundle.events, narrativeRuntime, validBundle.npcs, {
+  return new GameSession(store, locationService, validBundle.events, narrativeRuntime, validBundle.npcs, validBundle.quests, {
     randomFloat: options.randomFloat ?? (() => rngService.nextFloat()),
     eventHistoryWriteStrategy: options.eventHistoryWriteStrategy,
   });

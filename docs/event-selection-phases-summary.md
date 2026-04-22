@@ -54,7 +54,7 @@ For current prototype work, the safest model is:
 ## Follow-up topics outside these phases
 The event selection phases are now functionally complete for the current prototype scope.
 Natural next topics include:
-- richer event conditions
-- quest/system-driven predicates
-- broader narrative/effect model
-- NPC/system integration that consumes event history more explicitly
+- richer event conditions → **DONE**, see `docs/conditions-effects-summary.md`
+- quest/system-driven predicates → **DONE** (quest status + quest step), see `docs/conditions-effects-summary.md`
+- broader narrative/effect model → **DONE** (advanceQuestStep, completeQuest, failQuest), see `docs/conditions-effects-summary.md`
+- NPC/system integration that consumes event history more explicitly → **DONE**, see `docs/npc-event-integration-summary.md`

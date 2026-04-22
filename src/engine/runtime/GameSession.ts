@@ -3,10 +3,10 @@
  * TODO: Add post-choice event checks and scene history.
  */
 
-import { applyNarrativeChoiceEffects, NarrativeRuntime } from "../narrative";
+import { applyNarrativeChoiceEffects, filterVisibleChoices, NarrativeRuntime } from "../narrative";
 import type { NarrativeViewModel } from "../narrative";
 import { GameStateStore } from "../state/GameState";
-import type { EventDefinition, GameState, NPCDefinition } from "../types";
+import type { EventDefinition, GameState, NPCDefinition, QuestDefinition } from "../types";
 import { getAvailableNpcInteractions, getNpcInteractionDebugInfo, LocationService } from "../world";
 import type { AvailableNpcInteraction, NpcInteractionDebugEntry } from "../world";
 import type { AppMode } from "./appMode";
@@ -36,6 +36,7 @@ export class GameSession {
     private readonly events: EventDefinition[],
     private readonly narrativeRuntime: NarrativeRuntime,
     private readonly npcs: NPCDefinition[] = [],
+    private readonly quests: QuestDefinition[] = [],
     private readonly options: GameSessionOptions = {},
   ) {}
 
@@ -78,6 +79,21 @@ export class GameSession {
     return getNpcInteractionDebugInfo(this.store.getState(), this.npcs);
   }
 
+  /**
+   * Build a NarrativeViewModel with visibility-filtered choices.
+   * Reads the current node from NarrativeRuntime, then filters choices
+   * whose conditions don't match the current GameState.
+   */
+  private buildSceneView(): NarrativeViewModel {
+    const node = this.narrativeRuntime.getCurrentNode();
+    return {
+      nodeId: node.id,
+      text: node.text,
+      choices: filterVisibleChoices(node.choices, this.store.getState())
+        .map((choice) => ({ id: choice.id, text: choice.text })),
+    };
+  }
+
   canCloseScene(): boolean {
     return this.activeScene !== null && this.activeScene.choices.length === 0;
   }
@@ -97,7 +113,7 @@ export class GameSession {
     );
 
     this.store.setState(result.state);
-    this.activeScene = result.scene;
+    this.activeScene = result.scene ? this.buildSceneView() : null;
 
     return {
       state: this.store.getState(),
@@ -117,7 +133,7 @@ export class GameSession {
     }
 
     this.narrativeRuntime.jumpTo(interaction.nodeId);
-    this.activeScene = this.narrativeRuntime.getCurrentView();
+    this.activeScene = this.buildSceneView();
 
     return {
       state: this.store.getState(),
@@ -131,8 +147,17 @@ export class GameSession {
       throw new Error("No active narrative scene to choose from");
     }
 
+    // Validate the choice is visible (conditions match current state)
+    const visibleChoices = filterVisibleChoices(
+      this.narrativeRuntime.getCurrentChoices(),
+      this.store.getState(),
+    );
+    if (!visibleChoices.some((choice) => choice.id === choiceId)) {
+      throw new Error(`Choice not available: ${choiceId}`);
+    }
+
     const choiceResult = this.narrativeRuntime.choose(choiceId);
-    const nextState = applyNarrativeChoiceEffects(this.store.getState(), choiceResult.effects);
+    const nextState = applyNarrativeChoiceEffects(this.store.getState(), choiceResult.effects, this.quests);
     const postChoiceResult = runTriggeredEventFlow(
       nextState,
       this.events,
@@ -143,7 +168,9 @@ export class GameSession {
     );
 
     this.store.setState(postChoiceResult.state);
-    this.activeScene = postChoiceResult.scene ?? this.narrativeRuntime.getCurrentView();
+    // If an after-choice event triggered a new scene, build view from that;
+    // otherwise build view from the narrative runtime's current node.
+    this.activeScene = postChoiceResult.scene ? this.buildSceneView() : this.buildSceneView();
 
     return {
       state: this.store.getState(),

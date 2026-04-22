@@ -1,3 +1,5 @@
+import type { ScalarConditionValue } from "./conditions";
+
 /**
  * Directed connection between two locations in the world graph.
  */
@@ -24,7 +26,9 @@ export interface LocationDefinition {
 export interface NPCInteractionConditions {
   requiredFlags?: Record<string, boolean>;
   requiredQuests?: Record<string, "inactive" | "active" | "completed" | "failed">;
-  requiredVars?: Record<string, string | number | boolean>;
+  /** Match quests by current step id (requires quest to exist and have matching currentStepId). */
+  requiredQuestSteps?: Record<string, string>;
+  requiredVars?: Record<string, ScalarConditionValue>;
   requiredTimeOfDay?: "morning" | "afternoon" | "evening" | "night";
 }
 

@@ -26,3 +26,8 @@ export type {
 export type { QuestDefinition } from "./quests";
 export type { NarrativeNode, ChoiceOption, NarrativeChoiceEffects } from "./narrative";
 export type { SaveFile } from "./save";
+export type {
+  ComparableValue,
+  ScalarOperatorPredicate,
+  ScalarConditionValue,
+} from "./conditions";

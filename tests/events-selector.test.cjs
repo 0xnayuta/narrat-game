@@ -385,3 +385,340 @@ test("event selector should still exclude once events even if cooldown has expir
   const selected = selectEvent(onceCooldownEvents, state, "on-location-enter", () => 0.0);
   assert.equal(selected?.id, "fallback-after-once");
 });
+
+test("event selector should filter by required vars", () => {
+  const varEvents = [
+    {
+      id: "var-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        vars: { current_goal: "visit_market", known_vendor: false },
+      },
+    },
+    {
+      id: "var-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const state = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      current_goal: "visit_market",
+      known_vendor: false,
+    },
+  };
+
+  const selected = selectEvent(varEvents, state, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "var-match");
+
+  const mismatched = selectEvent(
+    varEvents,
+    {
+      ...state,
+      vars: {
+        ...state.vars,
+        current_goal: "rest",
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+  assert.equal(mismatched?.id, "var-fallback");
+});
+
+test("event selector should filter by required quest status", () => {
+  const questEvents = [
+    {
+      id: "quest-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        quests: { quest_intro_walk: "completed" },
+      },
+    },
+    {
+      id: "quest-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const state = {
+    ...baseState,
+    quests: {
+      quest_intro_walk: { status: "completed", currentStepId: "step_go_market" },
+    },
+  };
+
+  const selected = selectEvent(questEvents, state, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "quest-match");
+
+  const mismatched = selectEvent(
+    questEvents,
+    {
+      ...state,
+      quests: {
+        quest_intro_walk: { status: "active", currentStepId: "step_go_market" },
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+  assert.equal(mismatched?.id, "quest-fallback");
+});
+
+test("event selector should filter by required quest step", () => {
+  const questStepEvents = [
+    {
+      id: "step-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        questSteps: { quest_intro_walk: "step_go_market" },
+      },
+    },
+    {
+      id: "step-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const matchingState = {
+    ...baseState,
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_go_market" },
+    },
+  };
+
+  const selected = selectEvent(questStepEvents, matchingState, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "step-match");
+
+  const wrongStepState = {
+    ...baseState,
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_return" },
+    },
+  };
+
+  const mismatched = selectEvent(questStepEvents, wrongStepState, "on-location-enter", () => 0.0);
+  assert.equal(mismatched?.id, "step-fallback");
+
+  const missingQuestState = {
+    ...baseState,
+    quests: {},
+  };
+
+  const missing = selectEvent(questStepEvents, missingQuestState, "on-location-enter", () => 0.0);
+  assert.equal(missing?.id, "step-fallback");
+});
+
+test("event selector should support numeric comparison predicates in vars conditions", () => {
+  const comparisonEvents = [
+    {
+      id: "comparison-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        vars: {
+          gold: { ">=": 10, "<": 20 },
+          threat: { "<": 5 },
+        },
+      },
+    },
+    {
+      id: "comparison-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const matchingState = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      gold: 15,
+      threat: 2,
+    },
+  };
+
+  const selected = selectEvent(comparisonEvents, matchingState, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "comparison-match");
+
+  const mismatchedState = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      gold: 30,
+      threat: 2,
+    },
+  };
+
+  const mismatched = selectEvent(comparisonEvents, mismatchedState, "on-location-enter", () => 0.0);
+  assert.equal(mismatched?.id, "comparison-fallback");
+});
+
+test("event selector should support != and in predicates in vars conditions", () => {
+  const predicateEvents = [
+    {
+      id: "predicate-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        vars: {
+          mood: { "!=": "angry" },
+          weather: { in: ["sunny", "cloudy"] },
+        },
+      },
+    },
+    {
+      id: "predicate-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const matchingState = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      mood: "calm",
+      weather: "sunny",
+    },
+  };
+
+  const selected = selectEvent(predicateEvents, matchingState, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "predicate-match");
+
+  const mismatchedState = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      mood: "angry",
+      weather: "sunny",
+    },
+  };
+
+  const mismatched = selectEvent(predicateEvents, mismatchedState, "on-location-enter", () => 0.0);
+  assert.equal(mismatched?.id, "predicate-fallback");
+});
+
+test("event selector should support minimal not predicate in vars conditions", () => {
+  const notEvents = [
+    {
+      id: "not-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        vars: {
+          mood: { not: "angry" },
+          gold: { not: { ">=": 100 } },
+        },
+      },
+    },
+    {
+      id: "not-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const matchingState = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      mood: "calm",
+      gold: 50,
+    },
+  };
+
+  const selected = selectEvent(notEvents, matchingState, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "not-match");
+
+  const mismatchedState = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      mood: "angry",
+      gold: 50,
+    },
+  };
+
+  const mismatched = selectEvent(notEvents, mismatchedState, "on-location-enter", () => 0.0);
+  assert.equal(mismatched?.id, "not-fallback");
+});
+
+test("event selector should support any groups in conditions", () => {
+  const anyEvents = [
+    {
+      id: "any-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        any: [
+          { flags: { vip: true } },
+          { vars: { reputation: { ">=": 3 } } },
+        ],
+      },
+    },
+    {
+      id: "any-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const matchingState = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      reputation: 3,
+    },
+  };
+
+  const selected = selectEvent(anyEvents, matchingState, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "any-match");
+
+  const mismatchedState = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      reputation: 1,
+    },
+  };
+
+  const mismatched = selectEvent(anyEvents, mismatchedState, "on-location-enter", () => 0.0);
+  assert.equal(mismatched?.id, "any-fallback");
+});

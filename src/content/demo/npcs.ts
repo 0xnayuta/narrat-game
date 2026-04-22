@@ -40,6 +40,17 @@ export const demoNpcs: NPCDefinition[] = [
         },
         requiredTimeOfDay: "morning",
       },
+      {
+        id: "vendor-stall-tip",
+        label: "Ask about the oddities stall",
+        nodeId: "node_vendor_stall_tip",
+        requiredQuestSteps: {
+          quest_intro_walk: "step_examine_stall",
+        },
+        requiredFlags: {
+          stall_discovered: true,
+        },
+      },
     ],
     tags: ["shop"],
   },

@@ -52,7 +52,7 @@ export function runDemoContentFlow(): DemoFlowStepResult[] {
   if (step1.scene?.choices[0]) {
     selectedChoiceId = step1.scene.choices[0].id;
     const choiceResult = narrativeRuntime.choose(selectedChoiceId);
-    state = applyNarrativeChoiceEffects(state, choiceResult.effects);
+    state = applyNarrativeChoiceEffects(state, choiceResult.effects, demoQuests);
   }
 
   results.push({
@@ -80,7 +80,7 @@ export function runDemoContentFlow(): DemoFlowStepResult[] {
   if (step2.scene?.choices[0]) {
     selectedChoiceId = step2.scene.choices[0].id;
     const choiceResult = narrativeRuntime.choose(selectedChoiceId);
-    state = applyNarrativeChoiceEffects(state, choiceResult.effects);
+    state = applyNarrativeChoiceEffects(state, choiceResult.effects, demoQuests);
   }
 
   results.push({

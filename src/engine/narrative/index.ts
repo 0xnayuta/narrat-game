@@ -5,3 +5,4 @@
 export type { NarrativeGraph, NarrativeViewModel, NarrativeChoiceResult } from "./NarrativeRuntime";
 export { NarrativeRuntime } from "./NarrativeRuntime";
 export { applyNarrativeChoiceEffects } from "./effects";
+export { filterVisibleChoices, getVisibleChoiceViewModels } from "./visibility";

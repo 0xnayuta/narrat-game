@@ -9,6 +9,6 @@ export const demoQuests: QuestDefinition[] = [
     id: "quest_intro_walk",
     title: "Take a walk",
     status: "inactive",
-    stepIds: ["step_go_street", "step_go_market"],
+    stepIds: ["step_go_street", "step_go_market", "step_examine_stall"],
   },
 ];

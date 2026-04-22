@@ -3,6 +3,7 @@
  * TODO: Add richer predicate operators when condition DSL is introduced.
  */
 
+import { matchesBooleanRecord, matchesQuestStepRecord, matchesQuestStatusRecord, matchesScalarRecord } from "../conditions/shared";
 import { isInTimeRange } from "../time";
 import type { EventConditions } from "../types/events";
 import type { GameState } from "../types";
@@ -31,14 +32,39 @@ export function matchesFlagCondition(
   state: GameState,
   conditions?: EventConditions,
 ): boolean {
-  if (!conditions?.flags) {
+  return matchesBooleanRecord(state.flags, conditions?.flags, { missingBooleanValue: false });
+}
+
+export function matchesVarCondition(
+  state: GameState,
+  conditions?: EventConditions,
+): boolean {
+  return matchesScalarRecord(state.vars, conditions?.vars);
+}
+
+export function matchesQuestCondition(
+  state: GameState,
+  conditions?: EventConditions,
+): boolean {
+  return matchesQuestStatusRecord(state.quests, conditions?.quests);
+}
+
+export function matchesQuestStepCondition(
+  state: GameState,
+  conditions?: EventConditions,
+): boolean {
+  return matchesQuestStepRecord(state.quests, conditions?.questSteps);
+}
+
+export function matchesAnyConditionGroup(
+  state: GameState,
+  conditions?: EventConditions,
+): boolean {
+  if (!conditions?.any || conditions.any.length === 0) {
     return true;
   }
 
-  return Object.entries(conditions.flags).every(([flagId, expected]) => {
-    const actual = state.flags[flagId] ?? false;
-    return actual === expected;
-  });
+  return conditions.any.some((group) => matchesAllEventConditions(state, group));
 }
 
 export function matchesAllEventConditions(
@@ -48,6 +74,10 @@ export function matchesAllEventConditions(
   return (
     matchesLocationCondition(state, conditions) &&
     matchesTimeCondition(state, conditions) &&
-    matchesFlagCondition(state, conditions)
+    matchesFlagCondition(state, conditions) &&
+    matchesVarCondition(state, conditions) &&
+    matchesQuestCondition(state, conditions) &&
+    matchesQuestStepCondition(state, conditions) &&
+    matchesAnyConditionGroup(state, conditions)
   );
 }

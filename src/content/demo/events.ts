@@ -76,4 +76,64 @@ export const demoEvents: EventDefinition[] = [
       narrativeNodeId: "node_market_plan",
     },
   },
+  {
+    id: "evt_market_stall_discovery",
+    type: "ambient",
+    trigger: "on-time-check",
+    once: true,
+    priority: 5,
+    conditions: {
+      locationIds: ["market"],
+      vars: {
+        current_goal: "visit_market",
+      },
+      quests: {
+        quest_intro_walk: "active",
+      },
+      questSteps: {
+        quest_intro_walk: "step_go_market",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_stall_discovery",
+    },
+  },
+  {
+    id: "evt_vendor_aftermath",
+    type: "follow-up",
+    trigger: "after-choice",
+    once: true,
+    priority: 10,
+    conditions: {
+      locationIds: ["market"],
+      flags: {
+        vendor_met: true,
+      },
+      vars: {
+        last_npc_spoken: "npc_vendor_01",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_vendor_aftermath",
+    },
+  },
+  {
+    id: "evt_compass_lead",
+    type: "follow-up",
+    trigger: "after-choice",
+    once: true,
+    priority: 11,
+    conditions: {
+      locationIds: ["market"],
+      flags: {
+        compass_vendor_reacted: true,
+      },
+      vars: {
+        current_goal: "investigate_compass",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_compass_lead",
+    },
+  },
 ];

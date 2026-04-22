@@ -1,3 +1,5 @@
+import type { ScalarConditionValue } from "./conditions";
+
 /**
  * Supported event trigger phases for the minimal event framework.
  */
@@ -12,13 +14,19 @@ export interface EventTimeRange {
 }
 
 /**
- * Minimal event conditions (location, time range, flags).
+ * Minimal event conditions (location, time range, flags, vars, quests).
  */
 export interface EventConditions {
   locationIds?: string[];
   timeRange?: EventTimeRange;
   flags?: Record<string, boolean>;
-  // TODO: Add variable/stat/quest predicates when expression system is added.
+  vars?: Record<string, ScalarConditionValue>;
+  quests?: Record<string, "inactive" | "active" | "completed" | "failed">;
+  /** Match quests by current step id (requires quest to exist and have matching currentStepId). */
+  questSteps?: Record<string, string>;
+  /** At least one nested condition block must match (OR semantics). */
+  any?: EventConditions[];
+  // TODO: Add richer predicate operators when condition DSL is introduced.
 }
 
 /**
