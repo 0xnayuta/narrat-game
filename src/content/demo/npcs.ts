@@ -23,7 +23,6 @@ export const demoNpcs: NPCDefinition[] = [
         requiredVars: {
           current_goal: "market_visited",
         },
-        requiredTimeOfDay: "morning",
       },
       {
         id: "vendor-repeat-talk",
@@ -38,7 +37,6 @@ export const demoNpcs: NPCDefinition[] = [
         requiredVars: {
           current_goal: "market_visited",
         },
-        requiredTimeOfDay: "morning",
       },
       {
         id: "vendor-stall-tip",

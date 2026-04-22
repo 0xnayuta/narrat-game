@@ -11,6 +11,7 @@ import { getAvailableNpcInteractions, getNpcInteractionDebugInfo, LocationServic
 import type { AvailableNpcInteraction, NpcInteractionDebugEntry } from "../world";
 import type { AppMode } from "./appMode";
 import {
+  runTimeAdvanceEventFlow,
   runTravelEventFlow,
   runTriggeredEventFlow,
   type RuntimeRandomFloat,
@@ -106,6 +107,30 @@ export class GameSession {
       this.store.getState(),
       toLocationId,
       this.locationService,
+      this.events,
+      this.narrativeRuntime,
+      this.options.randomFloat,
+      { eventHistoryWriteStrategy: this.options.eventHistoryWriteStrategy },
+    );
+
+    this.store.setState(result.state);
+    this.activeScene = result.scene ? this.buildSceneView() : null;
+
+    return {
+      state: this.store.getState(),
+      scene: this.activeScene,
+      triggeredEventId: result.triggeredEvent?.id ?? null,
+    };
+  }
+
+  wait(minutes = 60): SessionActionResult {
+    if (!this.canTravel()) {
+      throw new Error("Cannot wait while a narrative scene is active");
+    }
+
+    const result = runTimeAdvanceEventFlow(
+      this.store.getState(),
+      minutes,
       this.events,
       this.narrativeRuntime,
       this.options.randomFloat,

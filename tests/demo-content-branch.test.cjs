@@ -65,7 +65,7 @@ test("demo branch should show buy_compass when gold >= 15 and apply effects", ()
   assert.equal(nextState.flags.compass_owned, true);
 });
 
-test("demo branch should hide buy_compass when gold < 15", () => {
+test("demo branch should show an explicit low-gold compass fallback when gold < 15", () => {
   const runtime = new NarrativeRuntime(demoNarrativeGraph);
   runtime.jumpTo("node_stall_examined");
 
@@ -78,8 +78,14 @@ test("demo branch should hide buy_compass when gold < 15", () => {
   const visibleChoices = filterVisibleChoices(runtime.getCurrentChoices(), state);
   assert.deepEqual(
     visibleChoices.map((choice) => choice.id),
-    ["examine_compass", "leave_stall"],
+    ["cannot_afford_compass", "examine_compass", "leave_stall"],
   );
+
+  const choiceResult = runtime.choose("cannot_afford_compass");
+  const nextState = applyNarrativeChoiceEffects(state, choiceResult.effects, demoQuests);
+  assert.equal(choiceResult.node.id, "node_compass_too_expensive");
+  assert.equal(nextState.flags.compass_examined, true);
+  assert.equal(nextState.vars.current_goal, "ask_about_compass");
 });
 
 test("demo vendor intro should show stall question only when current_goal matches in-predicate", () => {
@@ -162,7 +168,7 @@ test("demo vendor stall tip should show compass follow-up only when compass_owne
   const hiddenChoices = filterVisibleChoices(runtime.getCurrentChoices(), hiddenState);
   assert.deepEqual(
     hiddenChoices.map((choice) => choice.id),
-    ["thank_vendor"],
+    ["return_to_oddities_stall", "thank_vendor"],
   );
 
   const visibleState = buildBranchState({
@@ -173,7 +179,7 @@ test("demo vendor stall tip should show compass follow-up only when compass_owne
   const visibleChoices = filterVisibleChoices(runtime.getCurrentChoices(), visibleState);
   assert.deepEqual(
     visibleChoices.map((choice) => choice.id),
-    ["show_compass", "thank_vendor"],
+    ["show_compass", "press_for_harbor_watch", "return_to_oddities_stall", "thank_vendor"],
   );
 
   const choiceResult = runtime.choose("show_compass");

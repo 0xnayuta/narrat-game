@@ -31,6 +31,10 @@ test("NPC interaction choice should trigger after-choice event", () => {
   const finishWalk = session.choose("finish_walk");
   assert.equal(finishWalk.state.quests.quest_intro_walk?.status, "completed");
   assert.equal(finishWalk.state.vars.current_goal, "market_visited");
+  assert.equal(finishWalk.scene?.nodeId, "node_market_done");
+
+  const leaveMarket = session.choose("leave_market_for_now");
+  assert.equal(leaveMarket.scene?.nodeId, "node_market_done_end");
   session.closeScene();
 
   // Step 5: NPC should now be available
@@ -97,6 +101,93 @@ test("NPC interaction should not trigger after-choice event when conditions don'
   session.closeScene();
 });
 
+test("fresh demo path should allow reaching the oddities stall and unlocking the vendor stall tip", () => {
+  const session = createDemoSession();
+
+  const street = session.travelTo("street");
+  assert.equal(street.triggeredEventId, "evt_street_arrival");
+
+  const goMarket = session.choose("go_market");
+  assert.equal(goMarket.state.quests.quest_intro_walk?.status, "active");
+  assert.equal(goMarket.state.quests.quest_intro_walk?.currentStepId, "step_go_market");
+  session.closeScene();
+
+  const market = session.travelTo("market");
+  assert.equal(market.triggeredEventId, "evt_market_morning");
+  assert.equal(market.scene?.nodeId, "node_market_morning");
+  assert.deepEqual(market.scene?.choices, [
+    { id: "inspect_oddities_stall", text: "Check the oddities stall in the corner" },
+    { id: "finish_walk", text: "Look around the stalls" },
+  ]);
+
+  const inspectStall = session.choose("inspect_oddities_stall");
+  assert.equal(inspectStall.triggeredEventId, null);
+  assert.equal(inspectStall.scene?.nodeId, "node_stall_discovery");
+
+  const exploreStall = session.choose("explore_stall");
+  assert.equal(exploreStall.triggeredEventId, null);
+  assert.equal(exploreStall.state.flags.stall_discovered, true);
+  assert.equal(exploreStall.state.quests.quest_intro_walk?.currentStepId, "step_examine_stall");
+  assert.equal(exploreStall.scene?.nodeId, "node_stall_examined");
+
+  const leaveStall = session.choose("leave_stall");
+  assert.equal(leaveStall.triggeredEventId, null);
+  assert.equal(leaveStall.scene?.nodeId, "node_stall_left");
+  session.closeScene();
+
+  const npcs = session.getAvailableNpcs();
+  assert.equal(npcs.length, 1);
+  assert.equal(npcs[0].label, "Ask about the oddities stall");
+});
+
+test("market morning wrong turn should still preserve a clear path back to the oddities stall", () => {
+  const session = createDemoSession();
+
+  const street = session.travelTo("street");
+  assert.equal(street.triggeredEventId, "evt_street_arrival");
+
+  session.choose("go_market");
+  session.closeScene();
+
+  const market = session.travelTo("market");
+  assert.equal(market.triggeredEventId, "evt_market_morning");
+
+  const finishWalk = session.choose("finish_walk");
+  assert.equal(finishWalk.scene?.nodeId, "node_market_done");
+  assert.deepEqual(finishWalk.scene?.choices, [
+    { id: "inspect_oddities_stall_after_walk", text: "Take a closer look at the oddities stall before leaving" },
+    { id: "leave_market_for_now", text: "Leave the market floor for now" },
+  ]);
+
+  const recoverToStall = session.choose("inspect_oddities_stall_after_walk");
+  assert.equal(recoverToStall.triggeredEventId, null);
+  assert.equal(recoverToStall.scene?.nodeId, "node_stall_discovery");
+});
+
+test("vendor should still be available later in the day once the market intro path is complete", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 1, hour: 19, minute: 0 },
+    currentLocationId: "market",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      vendor_met: false,
+    },
+    quests: {
+      quest_intro_walk: { status: "completed", currentStepId: "step_go_market" },
+    },
+    inventory: {},
+    vars: { current_goal: "market_visited", gold: 35 },
+  });
+
+  const npcs = session.getAvailableNpcs();
+  assert.equal(npcs.length, 1);
+  assert.equal(npcs[0].label, "Talk to Vendor");
+});
+
 test("quest step condition should gate NPC interaction then advance via event", () => {
   const session = createDemoSession();
 
@@ -155,6 +246,111 @@ test("quest step condition should gate NPC interaction then advance via event", 
   session.closeScene();
 });
 
+test("vendor stall tip should let the player return to the oddities stall after leaving without buying", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 1, hour: 9, minute: 0 },
+    currentLocationId: "market",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      stall_discovered: true,
+      compass_owned: false,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+    },
+    inventory: {},
+    vars: { current_goal: "examine_stall", gold: 35, reputation: 1 },
+  });
+
+  const stallTip = session.interactWithNpc("npc_vendor_01");
+  assert.equal(stallTip.scene?.nodeId, "node_vendor_stall_tip");
+  assert.deepEqual(stallTip.scene?.choices, [
+    { id: "return_to_oddities_stall", text: "Go back and take another look at the oddities stall" },
+    { id: "thank_vendor", text: "Thank the vendor" },
+  ]);
+
+  const returnToStall = session.choose("return_to_oddities_stall");
+  assert.equal(returnToStall.triggeredEventId, null);
+  assert.equal(returnToStall.state.vars.current_goal, "examine_stall");
+  assert.equal(returnToStall.scene?.nodeId, "node_stall_examined");
+});
+
+test("low gold stall path should still guide the player toward the vendor fallback lead", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 1, hour: 9, minute: 0 },
+    currentLocationId: "market",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      stall_discovered: true,
+      compass_owned: false,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+    },
+    inventory: {},
+    vars: { current_goal: "examine_stall", gold: 5, reputation: 1 },
+  });
+
+  session.interactWithNpc("npc_vendor_01");
+  const returnToStall = session.choose("return_to_oddities_stall");
+  assert.equal(returnToStall.scene?.nodeId, "node_stall_examined");
+  assert.deepEqual(returnToStall.scene?.choices, [
+    { id: "cannot_afford_compass", text: "Admit you cannot afford the compass and ask about it instead" },
+    { id: "examine_compass", text: "Pick up the compass for a closer look" },
+    { id: "leave_stall", text: "Step back from the stall" },
+  ]);
+
+  const tooExpensive = session.choose("cannot_afford_compass");
+  assert.equal(tooExpensive.state.flags.compass_examined, true);
+  assert.equal(tooExpensive.state.vars.current_goal, "ask_about_compass");
+  assert.equal(tooExpensive.scene?.nodeId, "node_compass_too_expensive");
+});
+
+test("examining the compass without buying it should still provide a fallback into the black sail lead", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 90 }, flags: {} },
+    time: { day: 1, hour: 9, minute: 0 },
+    currentLocationId: "market",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      stall_discovered: true,
+      compass_owned: false,
+      compass_examined: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+    },
+    inventory: {},
+    vars: { current_goal: "examine_stall", gold: 5, reputation: 1 },
+  });
+
+  const stallTip = session.interactWithNpc("npc_vendor_01");
+  assert.equal(stallTip.scene?.nodeId, "node_vendor_stall_tip");
+  assert.deepEqual(stallTip.scene?.choices, [
+    { id: "describe_examined_compass", text: "Describe the strange compass you handled at the stall" },
+    { id: "return_to_oddities_stall", text: "Go back and take another look at the oddities stall" },
+    { id: "thank_vendor", text: "Thank the vendor" },
+  ]);
+
+  const fallbackLead = session.choose("describe_examined_compass");
+  assert.equal(fallbackLead.state.flags.compass_vendor_reacted, true);
+  assert.equal(fallbackLead.state.quests.quest_black_sail_trail?.status, "active");
+  assert.equal(fallbackLead.state.quests.quest_black_sail_trail?.currentStepId, "step_find_mira");
+  assert.equal(fallbackLead.triggeredEventId, "evt_compass_lead");
+  assert.equal(fallbackLead.scene?.nodeId, "node_compass_lead");
+});
+
 test("compass vendor branch should trigger follow-up event after showing the compass", () => {
   const session = createDemoSession();
 
@@ -184,6 +380,7 @@ test("compass vendor branch should trigger follow-up event after showing the com
   assert.deepEqual(stallTip.scene?.choices, [
     { id: "show_compass", text: "Show the compass you bought" },
     { id: "press_for_harbor_watch", text: "Press for a stronger harbor lead" },
+    { id: "return_to_oddities_stall", text: "Go back and take another look at the oddities stall" },
     { id: "thank_vendor", text: "Thank the vendor" },
   ]);
 
@@ -223,6 +420,7 @@ test("vendor stall tip should reveal stronger harbor lead when player either own
   assert.equal(stallTip.scene?.nodeId, "node_vendor_stall_tip");
   assert.deepEqual(stallTip.scene?.choices, [
     { id: "press_for_harbor_watch", text: "Press for a stronger harbor lead" },
+    { id: "return_to_oddities_stall", text: "Go back and take another look at the oddities stall" },
     { id: "thank_vendor", text: "Thank the vendor" },
   ]);
 
@@ -254,6 +452,7 @@ test("vendor stall tip should reveal stronger harbor lead when player either own
 
   const hiddenLead = session.interactWithNpc("npc_vendor_01");
   assert.deepEqual(hiddenLead.scene?.choices, [
+    { id: "return_to_oddities_stall", text: "Go back and take another look at the oddities stall" },
     { id: "thank_vendor", text: "Thank the vendor" },
   ]);
 });
@@ -418,7 +617,39 @@ test("harbor watch repeat should stay available for active black sail quest even
 
   const miraRepeat = session.interactWithNpc("npc_harbor_watch_01");
   assert.equal(miraRepeat.scene?.nodeId, "node_harbor_watch_repeat");
+  assert.match(miraRepeat.scene?.text ?? "", /Bring me something concrete from the tower, the piers, or the berth/i);
   assert.deepEqual(miraRepeat.scene?.choices, []);
+});
+
+test("waiting at harbor after Mira's night tip should trigger the night signal without leaving location", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 1, hour: 21, minute: 55 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      stall_discovered: true,
+      compass_vendor_reacted: true,
+      harbor_watch_contacted: true,
+      signal_tower_clue_found: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "active", currentStepId: "step_watch_harbor_at_night" },
+    },
+    inventory: {},
+    vars: { current_goal: "wait_for_harbor_signal", gold: 35 },
+  });
+
+  const waited = session.wait(10);
+  assert.equal(waited.triggeredEventId, "evt_harbor_night_signal");
+  assert.equal(waited.scene?.nodeId, "node_harbor_night_signal");
+  assert.deepEqual(waited.scene?.choices, [
+    { id: "follow_pier_signal", text: "Head for the far pier before the light disappears" },
+  ]);
 });
 
 test("night harbor signal should continue into a minimal pier investigation", () => {
@@ -676,6 +907,79 @@ test("coal berth ledger should let Mira confirm the black sail line and complete
   assert.equal(stingPlan.state.flags.black_sail_sting_prepared, true);
   assert.equal(stingPlan.state.vars.current_goal, "prepare_black_sail_sting");
   assert.equal(stingPlan.scene?.nodeId, "node_harbor_watch_sting_plan");
+});
+
+test("prepared black sail sting should unlock a minimal night stakeout event", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 3, hour: 22, minute: 10 },
+    currentLocationId: "coal_berth",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      black_sail_sting_prepared: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+    },
+    inventory: {},
+    vars: { current_goal: "prepare_black_sail_sting", gold: 35 },
+  });
+
+  const toHarbor = session.travelTo("harbor");
+  assert.equal(toHarbor.triggeredEventId, "evt_black_sail_stakeout");
+  assert.equal(toHarbor.scene?.nodeId, "node_black_sail_stakeout");
+  assert.deepEqual(toHarbor.scene?.choices, [
+    { id: "take_stakeout_position", text: "Take your place overlooking the coal berth" },
+  ]);
+
+  const takePosition = session.choose("take_stakeout_position");
+  assert.equal(takePosition.triggeredEventId, null);
+  assert.equal(takePosition.state.flags.black_sail_stakeout_started, true);
+  assert.equal(takePosition.state.vars.current_goal, "hold_black_sail_stakeout");
+  assert.equal(takePosition.scene?.nodeId, "node_black_sail_stakeout_ready");
+});
+
+test("started black sail stakeout should lead into a minimal contact and net-closing beat", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 3, hour: 22, minute: 25 },
+    currentLocationId: "coal_berth",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      black_sail_sting_prepared: true,
+      black_sail_stakeout_started: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+    },
+    inventory: {},
+    vars: { current_goal: "hold_black_sail_stakeout", gold: 35 },
+  });
+
+  const backToHarbor = session.travelTo("harbor");
+  assert.equal(backToHarbor.triggeredEventId, "evt_black_sail_contact");
+  assert.equal(backToHarbor.scene?.nodeId, "node_black_sail_contact");
+  assert.deepEqual(backToHarbor.scene?.choices, [
+    { id: "signal_mira_to_close_net", text: "Give Mira the go-ahead to close the net" },
+  ]);
+
+  const closeNet = session.choose("signal_mira_to_close_net");
+  assert.equal(closeNet.triggeredEventId, null);
+  assert.equal(closeNet.state.flags.black_sail_net_closing, true);
+  assert.equal(closeNet.state.vars.current_goal, "close_black_sail_net");
+  assert.equal(closeNet.scene?.nodeId, "node_black_sail_net_closing");
 });
 
 test("black sail quest skeleton should activate and advance across key branch milestones", () => {

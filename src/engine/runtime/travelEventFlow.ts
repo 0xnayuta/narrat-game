@@ -80,6 +80,26 @@ export function runTriggeredEventFlow(
  * Phase 2: event filtering
  * Phase 3: narrative startup (if event contains narrativeNodeId)
  */
+export function runTimeAdvanceEventFlow(
+  state: GameState,
+  minutes: number,
+  events: EventDefinition[],
+  narrativeRuntime: NarrativeRuntime,
+  randomFloat?: RuntimeRandomFloat,
+  eventHistoryOptions: RuntimeEventHistoryOptions = {},
+): TravelEventFlowResult {
+  const advancedState = advanceGameStateMinutes(state, minutes);
+
+  return runTriggeredEventFlow(
+    advancedState,
+    events,
+    "on-time-check",
+    narrativeRuntime,
+    randomFloat,
+    eventHistoryOptions,
+  );
+}
+
 export function runTravelEventFlow(
   state: GameState,
   toLocationId: string,

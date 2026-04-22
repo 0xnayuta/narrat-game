@@ -35,6 +35,9 @@
         >
           Go to {{ location.name }}
         </button>
+        <button type="button" class="demo-app__button" :disabled="!canTravel" @click="handleWait(60)">
+          Wait 1 hour
+        </button>
       </div>
       <p v-if="!canTravel" class="demo-app__hint">Finish or close the current scene before traveling.</p>
     </section>
@@ -113,14 +116,30 @@ const adjacentLocations = computed(() =>
 );
 const locationName = computed(() => currentLocation.value?.name ?? state.value.currentLocationId);
 const timeLabel = computed(() => getCurrentTimeLabel(state.value.time));
-const availableNpcs = computed(() => session.getAvailableNpcs());
+const availableNpcs = computed(() => {
+  state.value;
+  scene.value;
+  return session.getAvailableNpcs();
+});
 const sceneText = computed(() => scene.value?.text ?? "Travel to a nearby location to trigger the demo.");
 const sceneChoices = computed(() => scene.value?.choices ?? []);
-const appMode = computed(() => session.getMode());
-const canTravel = computed(() => session.canTravel());
-const hasActiveScene = computed(() => session.hasActiveScene());
+const appMode = computed(() => {
+  scene.value;
+  return session.getMode();
+});
+const canTravel = computed(() => {
+  scene.value;
+  return session.canTravel();
+});
+const hasActiveScene = computed(() => {
+  scene.value;
+  return session.hasActiveScene();
+});
 const sceneId = computed(() => scene.value?.nodeId ?? null);
-const showCloseScene = computed(() => session.canCloseScene());
+const showCloseScene = computed(() => {
+  scene.value;
+  return session.canCloseScene();
+});
 const quest = computed(() => state.value.quests.quest_intro_walk);
 const questStatus = computed(() => quest.value?.status ?? null);
 const questStepId = computed(() => quest.value?.currentStepId ?? null);
@@ -154,7 +173,11 @@ const questEntries = computed(() =>
     stepId: quest.currentStepId ?? null,
   })),
 );
-const npcDebug = computed(() => session.getNpcDebugInfo());
+const npcDebug = computed(() => {
+  state.value;
+  scene.value;
+  return session.getNpcDebugInfo();
+});
 
 function syncFromSession() {
   state.value = session.getState();
@@ -163,6 +186,12 @@ function syncFromSession() {
 
 function handleTravel(locationId: string) {
   const result = session.travelTo(locationId);
+  lastEventId.value = result.triggeredEventId;
+  syncFromSession();
+}
+
+function handleWait(minutes: number) {
+  const result = session.wait(minutes);
   lastEventId.value = result.triggeredEventId;
   syncFromSession();
 }

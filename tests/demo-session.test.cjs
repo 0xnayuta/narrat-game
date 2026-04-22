@@ -413,6 +413,7 @@ test("demo session should support manual travel and choice flow", () => {
   assert.equal(travelMarket.state.eventHistory?.onceTriggeredByEventId.evt_market_morning, true);
   assert.equal(travelMarket.scene?.nodeId, "node_market_morning");
   assert.deepEqual(travelMarket.scene?.choices, [
+    { id: "inspect_oddities_stall", text: "Check the oddities stall in the corner" },
     { id: "finish_walk", text: "Look around the stalls" },
   ]);
 
@@ -420,7 +421,15 @@ test("demo session should support manual travel and choice flow", () => {
   assert.equal(chooseMarket.state.vars.current_goal, "market_visited");
   assert.equal(chooseMarket.state.quests.quest_intro_walk?.status, "completed");
   assert.equal(chooseMarket.scene?.nodeId, "node_market_done");
-  assert.deepEqual(chooseMarket.scene?.choices, []);
+  assert.deepEqual(chooseMarket.scene?.choices, [
+    { id: "inspect_oddities_stall_after_walk", text: "Take a closer look at the oddities stall before leaving" },
+    { id: "leave_market_for_now", text: "Leave the market floor for now" },
+  ]);
+  assert.equal(session.canCloseScene(), false);
+
+  const leaveMarket = session.choose("leave_market_for_now");
+  assert.equal(leaveMarket.scene?.nodeId, "node_market_done_end");
+  assert.deepEqual(leaveMarket.scene?.choices, []);
   assert.equal(session.canCloseScene(), true);
 
   const closed = session.closeScene();
@@ -478,12 +487,18 @@ test("demo session should support manual travel and choice flow", () => {
     },
   });
   assert.equal(restoredWrongTimeNpc.scene, null);
-  assert.deepEqual(session.getAvailableNpcs(), []);
+  assert.deepEqual(session.getAvailableNpcs(), [
+    {
+      npcId: "npc_vendor_01",
+      npcName: "Vendor",
+      label: "Talk to Vendor",
+      nodeId: "node_vendor_intro",
+    },
+  ]);
   const npcDebug = session.getNpcDebugInfo();
   assert.equal(npcDebug.length, 1);
-  assert.equal(npcDebug[0].resolvedInteractionId, null);
-  assert.equal(npcDebug[0].rules[0].matched, false);
-  assert.ok(npcDebug[0].rules[0].reasons.some((reason) => reason.code === "timeOfDay"));
+  assert.equal(npcDebug[0].resolvedInteractionId, "vendor-first-talk");
+  assert.equal(npcDebug[0].rules[0].matched, true);
 
   session.restoreState({
     ...session.getState(),

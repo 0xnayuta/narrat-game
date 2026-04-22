@@ -254,4 +254,47 @@ export const demoEvents: EventDefinition[] = [
       narrativeNodeId: "node_coal_berth_arrival",
     },
   },
+  {
+    id: "evt_black_sail_stakeout",
+    type: "ambient",
+    trigger: "on-time-check",
+    once: true,
+    priority: 10,
+    conditions: {
+      locationIds: ["harbor"],
+      timeRange: { startHour: 22, endHour: 6 },
+      flags: {
+        black_sail_network_confirmed: true,
+        black_sail_sting_prepared: true,
+      },
+      quests: {
+        quest_black_sail_trail: "completed",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_black_sail_stakeout",
+    },
+  },
+  {
+    id: "evt_black_sail_contact",
+    type: "ambient",
+    trigger: "on-time-check",
+    once: true,
+    priority: 11,
+    conditions: {
+      locationIds: ["harbor"],
+      timeRange: { startHour: 22, endHour: 6 },
+      flags: {
+        black_sail_network_confirmed: true,
+        black_sail_sting_prepared: true,
+        black_sail_stakeout_started: true,
+      },
+      quests: {
+        quest_black_sail_trail: "completed",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_black_sail_contact",
+    },
+  },
 ];

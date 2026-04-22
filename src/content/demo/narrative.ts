@@ -47,6 +47,11 @@ export const demoNarrativeGraph: NarrativeGraph = {
       text: "The market is open and calm.",
       choices: [
         {
+          id: "inspect_oddities_stall",
+          text: "Check the oddities stall in the corner",
+          nextNodeId: "node_stall_discovery",
+        },
+        {
           id: "finish_walk",
           text: "Look around the stalls",
           nextNodeId: "node_market_done",
@@ -61,7 +66,23 @@ export const demoNarrativeGraph: NarrativeGraph = {
     },
     {
       id: "node_market_done",
-      text: "You have seen enough for now.",
+      text: "You have seen enough for now—though a cramped oddities stall tucked into the corner still catches your eye.",
+      choices: [
+        {
+          id: "inspect_oddities_stall_after_walk",
+          text: "Take a closer look at the oddities stall before leaving",
+          nextNodeId: "node_stall_discovery",
+        },
+        {
+          id: "leave_market_for_now",
+          text: "Leave the market floor for now",
+          nextNodeId: "node_market_done_end",
+        },
+      ],
+    },
+    {
+      id: "node_market_done_end",
+      text: "You turn away from the market stalls for now.",
       choices: [],
     },
     {
@@ -188,6 +209,22 @@ export const demoNarrativeGraph: NarrativeGraph = {
           },
         },
         {
+          id: "cannot_afford_compass",
+          text: "Admit you cannot afford the compass and ask about it instead",
+          nextNodeId: "node_compass_too_expensive",
+          conditions: {
+            vars: { gold: { not: { ">=": 15 } } },
+          },
+          effects: {
+            setFlags: {
+              compass_examined: true,
+            },
+            setVars: {
+              current_goal: "ask_about_compass",
+            },
+          },
+        },
+        {
           id: "examine_compass",
           text: "Pick up the compass for a closer look",
           nextNodeId: "node_compass_examined",
@@ -215,6 +252,11 @@ export const demoNarrativeGraph: NarrativeGraph = {
     {
       id: "node_compass_examined",
       text: "You pick up the compass. Its needle spins wildly before settling. Odd.",
+      choices: [],
+    },
+    {
+      id: "node_compass_too_expensive",
+      text: "You admit the price is beyond you for now. The stall keeper only shrugs, but the compass's strange spinning needle sticks in your mind. If anyone in the market knows what to make of it, it might be the vendor nearby.",
       choices: [],
     },
     {
@@ -285,6 +327,40 @@ export const demoNarrativeGraph: NarrativeGraph = {
                 status: "active",
                 currentStepId: "step_find_mira",
               },
+            },
+          },
+        },
+        {
+          id: "describe_examined_compass",
+          text: "Describe the strange compass you handled at the stall",
+          nextNodeId: "node_vendor_compass_reaction",
+          conditions: {
+            flags: {
+              compass_examined: true,
+            },
+          },
+          effects: {
+            setFlags: {
+              compass_vendor_reacted: true,
+            },
+            setVars: {
+              current_goal: "investigate_compass",
+            },
+            setQuests: {
+              quest_black_sail_trail: {
+                status: "active",
+                currentStepId: "step_find_mira",
+              },
+            },
+          },
+        },
+        {
+          id: "return_to_oddities_stall",
+          text: "Go back and take another look at the oddities stall",
+          nextNodeId: "node_stall_examined",
+          effects: {
+            setVars: {
+              current_goal: "examine_stall",
             },
           },
         },
@@ -381,7 +457,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
     },
     {
       id: "node_harbor_watch_repeat",
-      text: "Mira keeps her voice low. \"If the compass shifts again, don't chase it alone. Come straight back to the watch.\"",
+      text: "Mira keeps her voice low. \"If the compass shifts again, don't chase it alone. Come straight back to the watch. Bring me something concrete from the tower, the piers, or the berth, and I'll know where to point you next.\"",
       choices: [
         {
           id: "report_signal_tower_clue",
@@ -602,6 +678,54 @@ export const demoNarrativeGraph: NarrativeGraph = {
     {
       id: "node_harbor_watch_sting_plan",
       text: "Mira gives a short nod. \"Good. Keep your head down and be here before the next late tide. If Black Sail uses the berth again, we'll be ready for them.\"",
+      choices: [],
+    },
+    {
+      id: "node_black_sail_stakeout",
+      text: "Near midnight, a hooded runner from the watch finds you at the harbor. Mira already has two guards in place above the coal berth, lanterns shuttered and eyes on the dark water. Tonight is the first real chance to catch Black Sail in the act.",
+      choices: [
+        {
+          id: "take_stakeout_position",
+          text: "Take your place overlooking the coal berth",
+          nextNodeId: "node_black_sail_stakeout_ready",
+          effects: {
+            setFlags: {
+              black_sail_stakeout_started: true,
+            },
+            setVars: {
+              current_goal: "hold_black_sail_stakeout",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_black_sail_stakeout_ready",
+      text: "You settle into the shadow of a salt-stained storage shed while Mira's people spread out along the berth. Below, the tide knocks softly against the pilings, and every sound on the water suddenly feels important.",
+      choices: [],
+    },
+    {
+      id: "node_black_sail_contact",
+      text: "Some time after midnight, the faint creak of oars carries over the water. A low skiff noses toward the coal berth without running lights, and one of Mira's guards taps twice against the brick behind you: the signal that Black Sail has shown itself.",
+      choices: [
+        {
+          id: "signal_mira_to_close_net",
+          text: "Give Mira the go-ahead to close the net",
+          nextNodeId: "node_black_sail_net_closing",
+          effects: {
+            setFlags: {
+              black_sail_net_closing: true,
+            },
+            setVars: {
+              current_goal: "close_black_sail_net",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_black_sail_net_closing",
+      text: "Mira moves at once. Dark shapes break from cover along the berth while the skiff crew curse and reach for their poles. For the first time, Black Sail is reacting to your trap instead of staying one step ahead of it.",
       choices: [],
     },
   ],
