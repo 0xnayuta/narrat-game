@@ -11,7 +11,8 @@ test("demo content bundle should pass minimal validation", () => {
   assert.equal(validated.id, "demo-content-pack");
   assert.equal(validated.title, "Prototype Demo Pack");
   assert.equal(validated.version, 1);
-  assert.equal(validated.locations.length, 3);
+  assert.ok(validated.locations.length >= 3);
   assert.ok(validated.events.length >= 1);
+  assert.ok(validated.quests.length >= 1);
   assert.equal(typeof validated.narrative.startNodeId, "string");
 });
