@@ -671,6 +671,12 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "prepare_black_sail_sting",
             },
+            setQuests: {
+              quest_black_sail_sting: {
+                status: "active",
+                currentStepId: "step_prepare_stakeout",
+              },
+            },
           },
         },
       ],
@@ -695,6 +701,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "hold_black_sail_stakeout",
             },
+            advanceQuestStep: ["quest_black_sail_sting"],
           },
         },
       ],
@@ -719,6 +726,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "close_black_sail_net",
             },
+            advanceQuestStep: ["quest_black_sail_sting"],
           },
         },
       ],
@@ -726,6 +734,26 @@ export const demoNarrativeGraph: NarrativeGraph = {
     {
       id: "node_black_sail_net_closing",
       text: "Mira moves at once. Dark shapes break from cover along the berth while the skiff crew curse and reach for their poles. For the first time, Black Sail is reacting to your trap instead of staying one step ahead of it.",
+      choices: [
+        {
+          id: "help_secure_the_berth",
+          text: "Help the watch secure the berth after the rush",
+          nextNodeId: "node_black_sail_sting_resolved",
+          effects: {
+            setFlags: {
+              black_sail_sting_resolved: true,
+            },
+            setVars: {
+              current_goal: "black_sail_sting_resolved",
+            },
+            completeQuest: ["quest_black_sail_sting"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_black_sail_sting_resolved",
+      text: "By the time the shouting dies down, Mira's people have the berth locked tight and the skiff pinned against the pilings. Whatever else Black Sail may still be hiding, tonight the harbor watch finally forced the line into the open.",
       choices: [],
     },
   ],

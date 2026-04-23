@@ -25,4 +25,14 @@ export const demoQuests: QuestDefinition[] = [
       "step_investigate_black_sail_berth",
     ],
   },
+  {
+    id: "quest_black_sail_sting",
+    title: "Set the Black Sail Sting",
+    status: "inactive",
+    stepIds: [
+      "step_prepare_stakeout",
+      "step_hold_stakeout",
+      "step_close_the_net",
+    ],
+  },
 ];

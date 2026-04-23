@@ -269,6 +269,10 @@ export const demoEvents: EventDefinition[] = [
       },
       quests: {
         quest_black_sail_trail: "completed",
+        quest_black_sail_sting: "active",
+      },
+      questSteps: {
+        quest_black_sail_sting: "step_prepare_stakeout",
       },
     },
     payload: {
@@ -291,6 +295,10 @@ export const demoEvents: EventDefinition[] = [
       },
       quests: {
         quest_black_sail_trail: "completed",
+        quest_black_sail_sting: "active",
+      },
+      questSteps: {
+        quest_black_sail_sting: "step_hold_stakeout",
       },
     },
     payload: {

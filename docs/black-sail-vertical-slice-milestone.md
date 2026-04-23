@@ -18,6 +18,11 @@ The current Black Sail demo slice now forms a continuous path:
 8. Coal berth investigation
 9. Return to Mira with the ledger scrap
 10. Mira confirms the Black Sail smuggling line and `quest_black_sail_trail` completes
+11. Player offers to help with the harbor sting
+12. Night stakeout begins
+13. Black Sail contact appears
+14. Mira closes the net
+15. The berth is secured and `quest_black_sail_sting` completes
 
 ## Current structure boundary
 For this branch, the intended runtime split is now:
@@ -52,7 +57,15 @@ The current slice now demonstrates that the prototype can support:
    - it now reaches a small but explicit completion beat
 
 ## Current Black Sail quest shape
-`quest_black_sail_trail` currently progresses through:
+The Black Sail demo slice is now split into two small quest phases.
+
+### `quest_black_sail_trail`
+Responsibility:
+- investigate the line
+- gather proof
+- confirm that Black Sail is real and active
+
+Current steps:
 - `step_find_mira`
 - `step_search_signal_tower`
 - `step_watch_harbor_at_night`
@@ -65,6 +78,25 @@ Current completion beat:
 - report the coal berth ledger to Mira
 - set `black_sail_network_confirmed = true`
 - complete `quest_black_sail_trail`
+
+### `quest_black_sail_sting`
+Responsibility:
+- prepare the harbor sting
+- hold the stakeout
+- begin and resolve the first net-closing beat
+
+Current steps:
+- `step_prepare_stakeout`
+- `step_hold_stakeout`
+- `step_close_the_net`
+
+Current completion beat:
+- offer help with the sting
+- begin the stakeout
+- close the net
+- help secure the berth
+- set `black_sail_sting_resolved = true`
+- complete `quest_black_sail_sting`
 
 ## Regression status at this milestone
 Verified in this round:
@@ -83,7 +115,7 @@ This milestone does **not** mean:
 - the branch has downstream arrest / confrontation / faction consequences
 - all remaining `current_goal` writes have been removed
 
-It means the current demo branch is now a **stable, test-backed, end-to-end vertical slice**.
+It means the current demo branch is now a **stable, test-backed, end-to-end vertical slice** with a minimal two-phase quest structure.
 
 ## Recommended next-step posture
 After this checkpoint, prefer:

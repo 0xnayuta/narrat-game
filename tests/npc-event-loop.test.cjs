@@ -906,6 +906,8 @@ test("coal berth ledger should let Mira confirm the black sail line and complete
   assert.equal(stingPlan.triggeredEventId, null);
   assert.equal(stingPlan.state.flags.black_sail_sting_prepared, true);
   assert.equal(stingPlan.state.vars.current_goal, "prepare_black_sail_sting");
+  assert.equal(stingPlan.state.quests.quest_black_sail_sting?.status, "active");
+  assert.equal(stingPlan.state.quests.quest_black_sail_sting?.currentStepId, "step_prepare_stakeout");
   assert.equal(stingPlan.scene?.nodeId, "node_harbor_watch_sting_plan");
 });
 
@@ -926,6 +928,7 @@ test("prepared black sail sting should unlock a minimal night stakeout event", (
     quests: {
       quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
       quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_black_sail_sting: { status: "active", currentStepId: "step_prepare_stakeout" },
     },
     inventory: {},
     vars: { current_goal: "prepare_black_sail_sting", gold: 35 },
@@ -942,6 +945,7 @@ test("prepared black sail sting should unlock a minimal night stakeout event", (
   assert.equal(takePosition.triggeredEventId, null);
   assert.equal(takePosition.state.flags.black_sail_stakeout_started, true);
   assert.equal(takePosition.state.vars.current_goal, "hold_black_sail_stakeout");
+  assert.equal(takePosition.state.quests.quest_black_sail_sting?.currentStepId, "step_hold_stakeout");
   assert.equal(takePosition.scene?.nodeId, "node_black_sail_stakeout_ready");
 });
 
@@ -963,6 +967,7 @@ test("started black sail stakeout should lead into a minimal contact and net-clo
     quests: {
       quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
       quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_black_sail_sting: { status: "active", currentStepId: "step_hold_stakeout" },
     },
     inventory: {},
     vars: { current_goal: "hold_black_sail_stakeout", gold: 35 },
@@ -979,7 +984,18 @@ test("started black sail stakeout should lead into a minimal contact and net-clo
   assert.equal(closeNet.triggeredEventId, null);
   assert.equal(closeNet.state.flags.black_sail_net_closing, true);
   assert.equal(closeNet.state.vars.current_goal, "close_black_sail_net");
+  assert.equal(closeNet.state.quests.quest_black_sail_sting?.currentStepId, "step_close_the_net");
   assert.equal(closeNet.scene?.nodeId, "node_black_sail_net_closing");
+  assert.deepEqual(closeNet.scene?.choices, [
+    { id: "help_secure_the_berth", text: "Help the watch secure the berth after the rush" },
+  ]);
+
+  const resolveSting = session.choose("help_secure_the_berth");
+  assert.equal(resolveSting.triggeredEventId, null);
+  assert.equal(resolveSting.state.flags.black_sail_sting_resolved, true);
+  assert.equal(resolveSting.state.vars.current_goal, "black_sail_sting_resolved");
+  assert.equal(resolveSting.state.quests.quest_black_sail_sting?.status, "completed");
+  assert.equal(resolveSting.scene?.nodeId, "node_black_sail_sting_resolved");
 });
 
 test("black sail quest skeleton should activate and advance across key branch milestones", () => {
@@ -1172,4 +1188,35 @@ test("black sail quest skeleton should activate and advance across key branch mi
   const confirmLedger = session.choose("report_coal_berth_ledger");
   assert.equal(confirmLedger.state.flags.black_sail_network_confirmed, true);
   assert.equal(confirmLedger.state.quests.quest_black_sail_trail?.status, "completed");
+
+  const stingQuest = session.choose("offer_help_with_sting");
+  assert.equal(stingQuest.state.quests.quest_black_sail_sting?.status, "active");
+  assert.equal(stingQuest.state.quests.quest_black_sail_sting?.currentStepId, "step_prepare_stakeout");
+  session.closeScene();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 3, hour: 22, minute: 25 },
+    currentLocationId: "coal_berth",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      black_sail_sting_prepared: true,
+      black_sail_stakeout_started: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_black_sail_sting: { status: "active", currentStepId: "step_hold_stakeout" },
+    },
+    inventory: {},
+    vars: { current_goal: "hold_black_sail_stakeout", gold: 35 },
+  });
+
+  session.travelTo("harbor");
+  const closeNet = session.choose("signal_mira_to_close_net");
+  const resolveSting = session.choose("help_secure_the_berth");
+  assert.equal(resolveSting.state.quests.quest_black_sail_sting?.status, "completed");
 });
