@@ -1334,6 +1334,346 @@ export const demoNarrativeGraph: NarrativeGraph = {
     {
       id: "node_brine_lark_outer_marker_set",
       text: "Mira watches the cord in your memory rather than the bundle itself. \"That is the next object, then. Not the carrier. Not the cargo. The marker set.\" She explains that the outer line is not replacing one random tag with another, but shifting the bundle into a leaner external code: dark tar cord, a clipped twin-knot near the seal, and a short shell-white thread worked through the wrap where a harbor tally would normally sit. \"That combination is not for warehouse hands,\" she says. \"It is meant for people beyond the inner docks who need to recognize passage without reading a ledger. If we want the next layer after Brine Lark's swap, this outer marker set is the first stable identity the route gives us.\"",
+      choices: [
+        {
+          id: "watch_who_reacts_to_the_outer_marker_set",
+          text: "Watch who reacts when that outer marker set appears",
+          nextNodeId: "node_brine_lark_outer_marker_reaction",
+          effects: {
+            setFlags: {
+              brine_lark_outer_marker_set_interpreted: true,
+            },
+            setVars: {
+              current_goal: "identify_outer_marker_reaction",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_outer_marker_reaction",
+      text: "You do not announce the pattern aloud. Instead, you and Mira let the outer marker set surface at the edge of ordinary harbor traffic and watch for the smallest break in routine. Most eyes slide over it. Stevedores see only another wrapped bundle. Ledger clerks keep asking for tallies. But along the fringe beyond the inner docks, a narrower reaction repeats. The tide-stair runners and outer-line hand carriers are the ones who falter for half a breath when they catch the dark tar cord, the clipped twin-knot, and the shell-white thread together. One steps aside without demanding a mark. Another changes his question midway through, abandoning cargo terms for route terms. A third takes over a handoff already in motion, as if the bundle has just declared what kind of passage it belongs to. Mira notes the pattern quietly. \"Good. That gives us our first candidate class. Not warehouse labor. Not harbor clerks. The people reacting are the outer-edge receiving hands—the ones who move things onward once they have already slipped past formal counting.\"",
+      choices: [
+        {
+          id: "test_which_of_them_reads_the_marker_set_without_prompt",
+          text: "Keep watching to see which of them can read the marker set without prompt",
+          nextNodeId: "node_brine_lark_outer_marker_first_reader",
+          effects: {
+            setFlags: {
+              brine_lark_outer_marker_reaction_observed: true,
+            },
+            setVars: {
+              current_goal: "identify_outer_marker_first_reader",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_outer_marker_first_reader",
+      text: "On the next watch, you stop looking for mere recognition and start looking for confidence. The difference shows quickly. Some of the outer-edge hands only mirror one another: if someone ahead of them has already shifted stance, they follow; if a route question is spoken first, they nod along; if no cue is given, they hesitate and wait for confirmation. Those are not your first readers. Then the steadier pattern appears. A smaller subset of receiving hands does not wait for ledger, password, or example. They see the dark tar cord, register the clipped twin-knot and shell-white thread, and act as though the bundle has already been classified. One redirects it to the outer side of the steps before anyone speaks. Another waves off a tally check that would delay the pass. A third accepts temporary custody, not because he knows the carrier, but because the marker set alone tells him the bundle belongs to a continuing outer-route movement. Mira keeps her voice low. \"There. That is the distinction we needed. Plenty can recognize the sign once the moment has started. But the first readers are the outer-route receiving hands who can make the route decision from the marker set itself. They are not just informed. They are the ones assigned to read passage at first contact.\"",
+      choices: [
+        {
+          id: "follow_where_the_first_readers_consistently_push_the_route",
+          text: "Follow where the first readers consistently push the route next",
+          nextNodeId: "node_brine_lark_outer_marker_downstream_node",
+          effects: {
+            setFlags: {
+              brine_lark_outer_marker_first_reader_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_outer_marker_downstream_node",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_outer_marker_downstream_node",
+      text: "Once you stop tracking the hands and start tracking the push they create, the route narrows fast. The same first readers do not send marked bundles into the general dock maze, and they do not hold them long. Again and again, their decisions bend movement toward one unremarkable place behind the customs sheds: a narrow stone descent to the water that only matters at the right tide. A bundle marked with the dark tar cord and shell-white thread is not merely recognized there—it is expected there. You watch one first reader intercept a pass, glance once at the clipped twin-knot, and redirect the carrier with two fingers toward the lower steps without a word. Another refuses a pause on the open quay and waits instead for the tide to settle against the stone. Mira follows the line of motion and nods. \"That is our next concrete object. Not just a kind of person, and not just a kind of act. A place. The Customs Tide Stairs. The first readers are using the marker set to push outer-route traffic into that descent point. If we want the next layer after the reader, we watch the stairs.\"",
+      choices: [
+        {
+          id: "watch_what_happens_at_the_customs_tide_stairs_on_the_right_tide",
+          text: "Watch what happens at the Customs Tide Stairs on the right tide",
+          nextNodeId: "node_brine_lark_customs_tide_stairs_activity",
+          effects: {
+            setFlags: {
+              brine_lark_customs_tide_stairs_identified: true,
+            },
+            setVars: {
+              current_goal: "observe_customs_tide_stairs_activity",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_customs_tide_stairs_activity",
+      text: "You take position above the Customs Tide Stairs and wait for the tide to reach the same narrow height Mira marked against the stone. When the water finally steadies there, the pattern is subtler than a handoff and more disciplined than a delay. Marked bundles are brought down quickly, but they are not argued over, opened, or carried onward at once. Instead, each is set for only a few breaths into the same sheltered notch beside the lower steps, where a tar-dark loop has been fixed just above the wash line. One receiving hand checks the marker set, threads the loop through the wrap, and leaves the bundle hanging clear of the water but below easy view from the quay. No ledger appears. No password is spoken. The point of the stairs is not storage and not final delivery. It is a tide-timed holding point: a place to suspend outer-route traffic just long enough for the next movement to claim it from water level. Mira watches the repeated motion twice before she speaks. \"There it is. The first stable behavior at the stairs is not exchange in the open. It is short-term staging—pressure held against the tide, out of sight, ready for immediate pickup. The stairs are a controlled pause in the route. If we keep going, the next question is who claims from below.\"",
+      choices: [
+        {
+          id: "watch_who_claims_the_bundles_from_below_the_stairs",
+          text: "Watch who claims the bundles from below the stairs",
+          nextNodeId: "node_brine_lark_waterline_receiver",
+          effects: {
+            setFlags: {
+              brine_lark_customs_tide_stairs_activity_observed: true,
+            },
+            setVars: {
+              current_goal: "identify_waterline_receiver",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_waterline_receiver",
+      text: "You hold your position through the next tide cycle and force yourself to watch the waterline rather than the stairs. The claim comes so cleanly you almost miss it. No dock porter descends from above. No customs man emerges from the sheds. Instead, a flat, dark skiff noses in below the stone lip with muffled oars and barely enough profile to catch the harbor glow. It never ties up fully. One person keeps the craft pressed into place with a boat hook while another reaches up from the stern well, feels for the tar-dark loop, and frees the hanging bundle in one practiced motion. They do not inspect the carrier above, and they do not ask for confirmation. The marker set and the prepared staging point are enough. The whole claim lasts only seconds before the skiff slides back into the black water along the outer wall. Mira waits until the ripples flatten. \"Good. Now we have the receiver class. Not a man on the stairs, but a waterline pickup crew—small skiff hands working below sightline, timed to the tide. The stairs do not end the route. They hand it down to the low-profile boats that can move under the customs edge without presenting as a dock transfer.\"",
+      choices: [
+        {
+          id: "track_where_the_waterline_skiff_goes_first",
+          text: "Track where the waterline skiff goes first",
+          nextNodeId: "node_brine_lark_skiff_downstream_node",
+          effects: {
+            setFlags: {
+              brine_lark_waterline_receiver_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_skiff_downstream_node",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_skiff_downstream_node",
+      text: "You and Mira stop thinking like dock watchers and start tracing the skiff's first safe line instead. From the stairs, the boat does not strike for open water, and it does not angle toward any ordinary berth. It hugs the harbor wall under the customs shadow, slips past the brighter lanes, and disappears for a moment where the masonry breaks beneath an old storm outlet. The route repeats on the next tide, and on the one after that. Each time, the skiff's first stable destination is the same low arch half-hidden by weed-dark stone and backwash. It is not a final market and not a full landing. It is a covert water gate: a place where a boat can vanish from harbor sight before deciding where the bundle goes next. Mira watches the black opening until another wave folds over it. \"There. That is the next node. Breaker Culvert. The skiffs are not taking from the stairs straight into the open chain. They first sink the route into that culvert, where the transfer drops out of normal harbor visibility. If we want the next layer after the pickup crew, we watch the culvert mouth.\"",
+      choices: [
+        {
+          id: "watch_what_happens_at_the_breaker_culvert_mouth",
+          text: "Watch what happens at the Breaker Culvert mouth",
+          nextNodeId: "node_brine_lark_breaker_culvert_activity",
+          effects: {
+            setFlags: {
+              brine_lark_skiff_downstream_node_identified: true,
+            },
+            setVars: {
+              current_goal: "observe_breaker_culvert_activity",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_breaker_culvert_activity",
+      text: "The next watch is the hardest yet, because almost nothing visible happens unless you already know where to look. The skiff slips into the Breaker Culvert shadow and does not emerge at once. For several breaths the arch mouth shows only backwash and weed. Then a hooded lamp glints once deep inside—too dim for signaling at distance, bright enough to mark a confined handoff point. When the skiff edges back into view, the bundle is no longer hanging where it was taken aboard, but it has not been carried onward into the harbor either. You catch the same sequence twice more before trusting it: inside the culvert, the pickup crew pauses just long enough for a second pair of hands to verify the outer marker set by touch and position, settle the bundle into a different hold, and prepare it for the next movement under deeper cover. No bargaining, no unpacking, no spoken challenge. Mira draws the line immediately. \"So the culvert is not a destination. It is a concealed transfer chamber. The first stable behavior here is marker confirmation under cover, followed by a load shift. The route comes in on the skiff we can see, then is re-seated for whatever can carry it farther without exposing the stairs connection. If we keep going, the next question is what kind of carrier the culvert sends out.\"",
+      choices: [
+        {
+          id: "watch_what_kind_of_carrier_leaves_the_culvert",
+          text: "Watch what kind of carrier leaves the culvert next",
+          nextNodeId: "node_brine_lark_culvert_carrier",
+          effects: {
+            setFlags: {
+              brine_lark_breaker_culvert_activity_observed: true,
+            },
+            setVars: {
+              current_goal: "identify_culvert_carrier",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_culvert_carrier",
+      text: "On the following tide, you ignore the skiff entirely and hold on the culvert mouth until your eyes adjust to the layered dark. That is when the distinction finally resolves. The craft that leaves after the hidden load shift is not the same one that entered. The broad little pickup skiff backs out light and empty, still suited for quick waterline work near the stairs. The bundle itself departs later, deeper in shadow, aboard a narrower carrier that rides lower and quieter: a hand-poled punt with its load settled almost flush to the boards beneath a drab cover mat. It shows barely any profile above the wash, and where oars would flash, it moves by short controlled pushes better suited to stone edges, culvert channels, and shallow sidewater. You catch the same change twice more before Mira lets herself conclude. \"There. That is the next carrier class. The stairs use a skiff to claim. The culvert converts the route into a narrow punt for concealment and shallow passage. That means this node is doing more than hiding the transfer—it is selecting the transport mode for the next environment. If we follow further, we should stop asking who touched the bundle and start asking what water the punt is built to reach.\"",
+      choices: [
+        {
+          id: "track_what_water_the_culvert_punt_is_built_to_reach",
+          text: "Track what water the culvert punt is built to reach",
+          nextNodeId: "node_brine_lark_punt_waterway_node",
+          effects: {
+            setFlags: {
+              brine_lark_culvert_carrier_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_punt_waterway_node",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_punt_waterway_node",
+      text: "Once you start reading the punt by the water it refuses, the answer emerges quickly. It does not angle for the harbor lanes, where even shuttered movement would force wider turns. It does not seek deeper outbound current either. Instead, each departure from Breaker Culvert bends toward the margin where stone gives way to black mud and broken reed. The punt keeps to water too shallow and constricted for the skiff that fed it, gliding by pole through a slit of sidewater that only shows itself at the right tide and angle of moonlight. You and Mira trace the route twice more from separate vantage points before she commits to the name. \"Not open channel. Not quay water. A reed-cut. That's what this carrier is for.\" She points toward the dim line beyond the wall. \"Reedway Cut. The punt is built to push the route into shallow sidewater where ordinary harbor craft stop being useful. That makes this our next stable node—not a destination yet, but the next environment the chain depends on.\"",
+      choices: [
+        {
+          id: "watch_what_the_punt_consistently_does_inside_reedway_cut",
+          text: "Watch what the punt consistently does inside Reedway Cut",
+          nextNodeId: "node_brine_lark_reedway_cut_activity",
+          effects: {
+            setFlags: {
+              brine_lark_punt_waterway_node_identified: true,
+            },
+            setVars: {
+              current_goal: "observe_reedway_cut_activity",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_reedway_cut_activity",
+      text: "From a distance, Reedway Cut looks like dead water and broken growth. Up close, under the right tide and with enough patience, it reveals a pattern more deliberate than drift. The punt does not carry straight through. It enters the reed-shadow, noses sideways into the same shallow pocket of mud-banked water, and settles there almost flush with the bank where hanging reed mats break its outline. No one calls out. No lantern is raised. Instead, the crew lowers the punt's profile even further, drawing a dark netted screen and loose cut reeds across the exposed edge until hull and cargo blur into the bank itself. The bundle is not unloaded, but neither is it kept ready for immediate movement. It is hidden in place, moored in living cover for a short interval while the route goes quiet around it. Mira watches the disguise take shape before whispering her conclusion. \"So this is the first stable behavior here. Reedway Cut is a concealment berth. The punt comes in, buries itself in the reeds, and lets the route disappear without actually stopping. Not transfer yet—submergence. If we keep going, the next question is what wakes the hidden punt back into motion.\"",
+      choices: [
+        {
+          id: "watch_what_stably_triggers_the_hidden_punt_to_move_again",
+          text: "Watch what stably triggers the hidden punt to move again",
+          nextNodeId: "node_brine_lark_reedway_cut_release_trigger",
+          effects: {
+            setFlags: {
+              brine_lark_reedway_cut_activity_observed: true,
+            },
+            setVars: {
+              current_goal: "identify_reedway_cut_release_trigger",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_reedway_cut_release_trigger",
+      text: "You return determined not to chase the boat itself, but the moment before it ceases to be part of the bank. That moment proves narrower than you expected. The hidden punt does not wake simply because time passes. It waits through one usable stretch of water without moving, then stirs only when two conditions align. First, the ebb pulls just enough water off the mud line to expose a slick rib of darker bank beyond the reed pocket, opening a shallow exit the heavier skiff could never use. Second, from farther inland than the cut itself, a brief hooded reflection flashes once across the water—too small to guide a stranger, too consistent to be chance. Only then do the reed screens shift. The crew clears the punt in practiced silence, turns it by pole, and lets it slide out on the thinning water as if the bank itself had released it. Mira keeps her eyes on the dim line where the flash came from. \"Good. That's a stable release condition. Not a shouted summons and not tide alone. The route waits for a specific ebb threshold, then answers a single masked light cue from inland. So the hidden berth is governed from farther in, but only when the water makes passage possible. If we follow this further, the next object is not the punt. It's the inland point that issues that release signal.\"",
+      choices: [
+        {
+          id: "trace_where_the_masked_inland_light_consistently_originates",
+          text: "Trace where the masked inland light consistently originates",
+          nextNodeId: "node_brine_lark_inland_release_signal_node",
+          effects: {
+            setFlags: {
+              brine_lark_reedway_cut_release_trigger_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_inland_release_signal_node",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_inland_release_signal_node",
+      text: "You and Mira spend the next watch ignoring the punt entirely and triangulating the flash instead. From the cut it seems formless, just a blink on wet air. From the bank above, and again from a second angle inland, the line tightens. The reflection does not come from a moving watcher pacing the reeds. It returns, each time, from the same low rise beside an old sluice run where broken wicker screens and storm-thrown brush have been piled until they resemble marsh wreckage. Only when the hooded light answers the ebb do you finally see the structure hidden inside the ruin: a cramped shelter with just enough slit-space to send one masked gleam down the cut without exposing its keeper to the harbor side. Mira studies the dark shape a long moment before naming it. \"There. That's the node. A signal blind built on the old sluice line.\" She lowers her voice further. \"Sluice Blind. The release cue isn't wandering personnel or chance line-of-sight. It's being issued from a fixed inland observation point that can read both water level and route timing. If we push further, the next question is who occupies that blind—or what larger node it answers to.\"",
+      choices: [
+        {
+          id: "watch_who_stably_operates_the_sluice_blind_signal",
+          text: "Watch who stably operates the Sluice Blind signal",
+          nextNodeId: "node_brine_lark_sluice_blind_operator",
+          effects: {
+            setFlags: {
+              brine_lark_inland_release_signal_node_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_sluice_blind_operator",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_sluice_blind_operator",
+      text: "The next time you watch the blind, you stop treating the signal as a flash and start treating it as labor. Whoever works that slit is not merely waving a lamp. The same figure arrives early enough to read the bank before the cue matters, keeps low through the reeds instead of pacing the rise, and spends more time studying water height and cut geometry than watching the harbor behind. When the moment comes, the signal itself is almost incidental: one controlled gleam, then immediate stillness, as if the real work happened in the waiting and measurement beforehand. You never get a clean face, but you do get the pattern. This is not a courier, not a guard, and not a casual lookout. Mira murmurs the distinction once she sees it repeat. \"The blind is being run by a tide reader—someone assigned to judge when the inner water can safely release the route. More specifically, a sluice watcher. The lamp is only the last motion. Their real function is to translate water state into route timing. That gives us the operator class, even if not the name. If we keep going, the next question is who that sluice watcher answers to.\"",
+      choices: [
+        {
+          id: "watch_who_the_sluice_watcher_answers_to",
+          text: "Watch who the sluice watcher answers to",
+          nextNodeId: "node_brine_lark_sluice_control_node",
+          effects: {
+            setFlags: {
+              brine_lark_sluice_blind_operator_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_sluice_control_node",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_sluice_control_node",
+      text: "The sluice watcher does not act alone. You learn this when you shift your focus from the blind to the marsh behind it. The same tide reader leaves the signal post not to return to the harbor, but to vanish into a low brick structure half-sunk into the bank, barely taller than the reeds and with only a single smoke vent visible above the growth. There is no formal shift change, but the watcher is relieved by another figure who then takes up the same post by the cut. Both carry the same small slate with tide marks and route symbols. One morning you see a chart posted inside the control house window, showing water-level thresholds and route timing for the entire Reedway Cut system—marked not with days, but with tidal windows and marker set patterns. Mira studies the building's smoke line and the chart behind its glass. \"So that is the node. A sluice control house. The blind operator answers to whoever runs that house. They don't just judge water; they read the full slate of route conditions before deciding when to release. If we follow further, we need to see who occupies that control center.\"",
+      choices: [
+        {
+          id: "watch_who_stably_controls_the_sluice_house_operations",
+          text: "Watch who stably controls the Sluice House operations",
+          nextNodeId: "node_brine_lark_sluice_house_controller",
+          effects: {
+            setFlags: {
+              brine_lark_sluice_control_node_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_sluice_house_controller",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_sluice_house_controller",
+      text: "You spend a full cycle watching the control house instead of the cut. The sluice watcher comes and goes, but the house itself is always occupied by a single figure who never emerges into the open. They appear only at the window where the chart is posted, sometimes adjusting the tide marks, sometimes consulting a ledger, sometimes just watching the reed-cut through a small pane of glass. The pattern holds across several watches: when the sluice watcher needs guidance, they return to the house for a brief consultation at the window, then leave with updated instructions. The controller does not shout. They do not carry the slate themselves. They stay behind the glass, making marks and watching the marsh while the tide reader does the fieldwork. Mira watches the silent division of labor before speaking. \"There it is. The blind operator answers to the sluice master—the one who reads the full slate and gives the release window. Not a guard, not a clerk, not a lookout. A marsh controller. That means the control house is not just a shelter. It is the decision node for the entire Reedway Cut line. If we follow further, we need to see where that marsh controller gets their own orders from.\"",
+      choices: [
+        {
+          id: "watch_who_the_marsh_controller_answers_to",
+          text: "Watch who the marsh controller answers to",
+          nextNodeId: "node_brine_lark_marsh_control_node",
+          effects: {
+            setFlags: {
+              brine_lark_sluice_house_controller_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_marsh_control_node",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_marsh_control_node",
+      text: "You shift your vantage point to the rise behind the control house, where the marsh rises higher and offers a view of the entire system. From this angle, you see the marsh controller is not the last word. They leave the house not to enter the open marsh, but to ascend a camouflaged tower built into the rise, barely visible until its single lamp flares at dusk. From there, the controller can see not just the Reedway Cut, but the wider marsh system—the sluice lines, the reedways, and even the distant harbor wall. When the tide changes or the route shifts, the controller returns to the tower, where a network of signal lines runs down from its peak to the control house below. You watch one sequence: a flare from the tower, a moment where the controller consults a higher chart, then a new instruction passed back to the house. Mira traces the signal line with her finger. \"So that is the next node. A marsh control tower. The sluice master answers to whoever watches from that tower. They don't just read the full slate—they read the entire marsh system. That means the tower is the true hub for this entire inland water route. If we follow further, we need to see who occupies that tower.\"",
+      choices: [
+        {
+          id: "watch_who_stably_controls_the_marsh_tower_operations",
+          text: "Watch who stably controls the Marsh Tower operations",
+          nextNodeId: "node_brine_lark_marsh_warden",
+          effects: {
+            setFlags: {
+              brine_lark_marsh_control_node_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_marsh_warden",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_marsh_warden",
+      text: "You spend a full tide cycle watching the tower rather than the control house. The marsh controller goes up and comes down, but the tower itself is always occupied by a single figure who never descends to the lower levels. They appear only at the peak observation window, where a larger chart is posted—not just for the Reedway Cut, but for multiple sluice lines, reedway branches, and even harbor-side points. When a decision is needed, the controller from the house ascends to consult that figure; the tower operator marks something on the chart, then sends the instruction back down. The division of labor is strict: the house reads the local system, but the tower reads the whole route network. Mira studies the operator through the glass. \"There it is. The marsh controller answers to the marsh warden—the one who coordinates multiple water lines, not just one cut. Not a tide watcher, not a local dispatcher. A route coordinator. That means the tower is not just an observation point. It is the command node for the entire inland marsh route system. If we follow further, we need to see where that warden gets their own orders from.\"",
       choices: [],
     },
   ],
