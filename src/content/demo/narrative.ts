@@ -1018,6 +1018,322 @@ export const demoNarrativeGraph: NarrativeGraph = {
     {
       id: "node_brine_lark_shift_change_observed",
       text: "Just before dawn, a hooded figure slips through the rear loading door and passes a wrapped tag bundle to a waiting dock clerk before vanishing back into the dim lane behind the ropeshed. It happens too cleanly to be chance—Brine Lark's route is real, and now you have seen the handoff pattern with your own eyes.",
+      choices: [
+        {
+          id: "ask_mira_what_the_handoff_changes",
+          text: "Ask Mira what the handoff tells you to do next",
+          nextNodeId: "node_brine_lark_next_pressure_point",
+          effects: {
+            setFlags: {
+              brine_lark_handoff_assessed: true,
+            },
+            setVars: {
+              current_goal: "identify_brine_lark_receiver",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_next_pressure_point",
+      text: "Mira keeps her eyes on the lane where the hooded runner disappeared, then shakes her head. \"Not the one who vanished. That runner is doing exactly what the route was built to let them do. The weak seam is the dock clerk who stayed still long enough to take the bundle. If we want the next layer of this network, we stop chasing the shadow and learn who receives for Brine Lark when the handoff lands.\"",
+      choices: [
+        {
+          id: "mark_the_receiving_clerk_as_the_next_pressure_point",
+          text: "Mark the receiving clerk as the next pressure point",
+          nextNodeId: "node_brine_lark_receiver_marked",
+          effects: {
+            setFlags: {
+              brine_lark_receiving_clerk_marked: true,
+            },
+            setVars: {
+              current_goal: "pressure_brine_lark_receiving_clerk",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_receiver_marked",
+      text: "You fix the receiving clerk in memory instead of the runner's disappearing silhouette. The pattern is no longer just a rumor or a route window; it now has a stable receiving point. Whatever comes next in Brine Lark's chain, this clerk is the first person in the sequence who had to stand and be seen.",
+      choices: [
+        {
+          id: "ask_how_to_approach_the_receiving_clerk",
+          text: "Ask Mira how to get close to the clerk without spooking the route",
+          nextNodeId: "node_brine_lark_clerk_approach_plan",
+          effects: {
+            setFlags: {
+              brine_lark_clerk_approach_considered: true,
+            },
+            setVars: {
+              current_goal: "set_brine_lark_clerk_cover",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_clerk_approach_plan",
+      text: "Mira answers quietly. \"Do not crowd him and do not ask about the bundle. A receiving clerk expects tally questions, dock confusion, and people looking for the morning manifests. So give him one of those. Stay near the loading lanes after first bell, look like someone trying to confirm where a crate line was logged, and let him decide whether to brush you off or redirect you. Either answer tells us which authority he thinks he is protecting.\"",
+      choices: [
+        {
+          id: "adopt_a_manifest_pretext_to_sound_out_the_clerk",
+          text: "Use a manifest question as cover to sound out the clerk",
+          nextNodeId: "node_brine_lark_clerk_cover_set",
+          effects: {
+            setFlags: {
+              brine_lark_manifest_pretext_prepared: true,
+            },
+            setVars: {
+              current_goal: "approach_brine_lark_clerk_under_cover",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_clerk_cover_set",
+      text: "That gives you a way in that fits the docks instead of fighting them. You are not chasing the runner anymore; you are preparing to brush the receiving point from the side, under a question the clerk should be able to answer without alarm if he is clean. If he is not, the shape of his evasion becomes the next clue.",
+      choices: [
+        {
+          id: "approach_the_clerk_with_the_manifest_question",
+          text: "Approach the clerk with the manifest question",
+          nextNodeId: "node_brine_lark_clerk_first_reaction",
+          effects: {
+            setFlags: {
+              brine_lark_clerk_approached_under_cover: true,
+            },
+            setVars: {
+              current_goal: "read_brine_lark_clerk_reaction",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_clerk_first_reaction",
+      text: "You ask where a crate line was entered on the morning manifests, keeping your tone flat and forgettable. The clerk barely looks at you before answering too quickly: \"Upper tally board. Ask there.\" But the words land wrong. His hand closes over the wrapped bundle at his side before he turns, and his eyes flick not toward the tally board, but toward the ledger alcove behind the loading posts. It is not a clean dismissal. It is the reflex of someone trying to push attention away from the place that matters first.",
+      choices: [
+        {
+          id: "ask_if_the_ledger_alcove_is_the_real_lead",
+          text: "Ask Mira if the ledger alcove is the real lead to follow",
+          nextNodeId: "node_brine_lark_ledger_alcove_lead",
+          effects: {
+            setFlags: {
+              brine_lark_ledger_alcove_suspected: true,
+            },
+            setVars: {
+              current_goal: "follow_brine_lark_ledger_alcove_lead",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_ledger_alcove_lead",
+      text: "Mira does not even glance at the upper tally board. \"Yes. Not because he looked there, but because he made sure you would not. A practiced liar sends you toward noise. A worried clerk shields the quiet place that actually matters. If Brine Lark's chain touches paper after the handoff, that ledger alcove is where the route stops being motion and becomes record. Follow that seam next.\"",
+      choices: [
+        {
+          id: "commit_to_follow_the_ledger_alcove_seam",
+          text: "Follow the ledger alcove seam next",
+          nextNodeId: "node_brine_lark_ledger_alcove_marked",
+          effects: {
+            setFlags: {
+              brine_lark_ledger_alcove_marked: true,
+            },
+            setVars: {
+              current_goal: "inspect_brine_lark_ledger_alcove",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_ledger_alcove_marked",
+      text: "The route has narrowed again. What began as a moving handoff now points toward a fixed paper point behind the loading posts. If the receiving clerk was trying to keep your eyes off that alcove, then whatever sits there is closer to Brine Lark's working record than anything you have touched so far.",
+      choices: [
+        {
+          id: "inspect_the_ledger_alcove_for_any_paper_trace",
+          text: "Inspect the ledger alcove for any paper trace",
+          nextNodeId: "node_brine_lark_ledger_alcove_trace",
+          effects: {
+            setFlags: {
+              brine_lark_ledger_alcove_inspected: true,
+            },
+            setVars: {
+              current_goal: "recover_brine_lark_ledger_trace",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_ledger_alcove_trace",
+      text: "Inside the alcove, most of the shelves hold ordinary harbor tallies gone soft with salt. But tucked behind a warped board you find something different: a damp torn ledger edge wrapped around a duplicate cargo tag stub. The handwriting is clipped and coded rather than clerical, and one short column repeats the same tide-mark symbol you saw in the warehouse chalk. It is not enough to map the whole chain, but it proves the alcove was used to convert Brine Lark's moving handoffs into written trace before the paper was stripped away.",
+      choices: [
+        {
+          id: "ask_which_mark_on_the_torn_ledger_matters_most",
+          text: "Ask Mira which mark on the torn ledger matters most",
+          nextNodeId: "node_brine_lark_repeated_tag_pattern",
+          effects: {
+            setFlags: {
+              brine_lark_torn_ledger_reviewed: true,
+            },
+            setVars: {
+              current_goal: "identify_brine_lark_tag_pattern",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_repeated_tag_pattern",
+      text: "Mira taps the torn edge with one finger. \"Not the symbol by itself. This.\" Three entries on the damp scrap carry different shorthand notes, but each of them repeats the same cargo tag suffix in the same cramped hand, as if one tag number was being copied forward across separate movements. \"Harbor clerks log what arrived once,\" she says. \"They do not keep re-threading the same tag through unrelated lines unless someone is using the paper to preserve continuity across handoffs. That repeated suffix is the first real sign that Brine Lark's route is being stitched together on purpose, not just passed along by habit.\"",
+      choices: [
+        {
+          id: "ask_if_the_scrap_points_toward_any_destination",
+          text: "Ask if the scrap points toward any destination at all",
+          nextNodeId: "node_brine_lark_partial_destination_mark",
+          effects: {
+            setFlags: {
+              brine_lark_destination_hint_reviewed: true,
+            },
+            setVars: {
+              current_goal: "identify_brine_lark_destination_hint",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_partial_destination_mark",
+      text: "Mira turns the torn scrap toward the light and narrows her eyes at a water-blurred notation near the repeated tag suffix. Most of it is gone, but not all: the final strokes read like a dockside routing mark, something between a place-name and a handling note. \"Not an address,\" she says, \"but a receiving zone. Outer posts, east side... or whatever their people call that strip now. It is only a fragment, but it tells us this chain does not end at the warehouse clerk. After the paper point, the tag keeps moving toward the outer mooring line.\"",
+      choices: [
+        {
+          id: "check_whether_outer_mooring_line_is_a_real_node",
+          text: "Check whether the outer mooring line is a real receiving point",
+          nextNodeId: "node_brine_lark_outer_mooring_line_confirmed",
+          effects: {
+            setFlags: {
+              brine_lark_outer_mooring_line_checked: true,
+            },
+            setVars: {
+              current_goal: "verify_outer_mooring_line_node",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_outer_mooring_line_confirmed",
+      text: "At the east-side outer posts, the harbor feels thinner and less watched than the warehouse lanes. Most of the mooring rings are bare, but one bollard carries a tar-stiff loop of tag cord marked with the same tide-sign you found in the chalk and on the torn ledger edge. Nearby, a shallow crate scrape cuts across the planks toward the waterline, too narrow for normal unloading but exactly the sort of short transfer mark a hidden receiving zone would leave behind. It is not much, but it is enough. The outer mooring line is not a blurred rumor from damaged paper. It is a real node in Brine Lark's route.",
+      choices: [
+        {
+          id: "study_how_the_outer_posts_are_being_used",
+          text: "Study how the outer posts are being used",
+          nextNodeId: "node_brine_lark_outer_mooring_line_role",
+          effects: {
+            setFlags: {
+              brine_lark_outer_mooring_line_observed: true,
+            },
+            setVars: {
+              current_goal: "determine_outer_mooring_line_role",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_outer_mooring_line_role",
+      text: "You stay long enough to watch the rhythm of the place instead of the objects alone. Nothing here settles like a destination. No stack remains in place, no crew lingers to sort, and no ledger runner comes to reconcile a lasting load. What you do see is shorter than that: brief waits, quiet hand shifts, and signs that marked cargo pauses here only long enough to be matched, re-tagged, or turned outward again. Mira watches the waterline a moment longer before speaking. \"Not an endpoint,\" she says. \"And not just a dead drop either. This is a buffer seam. Things arrive here to lose one identity and leave with another. If Brine Lark's line reaches this far, the outer mooring line is where the route sheds its harbor skin before the next transfer.\"",
+      choices: [
+        {
+          id: "ask_what_the_outer_mooring_line_reveals_next",
+          text: "Ask what the outer mooring line reveals next",
+          nextNodeId: "node_brine_lark_outer_mooring_transfer_window",
+          effects: {
+            setFlags: {
+              brine_lark_outer_mooring_line_interpreted: true,
+            },
+            setVars: {
+              current_goal: "identify_outer_mooring_transfer_window",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_outer_mooring_transfer_window",
+      text: "Mira studies the tide pull around the outer posts, then points to the scrape marks and the bare bollards in turn. \"There. That is the next object, not a person. See how nothing stays tied long enough to weather a full turn, but the marks all cluster around the same narrow lull between harbor drift and outbound pull?\" She lets the thought settle before continuing. \"This place does not name the next carrier. It names the next window. If Brine Lark's route sheds one identity here, it does it on the slack-water turn just after dusk, when the outer line can hand something off without looking like a departure or an arrival. That transfer window is the first stable thing this node gives us.\"",
+      choices: [
+        {
+          id: "keep_watch_on_the_outer_line_at_slack_water",
+          text: "Keep watch on the outer line at the slack-water turn",
+          nextNodeId: "node_brine_lark_outer_mooring_transfer_activity",
+          effects: {
+            setFlags: {
+              brine_lark_outer_mooring_window_watched: true,
+            },
+            setVars: {
+              current_goal: "confirm_outer_mooring_transfer_activity",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_outer_mooring_transfer_activity",
+      text: "You return just after dusk and hold through the slack-water turn without moving too close to the posts. The harbor quiets for a few breaths, and in that lull the pattern finally shows itself: not a single dramatic exchange, but the same compact motion repeated twice over the turn. A marked bundle arrives under one set of hands, pauses only long enough for a short check and a cord change, then leaves the line under another set before the tide fully takes hold again. That is enough to settle it. The window is real, and the transfer behavior is repeatable.",
+      choices: [
+        {
+          id: "ask_mira_what_kind_of_transfer_this_really_is",
+          text: "Ask Mira what kind of transfer this really is",
+          nextNodeId: "node_brine_lark_identity_swap_pattern",
+          effects: {
+            setFlags: {
+              brine_lark_transfer_pattern_reviewed: true,
+            },
+            setVars: {
+              current_goal: "identify_outer_mooring_transfer_pattern",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_identity_swap_pattern",
+      text: "Mira answers almost at once. \"Not a cargo handoff in the ordinary sense. Look at what changes and what does not. The bundle barely moves, the pause is too short for sorting, and the only deliberate act in the middle is the cord change. That means the route is not moving weight here. It is moving identity.\" She gestures toward the posts. \"Brine Lark's people are using the outer line to strip one marker set and fasten another before the bundle continues. It is a tag-and-cord swap, not a true unload. The object leaving this seam is materially the same, but administratively it becomes something else.\"",
+      choices: [
+        {
+          id: "ask_what_identity_the_bundle_leaves_with",
+          text: "Ask what identity the bundle leaves with",
+          nextNodeId: "node_brine_lark_outer_marker_set",
+          effects: {
+            setFlags: {
+              brine_lark_identity_swap_interpreted: true,
+            },
+            setVars: {
+              current_goal: "identify_outer_marker_set",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_outer_marker_set",
+      text: "Mira watches the cord in your memory rather than the bundle itself. \"That is the next object, then. Not the carrier. Not the cargo. The marker set.\" She explains that the outer line is not replacing one random tag with another, but shifting the bundle into a leaner external code: dark tar cord, a clipped twin-knot near the seal, and a short shell-white thread worked through the wrap where a harbor tally would normally sit. \"That combination is not for warehouse hands,\" she says. \"It is meant for people beyond the inner docks who need to recognize passage without reading a ledger. If we want the next layer after Brine Lark's swap, this outer marker set is the first stable identity the route gives us.\"",
       choices: [],
     },
   ],
