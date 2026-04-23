@@ -3,20 +3,19 @@
  */
 
 import {
-  matchesBooleanRecord,
-  matchesQuestStepRecord,
-  matchesQuestStatusRecord,
-  matchesScalarCondition,
-  matchesScalarRecord,
-} from "../conditions/shared";
-import { getTimeOfDay } from "../time";
+  evaluateStateConditions,
+  matchesStateConditions,
+  type StateConditionMatchResult,
+  type StateConditionMismatchReason,
+  type StateConditions,
+} from "../conditions/state";
 import type { GameState, NPCInteractionConditions } from "../types";
 import type { ComparableValue, ScalarConditionValue } from "../types/conditions";
 
 export interface NpcInteractionMismatchReason {
-  code: "flag" | "quest" | "questStep" | "var" | "timeOfDay";
+  code: "flag" | "quest" | "questStep" | "var" | "timeOfDay" | "group";
   key?: string;
-  expected?: ScalarConditionValue;
+  expected?: ScalarConditionValue | string;
   actual?: ComparableValue | "missing";
   message: string;
 }
@@ -26,93 +25,50 @@ export interface NpcInteractionMatchResult {
   reasons: NpcInteractionMismatchReason[];
 }
 
+function toStateConditions(conditions: NPCInteractionConditions): StateConditions {
+  return {
+    flags: conditions.requiredFlags,
+    quests: conditions.requiredQuests,
+    questSteps: conditions.requiredQuestSteps,
+    vars: conditions.requiredVars,
+    timeOfDay: conditions.requiredTimeOfDay,
+    all: conditions.all?.map(toStateConditions),
+    any: conditions.any?.map(toStateConditions),
+    not: conditions.not ? toStateConditions(conditions.not) : undefined,
+  };
+}
+
+function toNpcInteractionMismatchReason(
+  reason: StateConditionMismatchReason,
+): NpcInteractionMismatchReason {
+  return {
+    code: reason.code as NpcInteractionMismatchReason["code"],
+    key: reason.key,
+    expected: reason.expected as ScalarConditionValue | string | undefined,
+    actual: reason.actual as ComparableValue | "missing" | undefined,
+    message: reason.message,
+  };
+}
+
+function toNpcInteractionMatchResult(
+  result: StateConditionMatchResult,
+): NpcInteractionMatchResult {
+  return {
+    matched: result.matched,
+    reasons: result.reasons.map(toNpcInteractionMismatchReason),
+  };
+}
+
 export function evaluateNpcInteractionConditions(
   state: GameState,
   conditions: NPCInteractionConditions,
 ): NpcInteractionMatchResult {
-  const reasons: NpcInteractionMismatchReason[] = [];
-
-  if (!matchesBooleanRecord(state.flags, conditions.requiredFlags, { missingBooleanValue: false })) {
-    for (const [flagId, expected] of Object.entries(conditions.requiredFlags ?? {})) {
-      const actual = state.flags[flagId] ?? false;
-      if (actual !== expected) {
-        reasons.push({
-          code: "flag",
-          key: flagId,
-          expected,
-          actual,
-          message: `flag.${flagId}: expected ${expected}, got ${actual}`,
-        });
-      }
-    }
-  }
-
-  if (!matchesQuestStatusRecord(state.quests, conditions.requiredQuests)) {
-    for (const [questId, expected] of Object.entries(conditions.requiredQuests ?? {})) {
-      const actual = state.quests[questId]?.status;
-      if (actual !== expected) {
-        reasons.push({
-          code: "quest",
-          key: questId,
-          expected,
-          actual: actual ?? "missing",
-          message: `quest.${questId}: expected ${expected}, got ${actual ?? "missing"}`,
-        });
-      }
-    }
-  }
-
-  if (!matchesQuestStepRecord(state.quests, conditions.requiredQuestSteps)) {
-    for (const [questId, expected] of Object.entries(conditions.requiredQuestSteps ?? {})) {
-      const actual = state.quests[questId]?.currentStepId;
-      if (actual !== expected) {
-        reasons.push({
-          code: "questStep",
-          key: questId,
-          expected,
-          actual: actual ?? "missing",
-          message: `questStep.${questId}: expected ${expected}, got ${actual ?? "missing"}`,
-        });
-      }
-    }
-  }
-
-  if (!matchesScalarRecord(state.vars, conditions.requiredVars)) {
-    for (const [varId, expected] of Object.entries(conditions.requiredVars ?? {})) {
-      const actual = state.vars[varId] as ComparableValue | undefined;
-      if (!matchesScalarCondition(actual, expected)) {
-        reasons.push({
-          code: "var",
-          key: varId,
-          expected,
-          actual: actual ?? "missing",
-          message: `var.${varId}: expected ${JSON.stringify(expected)}, got ${String(actual)}`,
-        });
-      }
-    }
-  }
-
-  if (conditions.requiredTimeOfDay) {
-    const actualTimeOfDay = getTimeOfDay(state.time);
-    if (actualTimeOfDay !== conditions.requiredTimeOfDay) {
-      reasons.push({
-        code: "timeOfDay",
-        expected: conditions.requiredTimeOfDay,
-        actual: actualTimeOfDay,
-        message: `timeOfDay: expected ${conditions.requiredTimeOfDay}, got ${actualTimeOfDay}`,
-      });
-    }
-  }
-
-  return {
-    matched: reasons.length === 0,
-    reasons,
-  };
+  return toNpcInteractionMatchResult(evaluateStateConditions(state, toStateConditions(conditions)));
 }
 
 export function matchesNpcInteractionRule(
   state: GameState,
   conditions: NPCInteractionConditions,
 ): boolean {
-  return evaluateNpcInteractionConditions(state, conditions).matched;
+  return matchesStateConditions(state, toStateConditions(conditions));
 }

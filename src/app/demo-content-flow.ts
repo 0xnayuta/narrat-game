@@ -78,7 +78,8 @@ export function runDemoContentFlow(): DemoFlowStepResult[] {
 
   selectedChoiceId = null;
   if (step2.scene?.choices[0]) {
-    selectedChoiceId = step2.scene.choices[0].id;
+    const preferredChoice = step2.scene.choices.find((choice) => choice.id === "finish_walk");
+    selectedChoiceId = preferredChoice?.id ?? step2.scene.choices[0].id;
     const choiceResult = narrativeRuntime.choose(selectedChoiceId);
     state = applyNarrativeChoiceEffects(state, choiceResult.effects, demoQuests);
   }

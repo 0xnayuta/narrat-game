@@ -13,8 +13,21 @@ export interface EventTimeRange {
   endHour: number;
 }
 
+export interface EventHistoryConditions {
+  /** Match whether a specific event id has ever been recorded as triggered. */
+  onceTriggered?: Record<string, boolean>;
+  /** Match whether an event id was last triggered within the provided minute window. */
+  lastTriggeredWithinMinutes?: Record<string, number>;
+}
+
 /**
- * Minimal event conditions (location, time range, flags, vars, quests).
+ * Minimal recursive condition set shared by events and narrative choice visibility.
+ *
+ * Top-level fields are combined with AND semantics.
+ * Nested groups provide explicit composition:
+ * - `all`: every nested block must match
+ * - `any`: at least one nested block must match
+ * - `not`: nested block must not match
  */
 export interface EventConditions {
   locationIds?: string[];
@@ -24,8 +37,14 @@ export interface EventConditions {
   quests?: Record<string, "inactive" | "active" | "completed" | "failed">;
   /** Match quests by current step id (requires quest to exist and have matching currentStepId). */
   questSteps?: Record<string, string>;
+  /** Match against logical eventHistory through the adapter layer. */
+  eventHistory?: EventHistoryConditions;
+  /** Every nested condition block must match (AND semantics). */
+  all?: EventConditions[];
   /** At least one nested condition block must match (OR semantics). */
   any?: EventConditions[];
+  /** Nested condition block must not match (NOT semantics). */
+  not?: EventConditions;
   // TODO: Add richer predicate operators when condition DSL is introduced.
 }
 

@@ -31,6 +31,25 @@ const npcs = [
         requiredVars: { current_goal: "market_visited" },
         requiredTimeOfDay: "morning",
       },
+      {
+        id: "conditional-group",
+        label: "Special ask",
+        nodeId: "special",
+        requiredQuests: { quest_intro_walk: "completed" },
+        all: [
+          {
+            any: [
+              { requiredFlags: { vendor_met: true } },
+              { requiredVars: { reputation: { ">=": 3 } } },
+            ],
+          },
+          {
+            not: {
+              requiredTimeOfDay: "night",
+            },
+          },
+        ],
+      },
     ],
   },
 ];
@@ -168,4 +187,10 @@ test("NpcService should provide debug reasons for blocked interaction rules", ()
       },
     ],
   );
+
+  const groupRule = debugInfo[0].rules.find((rule) => rule.ruleId === "conditional-group");
+  assert.ok(groupRule);
+  assert.equal(groupRule.matched, false);
+  assert.deepEqual(groupRule.reasons.map((reason) => reason.code), ["group"]);
+  assert.equal(groupRule.reasons[0].expected, "any");
 });

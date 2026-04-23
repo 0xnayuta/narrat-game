@@ -29,6 +29,7 @@ function buildBranchState(overrides = {}) {
     },
     quests: {
       quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "inactive", currentStepId: undefined },
       ...(overrides.quests ?? {}),
     },
     inventory: {},
@@ -86,6 +87,39 @@ test("demo branch should show an explicit low-gold compass fallback when gold < 
   assert.equal(choiceResult.node.id, "node_compass_too_expensive");
   assert.equal(nextState.flags.compass_examined, true);
   assert.equal(nextState.vars.current_goal, "ask_about_compass");
+});
+
+test("demo market morning should show retrace choice only when arrival event is recent in eventHistory", () => {
+  const runtime = new NarrativeRuntime(demoNarrativeGraph);
+  runtime.jumpTo("node_market_morning");
+
+  const visibleWithRecentHistory = filterVisibleChoices(
+    runtime.getCurrentChoices(),
+    buildBranchState({
+      eventHistory: {
+        onceTriggeredByEventId: { evt_market_morning: true },
+        cooldownLastTriggeredMinuteByEventId: { evt_market_morning: 520 },
+      },
+    }),
+  );
+  assert.deepEqual(
+    visibleWithRecentHistory.map((choice) => choice.id),
+    ["retrace_market_arrival", "inspect_oddities_stall", "finish_walk"],
+  );
+
+  const visibleWithExpiredHistory = filterVisibleChoices(
+    runtime.getCurrentChoices(),
+    buildBranchState({
+      eventHistory: {
+        onceTriggeredByEventId: { evt_market_morning: true },
+        cooldownLastTriggeredMinuteByEventId: { evt_market_morning: 500 },
+      },
+    }),
+  );
+  assert.deepEqual(
+    visibleWithExpiredHistory.map((choice) => choice.id),
+    ["inspect_oddities_stall", "finish_walk"],
+  );
 });
 
 test("demo vendor intro should show stall question only when current_goal matches in-predicate", () => {
@@ -187,4 +221,6 @@ test("demo vendor stall tip should show compass follow-up only when compass_owne
   assert.equal(choiceResult.node.id, "node_vendor_compass_reaction");
   assert.equal(nextState.flags.compass_vendor_reacted, true);
   assert.equal(nextState.vars.current_goal, "investigate_compass");
+  assert.equal(nextState.quests.quest_black_sail_trail.status, "active");
+  assert.equal(nextState.quests.quest_black_sail_trail.currentStepId, "step_find_mira");
 });

@@ -2,4 +2,9 @@
  * Responsibility: Public quest progression exports.
  */
 
-export { createQuestStateFromDefinitions } from "./QuestService";
+export {
+  createQuestStateFromDefinitions,
+  getFirstQuestStepId,
+  resetQuestStep,
+  setQuestStep,
+} from "./QuestService";

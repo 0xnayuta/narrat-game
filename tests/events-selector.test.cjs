@@ -722,3 +722,255 @@ test("event selector should support any groups in conditions", () => {
   const mismatched = selectEvent(anyEvents, mismatchedState, "on-location-enter", () => 0.0);
   assert.equal(mismatched?.id, "any-fallback");
 });
+
+test("event selector should support all groups in conditions", () => {
+  const allEvents = [
+    {
+      id: "all-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        all: [
+          { flags: { intro_done: true } },
+          { vars: { reputation: { ">=": 3 } } },
+        ],
+      },
+    },
+    {
+      id: "all-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const matchingState = {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      reputation: 3,
+    },
+  };
+
+  const selected = selectEvent(allEvents, matchingState, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "all-match");
+
+  const mismatched = selectEvent(
+    allEvents,
+    {
+      ...matchingState,
+      vars: {
+        ...matchingState.vars,
+        reputation: 2,
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+  assert.equal(mismatched?.id, "all-fallback");
+});
+
+test("event selector should support not groups in conditions", () => {
+  const notEvents = [
+    {
+      id: "not-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        not: {
+          flags: { banned: true },
+        },
+      },
+    },
+    {
+      id: "not-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const selected = selectEvent(notEvents, baseState, "on-location-enter", () => 0.0);
+  assert.equal(selected?.id, "not-match");
+
+  const mismatched = selectEvent(
+    notEvents,
+    {
+      ...baseState,
+      flags: {
+        ...baseState.flags,
+        banned: true,
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+  assert.equal(mismatched?.id, "not-fallback");
+});
+
+test("event selector should support nested all/any/not composition", () => {
+  const nestedEvents = [
+    {
+      id: "nested-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        all: [
+          {
+            any: [
+              { vars: { reputation: { ">=": 5 } } },
+              { flags: { vip: true } },
+            ],
+          },
+          {
+            not: {
+              vars: { heat: { ">=": 3 } },
+            },
+          },
+        ],
+      },
+    },
+    {
+      id: "nested-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const selected = selectEvent(
+    nestedEvents,
+    {
+      ...baseState,
+      vars: {
+        ...baseState.vars,
+        reputation: 5,
+        heat: 1,
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+  assert.equal(selected?.id, "nested-match");
+
+  const mismatched = selectEvent(
+    nestedEvents,
+    {
+      ...baseState,
+      vars: {
+        ...baseState.vars,
+        reputation: 5,
+        heat: 3,
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+  assert.equal(mismatched?.id, "nested-fallback");
+});
+
+test("event selector should support eventHistory.onceTriggered conditions", () => {
+  const historyEvents = [
+    {
+      id: "history-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        eventHistory: {
+          onceTriggered: {
+            evt_intro_seen: true,
+          },
+        },
+      },
+    },
+    {
+      id: "history-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const selected = selectEvent(
+    historyEvents,
+    {
+      ...baseState,
+      eventHistory: {
+        onceTriggeredByEventId: { evt_intro_seen: true },
+        cooldownLastTriggeredMinuteByEventId: {},
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+  assert.equal(selected?.id, "history-match");
+
+  const mismatched = selectEvent(historyEvents, baseState, "on-location-enter", () => 0.0);
+  assert.equal(mismatched?.id, "history-fallback");
+});
+
+test("event selector should support eventHistory.lastTriggeredWithinMinutes conditions", () => {
+  const historyWindowEvents = [
+    {
+      id: "history-window-match",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 10,
+      conditions: {
+        locationIds: ["street"],
+        eventHistory: {
+          lastTriggeredWithinMinutes: {
+            evt_recent: 30,
+          },
+        },
+      },
+    },
+    {
+      id: "history-window-fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const selected = selectEvent(
+    historyWindowEvents,
+    {
+      ...baseState,
+      vars: {
+        ...baseState.vars,
+        "event.cooldown.evt_recent.lastTriggeredMinute": 520,
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+  assert.equal(selected?.id, "history-window-match");
+
+  const mismatched = selectEvent(
+    historyWindowEvents,
+    {
+      ...baseState,
+      vars: {
+        ...baseState.vars,
+        "event.cooldown.evt_recent.lastTriggeredMinute": 500,
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+  assert.equal(mismatched?.id, "history-window-fallback");
+});

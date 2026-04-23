@@ -11,6 +11,12 @@ export interface NarrativeChoiceEffects {
       currentStepId?: string;
     }
   >;
+  /** Quest IDs to start. Sets status to active and moves to the first configured step when available. */
+  startQuest?: string[];
+  /** Quest IDs to reset to their first configured step while keeping current status unchanged. */
+  resetQuestStep?: string[];
+  /** Set quest current step directly when the target step exists in the quest definition. */
+  setQuestStep?: Record<string, string>;
   /** Quest IDs to advance to the next step (based on stepIds order in QuestDefinition). */
   advanceQuestStep?: string[];
   /** Quest IDs to mark as completed. */

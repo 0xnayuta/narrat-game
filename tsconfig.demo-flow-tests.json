@@ -10,6 +10,7 @@
     "noEmit": false,
     "outDir": ".tmp-demo-tests",
     "module": "commonjs",
+    "moduleResolution": "node",
     "target": "es2019",
     "declaration": false,
     "sourceMap": false

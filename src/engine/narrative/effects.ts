@@ -3,11 +3,17 @@
  * Effects are applied in a deterministic order:
  *   1. setFlags / setVars / setQuests — direct state writes
  *   2. addVars / addStats — numeric deltas (run after setVars so base values are set first)
- *   3. advanceQuestStep — step progression (runs after setQuests so status changes are visible)
+ *   3. startQuest / resetQuestStep / setQuestStep / advanceQuestStep — quest progression actions
  *   4. completeQuest / failQuest — status overrides (run last so they take final precedence)
  */
 
-import { advanceQuestStep, buildQuestStepIndex } from "../quests/QuestService";
+import {
+  advanceQuestStep,
+  buildQuestStepIndex,
+  getFirstQuestStepId,
+  resetQuestStep,
+  setQuestStep,
+} from "../quests/QuestService";
 import type { QuestDefinition } from "../types";
 import type { GameState, NarrativeChoiceEffects } from "../types";
 
@@ -82,27 +88,80 @@ export function applyNarrativeChoiceEffects(
     };
   }
 
-  // Phase 3: advance quest steps
-  if (effects.advanceQuestStep && effects.advanceQuestStep.length > 0) {
+  // Phase 3: quest progression actions
+  const hasQuestProgressionEffects = Boolean(
+    (effects.startQuest && effects.startQuest.length > 0) ||
+      (effects.resetQuestStep && effects.resetQuestStep.length > 0) ||
+      (effects.setQuestStep && Object.keys(effects.setQuestStep).length > 0) ||
+      (effects.advanceQuestStep && effects.advanceQuestStep.length > 0),
+  );
+
+  if (hasQuestProgressionEffects) {
     if (!questDefinitions || questDefinitions.length === 0) {
       throw new Error(
-        "advanceQuestStep effect requires questDefinitions to resolve step order",
+        "quest progression effects require questDefinitions to resolve quest step order",
       );
     }
 
     const stepIndex = buildQuestStepIndex(questDefinitions);
-    for (const questId of effects.advanceQuestStep) {
-      const result = advanceQuestStep(questId, nextQuests, stepIndex);
-      if (result) {
+
+    if (effects.startQuest && effects.startQuest.length > 0) {
+      for (const questId of effects.startQuest) {
+        const current = nextQuests[questId];
+        if (!current) {
+          continue;
+        }
+
         nextQuests = {
           ...nextQuests,
           [questId]: {
-            status: result.status,
-            currentStepId: result.currentStepId,
+            ...current,
+            status: "active",
+            currentStepId: getFirstQuestStepId(questId, stepIndex),
           },
         };
       }
     }
+
+    if (effects.resetQuestStep && effects.resetQuestStep.length > 0) {
+      for (const questId of effects.resetQuestStep) {
+        const result = resetQuestStep(questId, nextQuests, stepIndex);
+        if (result) {
+          nextQuests = {
+            ...nextQuests,
+            [questId]: result,
+          };
+        }
+      }
+    }
+
+    if (effects.setQuestStep && Object.keys(effects.setQuestStep).length > 0) {
+      for (const [questId, stepId] of Object.entries(effects.setQuestStep)) {
+        const result = setQuestStep(questId, stepId, nextQuests, stepIndex);
+        if (result) {
+          nextQuests = {
+            ...nextQuests,
+            [questId]: result,
+          };
+        }
+      }
+    }
+
+    if (effects.advanceQuestStep && effects.advanceQuestStep.length > 0) {
+      for (const questId of effects.advanceQuestStep) {
+        const result = advanceQuestStep(questId, nextQuests, stepIndex);
+        if (result) {
+          nextQuests = {
+            ...nextQuests,
+            [questId]: {
+              status: result.status,
+              currentStepId: result.currentStepId,
+            },
+          };
+        }
+      }
+    }
+
     nextState.quests = nextQuests;
   }
 

@@ -251,6 +251,150 @@ test("filterVisibleChoices should support any groups in conditions", () => {
   assert.equal(mismatching.length, 0);
 });
 
+test("filterVisibleChoices should support all groups in conditions", () => {
+  const choices = [
+    {
+      id: "all_choice",
+      text: "All choice",
+      nextNodeId: "node_a",
+      conditions: {
+        all: [
+          { flags: { vendor_met: false } },
+          { vars: { reputation: { ">=": 3 } } },
+        ],
+      },
+    },
+  ];
+
+  const matching = filterVisibleChoices(choices, {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      reputation: 3,
+    },
+  });
+  assert.equal(matching.length, 1);
+
+  const mismatching = filterVisibleChoices(choices, {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      reputation: 1,
+    },
+  });
+  assert.equal(mismatching.length, 0);
+});
+
+test("filterVisibleChoices should support not groups in conditions", () => {
+  const choices = [
+    {
+      id: "not_group_choice",
+      text: "Not group choice",
+      nextNodeId: "node_a",
+      conditions: {
+        not: {
+          flags: { vendor_met: true },
+        },
+      },
+    },
+  ];
+
+  const matching = filterVisibleChoices(choices, baseState);
+  assert.equal(matching.length, 1);
+
+  const mismatching = filterVisibleChoices(choices, {
+    ...baseState,
+    flags: {
+      ...baseState.flags,
+      vendor_met: true,
+    },
+  });
+  assert.equal(mismatching.length, 0);
+});
+
+test("filterVisibleChoices should support nested all/any/not composition", () => {
+  const choices = [
+    {
+      id: "nested_choice",
+      text: "Nested choice",
+      nextNodeId: "node_a",
+      conditions: {
+        all: [
+          {
+            any: [
+              { vars: { reputation: { ">=": 5 } } },
+              { flags: { trusted: true } },
+            ],
+          },
+          {
+            not: {
+              vars: { suspicion: { ">=": 2 } },
+            },
+          },
+        ],
+      },
+    },
+  ];
+
+  const matching = filterVisibleChoices(choices, {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      reputation: 5,
+      suspicion: 1,
+    },
+  });
+  assert.equal(matching.length, 1);
+
+  const mismatching = filterVisibleChoices(choices, {
+    ...baseState,
+    vars: {
+      ...baseState.vars,
+      reputation: 5,
+      suspicion: 2,
+    },
+  });
+  assert.equal(mismatching.length, 0);
+});
+
+test("filterVisibleChoices should support eventHistory conditions", () => {
+  const choices = [
+    {
+      id: "history_choice",
+      text: "History choice",
+      nextNodeId: "node_a",
+      conditions: {
+        eventHistory: {
+          onceTriggered: {
+            evt_hidden_path_seen: true,
+          },
+          lastTriggeredWithinMinutes: {
+            evt_recent_signal: 30,
+          },
+        },
+      },
+    },
+  ];
+
+  const matching = filterVisibleChoices(choices, {
+    ...baseState,
+    eventHistory: {
+      onceTriggeredByEventId: { evt_hidden_path_seen: true },
+      cooldownLastTriggeredMinuteByEventId: { evt_recent_signal: 520 },
+    },
+  });
+  assert.equal(matching.length, 1);
+
+  const mismatching = filterVisibleChoices(choices, {
+    ...baseState,
+    eventHistory: {
+      onceTriggeredByEventId: { evt_hidden_path_seen: true },
+      cooldownLastTriggeredMinuteByEventId: { evt_recent_signal: 500 },
+    },
+  });
+  assert.equal(mismatching.length, 0);
+});
+
 test("getVisibleChoiceViewModels should return id+text pairs for visible choices", () => {
   const choices = [
     { id: "a", text: "Option A", nextNodeId: "node_a" },

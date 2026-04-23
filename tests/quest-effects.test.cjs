@@ -5,6 +5,9 @@ const {
   createQuestStateFromDefinitions,
   advanceQuestStep,
   buildQuestStepIndex,
+  getFirstQuestStepId,
+  resetQuestStep,
+  setQuestStep,
 } = require("../.tmp-demo-tests/engine/quests/QuestService.js");
 const {
   applyNarrativeChoiceEffects,
@@ -66,6 +69,33 @@ test("advanceQuestStep should handle unknown currentStepId by starting from step
   assert.equal(result?.currentStepId, "step_a");
 });
 
+test("getFirstQuestStepId should return first step when available", () => {
+  assert.equal(getFirstQuestStepId("q1", stepIndex), "step_a");
+  assert.equal(getFirstQuestStepId("q_empty", stepIndex), undefined);
+  assert.equal(getFirstQuestStepId("unknown", stepIndex), undefined);
+});
+
+test("setQuestStep should set a valid quest step and preserve status", () => {
+  const quests = { q1: { status: "active", currentStepId: "step_a" } };
+  const result = setQuestStep("q1", "step_c", quests, stepIndex);
+  assert.equal(result?.status, "active");
+  assert.equal(result?.currentStepId, "step_c");
+});
+
+test("setQuestStep should return null for invalid target step or missing quest", () => {
+  const quests = { q1: { status: "active", currentStepId: "step_a" } };
+  assert.equal(setQuestStep("q1", "step_missing", quests, stepIndex), null);
+  assert.equal(setQuestStep("unknown", "step_a", quests, stepIndex), null);
+});
+
+test("resetQuestStep should return first step and preserve status", () => {
+  const quests = { q1: { status: "failed", currentStepId: "step_c" } };
+  const result = resetQuestStep("q1", quests, stepIndex);
+  assert.equal(result?.status, "failed");
+  assert.equal(result?.currentStepId, "step_a");
+});
+
+
 test("applyNarrativeChoiceEffects should advance quest step", () => {
   const state = {
     ...baseState,
@@ -78,6 +108,39 @@ test("applyNarrativeChoiceEffects should advance quest step", () => {
 
   assert.equal(result.quests.q1.currentStepId, "step_b");
   assert.equal(result.quests.q1.status, "active");
+});
+
+test("applyNarrativeChoiceEffects should start a quest at its first step", () => {
+  const state = {
+    ...baseState,
+    quests: { q1: { status: "inactive", currentStepId: "step_c" } },
+  };
+
+  const result = applyNarrativeChoiceEffects(state, {
+    startQuest: ["q1"],
+  }, questDefs);
+
+  assert.equal(result.quests.q1.status, "active");
+  assert.equal(result.quests.q1.currentStepId, "step_a");
+});
+
+test("applyNarrativeChoiceEffects should reset and set quest step", () => {
+  const state = {
+    ...baseState,
+    quests: { q1: { status: "active", currentStepId: "step_c" } },
+  };
+
+  const resetResult = applyNarrativeChoiceEffects(state, {
+    resetQuestStep: ["q1"],
+  }, questDefs);
+  assert.equal(resetResult.quests.q1.status, "active");
+  assert.equal(resetResult.quests.q1.currentStepId, "step_a");
+
+  const setResult = applyNarrativeChoiceEffects(state, {
+    setQuestStep: { q1: "step_b" },
+  }, questDefs);
+  assert.equal(setResult.quests.q1.status, "active");
+  assert.equal(setResult.quests.q1.currentStepId, "step_b");
 });
 
 test("applyNarrativeChoiceEffects should complete a quest", () => {
@@ -133,7 +196,7 @@ test("applyNarrativeChoiceEffects should combine setQuests + advanceQuestStep + 
   assert.equal(result.quests.q2.status, "completed");
 });
 
-test("applyNarrativeChoiceEffects should throw when advanceQuestStep used without questDefinitions", () => {
+test("applyNarrativeChoiceEffects should throw when quest progression effects are used without questDefinitions", () => {
   const state = {
     ...baseState,
     quests: { q1: { status: "active", currentStepId: "step_a" } },
@@ -141,7 +204,17 @@ test("applyNarrativeChoiceEffects should throw when advanceQuestStep used withou
 
   assert.throws(
     () => applyNarrativeChoiceEffects(state, { advanceQuestStep: ["q1"] }),
-    /advanceQuestStep effect requires questDefinitions/,
+    /quest progression effects require questDefinitions/,
+  );
+
+  assert.throws(
+    () => applyNarrativeChoiceEffects(state, { startQuest: ["q1"] }),
+    /quest progression effects require questDefinitions/,
+  );
+
+  assert.throws(
+    () => applyNarrativeChoiceEffects(state, { setQuestStep: { q1: "step_b" } }),
+    /quest progression effects require questDefinitions/,
   );
 });
 
@@ -163,18 +236,19 @@ test("applyNarrativeChoiceEffects should handle multiple quest advancements", ()
   assert.equal(result.quests.q2.currentStepId, "step_x");
 });
 
-test("applyNarrativeChoiceEffects completeQuest should take precedence over advanceQuestStep for same quest", () => {
+test("applyNarrativeChoiceEffects completeQuest should take precedence over quest progression actions for same quest", () => {
   const state = {
     ...baseState,
-    quests: { q1: { status: "active", currentStepId: "step_a" } },
+    quests: { q1: { status: "inactive", currentStepId: "step_c" } },
   };
 
   const result = applyNarrativeChoiceEffects(state, {
+    startQuest: ["q1"],
+    setQuestStep: { q1: "step_b" },
     advanceQuestStep: ["q1"],
     completeQuest: ["q1"],
   }, questDefs);
 
-  // advanceQuestStep moves to step_b, then completeQuest sets status=completed
   assert.equal(result.quests.q1.status, "completed");
-  assert.equal(result.quests.q1.currentStepId, "step_b");
+  assert.equal(result.quests.q1.currentStepId, "step_c");
 });

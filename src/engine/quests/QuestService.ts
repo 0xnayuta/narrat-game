@@ -29,6 +29,61 @@ export function buildQuestStepIndex(
   return new Map(definitions.map((q) => [q.id, q.stepIds]));
 }
 
+export function getFirstQuestStepId(
+  questId: string,
+  stepIndex: Map<string, string[]>,
+): string | undefined {
+  const stepIds = stepIndex.get(questId);
+  if (!stepIds || stepIds.length === 0) {
+    return undefined;
+  }
+
+  return stepIds[0];
+}
+
+export function setQuestStep(
+  questId: string,
+  stepId: string,
+  quests: Record<string, QuestProgress>,
+  stepIndex: Map<string, string[]>,
+): QuestProgress | null {
+  const stepIds = stepIndex.get(questId);
+  if (!stepIds || stepIds.length === 0 || !stepIds.includes(stepId)) {
+    return null;
+  }
+
+  const current = quests[questId];
+  if (!current) {
+    return null;
+  }
+
+  return {
+    ...current,
+    currentStepId: stepId,
+  };
+}
+
+export function resetQuestStep(
+  questId: string,
+  quests: Record<string, QuestProgress>,
+  stepIndex: Map<string, string[]>,
+): QuestProgress | null {
+  const firstStepId = getFirstQuestStepId(questId, stepIndex);
+  if (!firstStepId) {
+    return null;
+  }
+
+  const current = quests[questId];
+  if (!current) {
+    return null;
+  }
+
+  return {
+    ...current,
+    currentStepId: firstStepId,
+  };
+}
+
 export interface QuestStepAdvanceResult {
   /** ID of the step after advancement, or unchanged if already at last step. */
   currentStepId: string;

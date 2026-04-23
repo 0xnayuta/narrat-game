@@ -5,6 +5,7 @@
 export {
   matchesAllEventConditions,
   matchesAnyConditionGroup,
+  matchesEventHistoryCondition,
   matchesFlagCondition,
   matchesLocationCondition,
   matchesQuestCondition,

@@ -27,11 +27,9 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "visit_market",
             },
-            setQuests: {
-              quest_intro_walk: {
-                status: "active",
-                currentStepId: "step_go_market",
-              },
+            startQuest: ["quest_intro_walk"],
+            setQuestStep: {
+              quest_intro_walk: "step_go_market",
             },
           },
         },
@@ -46,6 +44,21 @@ export const demoNarrativeGraph: NarrativeGraph = {
       id: "node_market_morning",
       text: "The market is open and calm.",
       choices: [
+        {
+          id: "retrace_market_arrival",
+          text: "Pause and retrace the first impression of the market",
+          nextNodeId: "node_market_arrival_impression",
+          conditions: {
+            eventHistory: {
+              onceTriggered: {
+                evt_market_morning: true,
+              },
+              lastTriggeredWithinMinutes: {
+                evt_market_morning: 30,
+              },
+            },
+          },
+        },
         {
           id: "inspect_oddities_stall",
           text: "Check the oddities stall in the corner",
@@ -63,6 +76,11 @@ export const demoNarrativeGraph: NarrativeGraph = {
           },
         },
       ],
+    },
+    {
+      id: "node_market_arrival_impression",
+      text: "You hold still for a moment and let the first impression settle properly: the open lanes, the unhurried voices, the sense that nothing here is pressing—at least not yet. Seen again that quickly, the market's calm feels less like emptiness and more like a surface waiting for you to notice what sits just outside the obvious flow.",
+      choices: [],
     },
     {
       id: "node_market_done",
@@ -289,12 +307,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "investigate_compass",
             },
-            setQuests: {
-              quest_black_sail_trail: {
-                status: "active",
-                currentStepId: "step_find_mira",
-              },
-            },
+            startQuest: ["quest_black_sail_trail"],
           },
         },
         {
@@ -322,12 +335,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "investigate_compass",
             },
-            setQuests: {
-              quest_black_sail_trail: {
-                status: "active",
-                currentStepId: "step_find_mira",
-              },
-            },
+            startQuest: ["quest_black_sail_trail"],
           },
         },
         {
@@ -346,12 +354,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "investigate_compass",
             },
-            setQuests: {
-              quest_black_sail_trail: {
-                status: "active",
-                currentStepId: "step_find_mira",
-              },
-            },
+            startQuest: ["quest_black_sail_trail"],
           },
         },
         {

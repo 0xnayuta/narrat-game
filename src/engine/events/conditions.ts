@@ -3,81 +3,107 @@
  * TODO: Add richer predicate operators when condition DSL is introduced.
  */
 
-import { matchesBooleanRecord, matchesQuestStepRecord, matchesQuestStatusRecord, matchesScalarRecord } from "../conditions/shared";
-import { isInTimeRange } from "../time";
-import type { EventConditions } from "../types/events";
+import { matchesStateConditions, type StateConditions } from "../conditions/state";
 import type { GameState } from "../types";
+import type { EventConditions } from "../types/events";
+
+function toStateConditions(conditions?: EventConditions): StateConditions | undefined {
+  return conditions as StateConditions | undefined;
+}
 
 export function matchesLocationCondition(
   state: GameState,
   conditions?: EventConditions,
 ): boolean {
-  if (!conditions?.locationIds || conditions.locationIds.length === 0) {
-    return true;
-  }
-  return conditions.locationIds.includes(state.currentLocationId);
+  return matchesStateConditions(state, {
+    locationIds: conditions?.locationIds,
+  });
 }
 
 export function matchesTimeCondition(
   state: GameState,
   conditions?: EventConditions,
 ): boolean {
-  if (!conditions?.timeRange) {
-    return true;
-  }
-  return isInTimeRange(state.time, conditions.timeRange);
+  return matchesStateConditions(state, {
+    timeRange: conditions?.timeRange,
+  });
 }
 
 export function matchesFlagCondition(
   state: GameState,
   conditions?: EventConditions,
 ): boolean {
-  return matchesBooleanRecord(state.flags, conditions?.flags, { missingBooleanValue: false });
+  return matchesStateConditions(state, {
+    flags: conditions?.flags,
+  });
 }
 
 export function matchesVarCondition(
   state: GameState,
   conditions?: EventConditions,
 ): boolean {
-  return matchesScalarRecord(state.vars, conditions?.vars);
+  return matchesStateConditions(state, {
+    vars: conditions?.vars,
+  });
 }
 
 export function matchesQuestCondition(
   state: GameState,
   conditions?: EventConditions,
 ): boolean {
-  return matchesQuestStatusRecord(state.quests, conditions?.quests);
+  return matchesStateConditions(state, {
+    quests: conditions?.quests,
+  });
 }
 
 export function matchesQuestStepCondition(
   state: GameState,
   conditions?: EventConditions,
 ): boolean {
-  return matchesQuestStepRecord(state.quests, conditions?.questSteps);
+  return matchesStateConditions(state, {
+    questSteps: conditions?.questSteps,
+  });
+}
+
+export function matchesEventHistoryCondition(
+  state: GameState,
+  conditions?: EventConditions,
+): boolean {
+  return matchesStateConditions(state, {
+    eventHistory: conditions?.eventHistory,
+  });
+}
+
+export function matchesAllConditionGroup(
+  state: GameState,
+  conditions?: EventConditions,
+): boolean {
+  return matchesStateConditions(state, {
+    all: conditions?.all?.map((group) => toStateConditions(group)!).filter(Boolean),
+  });
 }
 
 export function matchesAnyConditionGroup(
   state: GameState,
   conditions?: EventConditions,
 ): boolean {
-  if (!conditions?.any || conditions.any.length === 0) {
-    return true;
-  }
+  return matchesStateConditions(state, {
+    any: conditions?.any?.map((group) => toStateConditions(group)!).filter(Boolean),
+  });
+}
 
-  return conditions.any.some((group) => matchesAllEventConditions(state, group));
+export function matchesNotConditionGroup(
+  state: GameState,
+  conditions?: EventConditions,
+): boolean {
+  return matchesStateConditions(state, {
+    not: toStateConditions(conditions?.not),
+  });
 }
 
 export function matchesAllEventConditions(
   state: GameState,
   conditions?: EventConditions,
 ): boolean {
-  return (
-    matchesLocationCondition(state, conditions) &&
-    matchesTimeCondition(state, conditions) &&
-    matchesFlagCondition(state, conditions) &&
-    matchesVarCondition(state, conditions) &&
-    matchesQuestCondition(state, conditions) &&
-    matchesQuestStepCondition(state, conditions) &&
-    matchesAnyConditionGroup(state, conditions)
-  );
+  return matchesStateConditions(state, toStateConditions(conditions));
 }

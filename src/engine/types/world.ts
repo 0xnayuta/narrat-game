@@ -22,6 +22,12 @@ export interface LocationDefinition {
 
 /**
  * Reusable condition set for content that gates NPC interactions by runtime state.
+ *
+ * Top-level fields are combined with AND semantics.
+ * Nested groups provide explicit composition:
+ * - `all`: every nested block must match
+ * - `any`: at least one nested block must match
+ * - `not`: nested block must not match
  */
 export interface NPCInteractionConditions {
   requiredFlags?: Record<string, boolean>;
@@ -30,6 +36,12 @@ export interface NPCInteractionConditions {
   requiredQuestSteps?: Record<string, string>;
   requiredVars?: Record<string, ScalarConditionValue>;
   requiredTimeOfDay?: "morning" | "afternoon" | "evening" | "night";
+  /** Every nested condition block must match (AND semantics). */
+  all?: NPCInteractionConditions[];
+  /** At least one nested condition block must match (OR semantics). */
+  any?: NPCInteractionConditions[];
+  /** Nested condition block must not match (NOT semantics). */
+  not?: NPCInteractionConditions;
 }
 
 /**
