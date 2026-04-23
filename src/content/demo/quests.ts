@@ -35,4 +35,14 @@ export const demoQuests: QuestDefinition[] = [
       "step_close_the_net",
     ],
   },
+  {
+    id: "quest_drowned_lantern",
+    title: "Trace the Drowned Lantern",
+    status: "inactive",
+    stepIds: [
+      "step_search_customs_sheds",
+      "step_trace_dawn_exchange",
+      "step_identify_drowned_lantern_contact",
+    ],
+  },
 ];

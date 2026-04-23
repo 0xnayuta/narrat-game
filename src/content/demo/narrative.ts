@@ -754,6 +754,167 @@ export const demoNarrativeGraph: NarrativeGraph = {
     {
       id: "node_black_sail_sting_resolved",
       text: "By the time the shouting dies down, Mira's people have the berth locked tight and the skiff pinned against the pilings. Whatever else Black Sail may still be hiding, tonight the harbor watch finally forced the line into the open.",
+      choices: [
+        {
+          id: "ask_what_the_watch_caught",
+          text: "Ask Mira what the watch actually seized",
+          nextNodeId: "node_black_sail_aftermath_report",
+          effects: {
+            setFlags: {
+              black_sail_courier_captured: true,
+            },
+            setVars: {
+              current_goal: "review_black_sail_aftermath",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_black_sail_aftermath_report",
+      text: "Mira wipes soot from her sleeve and answers without looking up from the seized skiff. \"One courier, one coded ledger stub, and enough marked rope to tie this berth to the rest of the line. Black Sail is hurt, not broken—but now we know they bleed.\"",
+      choices: [
+        {
+          id: "ask_where_the_stub_points",
+          text: "Ask Mira what the ledger stub points to next",
+          nextNodeId: "node_black_sail_next_lead",
+          effects: {
+            setFlags: {
+              black_sail_next_lead_found: true,
+            },
+            setVars: {
+              current_goal: "trace_black_sail_next_lead",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_black_sail_next_lead",
+      text: "Mira turns the damp ledger stub toward the lantern light. \"This mark isn't for the berth—it's for a runner called the Drowned Lantern. If Black Sail still has a route open after tonight, that name is where the next trail starts.\"",
+      choices: [
+        {
+          id: "ask_what_drowned_lantern_is",
+          text: "Ask Mira what the Drowned Lantern actually is",
+          nextNodeId: "node_black_sail_next_lead_clarified",
+          effects: {
+            setFlags: {
+              drowned_lantern_identified_as_contact: true,
+            },
+            setVars: {
+              current_goal: "trace_drowned_lantern_contact",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_black_sail_next_lead_clarified",
+      text: "Mira taps the ledger stub once. \"Not a ship. Not a berth. A name passed hand to hand among their runners. Drowned Lantern is a contact alias—the sort used when cargo changes boats before dawn. If we keep pushing this line, that alias is the next knot to cut.\"",
+      choices: [
+        {
+          id: "ask_where_to_start_tracking_drowned_lantern",
+          text: "Ask where to start tracking the Drowned Lantern contact",
+          nextNodeId: "node_drowned_lantern_start_point",
+          effects: {
+            setFlags: {
+              drowned_lantern_search_started: true,
+            },
+            setVars: {
+              current_goal: "search_customs_sheds_contact_line",
+            },
+            setQuests: {
+              quest_drowned_lantern: {
+                status: "active",
+                currentStepId: "step_search_customs_sheds",
+              },
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_start_point",
+      text: "Mira folds the stub and points back toward the darker end of the harbor. \"Start with the customs-side sheds near the old berth. Couriers working under contact names need somewhere dry to trade ledgers, rope seals, and tide slips. If Drowned Lantern still has feet on the docks, that is where the trail should pick up again.\"",
+      choices: [
+        {
+          id: "search_customs_sheds_for_drowned_lantern_trace",
+          text: "Search the customs-side sheds for any trace of the contact",
+          nextNodeId: "node_drowned_lantern_shed_trace",
+          effects: {
+            setFlags: {
+              drowned_lantern_shed_trace_found: true,
+            },
+            setVars: {
+              current_goal: "inspect_drowned_lantern_shed_trace",
+            },
+            advanceQuestStep: ["quest_drowned_lantern"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_shed_trace",
+      text: "In a dry gap behind a customs ledger chest, you find a wax-sealed tide slip stamped with the same drowned-lantern mark Mira showed you. Someone used these sheds as a handoff point, and the slip references a dawn-side exchange still waiting to happen.",
+      choices: [
+        {
+          id: "ask_mira_to_decode_dawn_exchange",
+          text: "Ask Mira what the dawn-side exchange note means",
+          nextNodeId: "node_drowned_lantern_exchange_window",
+          effects: {
+            setFlags: {
+              drowned_lantern_exchange_window_found: true,
+            },
+            setVars: {
+              current_goal: "identify_drowned_lantern_exchange_window",
+            },
+            advanceQuestStep: ["quest_drowned_lantern"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_exchange_window",
+      text: "Mira studies the tide slip and traces a thumb over the salt-soft wax. \"This isn't a meeting place—it's a timing mark. Dawn-side exchange means they pass ledgers and cargo tags at first light, then move the runner before the harbor wakes. If we press this lead, the next move is to identify which contact answers that window.\"",
+      choices: [
+        {
+          id: "ask_who_handles_the_dawn_exchange",
+          text: "Ask Mira who is most likely handling that dawn exchange",
+          nextNodeId: "node_drowned_lantern_contact_suspect",
+          effects: {
+            setFlags: {
+              drowned_lantern_contact_suspect_identified: true,
+            },
+            setVars: {
+              current_goal: "verify_drowned_lantern_contact_suspect",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_contact_suspect",
+      text: "Mira thinks for a long moment before answering. \"Not the cargo hands. This reads like the work of a dawn runner who never stays with the same boat twice. If I had to place it, I'd start with the tally-keeper they call Brine Lark—the sort who carries tags, names, and tide slips between crews without ever touching the cargo itself.\"",
+      choices: [
+        {
+          id: "mark_brine_lark_as_the_next_target",
+          text: "Mark Brine Lark as the next target to trace",
+          nextNodeId: "node_drowned_lantern_contact_confirmed",
+          effects: {
+            setFlags: {
+              brine_lark_identified_as_target: true,
+            },
+            setVars: {
+              current_goal: "trace_brine_lark_network",
+            },
+            completeQuest: ["quest_drowned_lantern"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_contact_confirmed",
+      text: "Mira nods once. \"Then Brine Lark is our next point of pressure. We may not know every face behind Black Sail yet, but we know which runner's shadow to follow when this line moves again.\"",
       choices: [],
     },
   ],

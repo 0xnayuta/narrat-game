@@ -996,6 +996,84 @@ test("started black sail stakeout should lead into a minimal contact and net-clo
   assert.equal(resolveSting.state.vars.current_goal, "black_sail_sting_resolved");
   assert.equal(resolveSting.state.quests.quest_black_sail_sting?.status, "completed");
   assert.equal(resolveSting.scene?.nodeId, "node_black_sail_sting_resolved");
+  assert.deepEqual(resolveSting.scene?.choices, [
+    { id: "ask_what_the_watch_caught", text: "Ask Mira what the watch actually seized" },
+  ]);
+
+  const aftermath = session.choose("ask_what_the_watch_caught");
+  assert.equal(aftermath.triggeredEventId, null);
+  assert.equal(aftermath.state.flags.black_sail_courier_captured, true);
+  assert.equal(aftermath.state.vars.current_goal, "review_black_sail_aftermath");
+  assert.equal(aftermath.scene?.nodeId, "node_black_sail_aftermath_report");
+  assert.deepEqual(aftermath.scene?.choices, [
+    { id: "ask_where_the_stub_points", text: "Ask Mira what the ledger stub points to next" },
+  ]);
+
+  const nextLead = session.choose("ask_where_the_stub_points");
+  assert.equal(nextLead.triggeredEventId, null);
+  assert.equal(nextLead.state.flags.black_sail_next_lead_found, true);
+  assert.equal(nextLead.state.vars.current_goal, "trace_black_sail_next_lead");
+  assert.equal(nextLead.scene?.nodeId, "node_black_sail_next_lead");
+  assert.deepEqual(nextLead.scene?.choices, [
+    { id: "ask_what_drowned_lantern_is", text: "Ask Mira what the Drowned Lantern actually is" },
+  ]);
+
+  const clarifyLead = session.choose("ask_what_drowned_lantern_is");
+  assert.equal(clarifyLead.triggeredEventId, null);
+  assert.equal(clarifyLead.state.flags.drowned_lantern_identified_as_contact, true);
+  assert.equal(clarifyLead.state.vars.current_goal, "trace_drowned_lantern_contact");
+  assert.equal(clarifyLead.scene?.nodeId, "node_black_sail_next_lead_clarified");
+  assert.deepEqual(clarifyLead.scene?.choices, [
+    { id: "ask_where_to_start_tracking_drowned_lantern", text: "Ask where to start tracking the Drowned Lantern contact" },
+  ]);
+
+  const startTracking = session.choose("ask_where_to_start_tracking_drowned_lantern");
+  assert.equal(startTracking.triggeredEventId, null);
+  assert.equal(startTracking.state.flags.drowned_lantern_search_started, true);
+  assert.equal(startTracking.state.vars.current_goal, "search_customs_sheds_contact_line");
+  assert.equal(startTracking.state.quests.quest_drowned_lantern?.status, "active");
+  assert.equal(startTracking.state.quests.quest_drowned_lantern?.currentStepId, "step_search_customs_sheds");
+  assert.equal(startTracking.scene?.nodeId, "node_drowned_lantern_start_point");
+  assert.deepEqual(startTracking.scene?.choices, [
+    { id: "search_customs_sheds_for_drowned_lantern_trace", text: "Search the customs-side sheds for any trace of the contact" },
+  ]);
+
+  const searchSheds = session.choose("search_customs_sheds_for_drowned_lantern_trace");
+  assert.equal(searchSheds.triggeredEventId, null);
+  assert.equal(searchSheds.state.flags.drowned_lantern_shed_trace_found, true);
+  assert.equal(searchSheds.state.vars.current_goal, "inspect_drowned_lantern_shed_trace");
+  assert.equal(searchSheds.state.quests.quest_drowned_lantern?.currentStepId, "step_trace_dawn_exchange");
+  assert.equal(searchSheds.scene?.nodeId, "node_drowned_lantern_shed_trace");
+  assert.deepEqual(searchSheds.scene?.choices, [
+    { id: "ask_mira_to_decode_dawn_exchange", text: "Ask Mira what the dawn-side exchange note means" },
+  ]);
+
+  const decodeExchange = session.choose("ask_mira_to_decode_dawn_exchange");
+  assert.equal(decodeExchange.triggeredEventId, null);
+  assert.equal(decodeExchange.state.flags.drowned_lantern_exchange_window_found, true);
+  assert.equal(decodeExchange.state.vars.current_goal, "identify_drowned_lantern_exchange_window");
+  assert.equal(decodeExchange.state.quests.quest_drowned_lantern?.currentStepId, "step_identify_drowned_lantern_contact");
+  assert.equal(decodeExchange.scene?.nodeId, "node_drowned_lantern_exchange_window");
+  assert.deepEqual(decodeExchange.scene?.choices, [
+    { id: "ask_who_handles_the_dawn_exchange", text: "Ask Mira who is most likely handling that dawn exchange" },
+  ]);
+
+  const identifySuspect = session.choose("ask_who_handles_the_dawn_exchange");
+  assert.equal(identifySuspect.triggeredEventId, null);
+  assert.equal(identifySuspect.state.flags.drowned_lantern_contact_suspect_identified, true);
+  assert.equal(identifySuspect.state.vars.current_goal, "verify_drowned_lantern_contact_suspect");
+  assert.equal(identifySuspect.state.quests.quest_drowned_lantern?.currentStepId, "step_identify_drowned_lantern_contact");
+  assert.equal(identifySuspect.scene?.nodeId, "node_drowned_lantern_contact_suspect");
+  assert.deepEqual(identifySuspect.scene?.choices, [
+    { id: "mark_brine_lark_as_the_next_target", text: "Mark Brine Lark as the next target to trace" },
+  ]);
+
+  const confirmTarget = session.choose("mark_brine_lark_as_the_next_target");
+  assert.equal(confirmTarget.triggeredEventId, null);
+  assert.equal(confirmTarget.state.flags.brine_lark_identified_as_target, true);
+  assert.equal(confirmTarget.state.vars.current_goal, "trace_brine_lark_network");
+  assert.equal(confirmTarget.state.quests.quest_drowned_lantern?.status, "completed");
+  assert.equal(confirmTarget.scene?.nodeId, "node_drowned_lantern_contact_confirmed");
 });
 
 test("black sail quest skeleton should activate and advance across key branch milestones", () => {

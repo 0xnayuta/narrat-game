@@ -23,6 +23,12 @@ The current Black Sail demo slice now forms a continuous path:
 13. Black Sail contact appears
 14. Mira closes the net
 15. The berth is secured and `quest_black_sail_sting` completes
+16. Mira identifies the Drowned Lantern lead from the seized material
+17. The lead is clarified as a contact alias
+18. The customs-side sheds become the next search point
+19. The first Drowned Lantern trace is recovered
+20. The dawn exchange window is decoded
+21. Brine Lark is marked as the next target and `quest_drowned_lantern` completes
 
 ## Current structure boundary
 For this branch, the intended runtime split is now:
@@ -56,8 +62,11 @@ The current slice now demonstrates that the prototype can support:
    - the branch no longer stops at "found another clue"
    - it now reaches a small but explicit completion beat
 
+6. **Three-phase quest chaining**
+   - the demo now supports one quest phase completing and additional follow-up quest phases activating, advancing, and completing in sequence
+
 ## Current Black Sail quest shape
-The Black Sail demo slice is now split into two small quest phases.
+The Black Sail demo slice is now split into three small quest phases.
 
 ### `quest_black_sail_trail`
 Responsibility:
@@ -98,6 +107,36 @@ Current completion beat:
 - set `black_sail_sting_resolved = true`
 - complete `quest_black_sail_sting`
 
+Current status:
+- `quest_black_sail_sting` now forms a minimal closed loop of its own:
+  - activate
+  - advance by step
+  - complete
+
+### `quest_drowned_lantern`
+Responsibility:
+- carry the post-sting follow-up lead
+- move from alias → location trace → exchange window → concrete suspect target
+
+Current steps:
+- `step_search_customs_sheds`
+- `step_trace_dawn_exchange`
+- `step_identify_drowned_lantern_contact`
+
+Current completion beat:
+- begin tracing the Drowned Lantern contact
+- search the customs-side sheds
+- decode the dawn exchange timing
+- narrow the line to Brine Lark as the next target
+- set `brine_lark_identified_as_target = true`
+- complete `quest_drowned_lantern`
+
+Current status:
+- `quest_drowned_lantern` now forms a minimal closed loop of its own:
+  - activate
+  - advance by step
+  - complete
+
 ## Regression status at this milestone
 Verified in this round:
 - `npm run test:npc-event-loop`
@@ -115,7 +154,7 @@ This milestone does **not** mean:
 - the branch has downstream arrest / confrontation / faction consequences
 - all remaining `current_goal` writes have been removed
 
-It means the current demo branch is now a **stable, test-backed, end-to-end vertical slice** with a minimal two-phase quest structure.
+It means the current demo branch is now a **stable, test-backed, end-to-end vertical slice** with a minimal three-phase quest structure, where each quest phase now reaches its own explicit completion beat.
 
 ## Recommended next-step posture
 After this checkpoint, prefer:
