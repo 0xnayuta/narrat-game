@@ -1433,18 +1433,18 @@ export const demoNarrativeGraph: NarrativeGraph = {
     },
     {
       id: "node_brine_lark_waterline_receiver",
-      text: "You hold your position through the next tide cycle and force yourself to watch the waterline rather than the stairs. The claim comes so cleanly you almost miss it. No dock porter descends from above. No customs man emerges from the sheds. Instead, a flat, dark skiff noses in below the stone lip with muffled oars and barely enough profile to catch the harbor glow. It never ties up fully. One person keeps the craft pressed into place with a boat hook while another reaches up from the stern well, feels for the tar-dark loop, and frees the hanging bundle in one practiced motion. They do not inspect the carrier above, and they do not ask for confirmation. The marker set and the prepared staging point are enough. The whole claim lasts only seconds before the skiff slides back into the black water along the outer wall. Mira waits until the ripples flatten. \"Good. Now we have the receiver class. Not a man on the stairs, but a waterline pickup crew—small skiff hands working below sightline, timed to the tide. The stairs do not end the route. They hand it down to the low-profile boats that can move under the customs edge without presenting as a dock transfer.\"",
+      text: "You hold your position through the next tide cycle and force yourself to watch the waterline rather than the stairs. The claim comes so cleanly you almost miss it. No dock porter descends from above. No customs man emerges from the sheds. Instead, a flat, dark skiff noses in below the stone lip with muffled oars and barely enough profile to catch the harbor glow. It never ties up fully. One person keeps the craft pressed into place with a boat hook while another reaches up from the stern well, feels for the tar-dark loop, and frees the hanging bundle in one practiced motion. They do not inspect the carrier above, and they do not ask for confirmation. The marker set and the prepared staging point are enough. The whole claim lasts only seconds before the skiff slides back into the black water along the outer wall. Mira waits until the ripples flatten. \"Good. Now we have the receiver class. Not a man on the stairs, but a waterline pickup crew—small skiff hands working below sightline, timed to the tide. The stairs do not end the route. They hand it down to the low-profile boats that can move under the customs edge without presenting as a dock transfer. If we keep going, the next question is not just where the skiff vanishes, but what stable behavior happens where it drops out of harbor sight.\"",
       choices: [
         {
-          id: "track_where_the_waterline_skiff_goes_first",
-          text: "Track where the waterline skiff goes first",
-          nextNodeId: "node_brine_lark_skiff_downstream_node",
+          id: "watch_what_happens_where_the_waterline_skiff_disappears",
+          text: "Watch what happens where the waterline skiff disappears from sight",
+          nextNodeId: "node_brine_lark_breaker_culvert_activity",
           effects: {
             setFlags: {
               brine_lark_waterline_receiver_identified: true,
             },
             setVars: {
-              current_goal: "identify_skiff_downstream_node",
+              current_goal: "observe_breaker_culvert_activity",
             },
             advanceQuestStep: ["quest_brine_lark"],
           },
@@ -1493,18 +1493,18 @@ export const demoNarrativeGraph: NarrativeGraph = {
     },
     {
       id: "node_brine_lark_culvert_carrier",
-      text: "On the following tide, you ignore the skiff entirely and hold on the culvert mouth until your eyes adjust to the layered dark. That is when the distinction finally resolves. The craft that leaves after the hidden load shift is not the same one that entered. The broad little pickup skiff backs out light and empty, still suited for quick waterline work near the stairs. The bundle itself departs later, deeper in shadow, aboard a narrower carrier that rides lower and quieter: a hand-poled punt with its load settled almost flush to the boards beneath a drab cover mat. It shows barely any profile above the wash, and where oars would flash, it moves by short controlled pushes better suited to stone edges, culvert channels, and shallow sidewater. You catch the same change twice more before Mira lets herself conclude. \"There. That is the next carrier class. The stairs use a skiff to claim. The culvert converts the route into a narrow punt for concealment and shallow passage. That means this node is doing more than hiding the transfer—it is selecting the transport mode for the next environment. If we follow further, we should stop asking who touched the bundle and start asking what water the punt is built to reach.\"",
+      text: "On the following tide, you ignore the skiff entirely and hold on the culvert mouth until your eyes adjust to the layered dark. That is when the distinction finally resolves. The craft that leaves after the hidden load shift is not the same one that entered. The broad little pickup skiff backs out light and empty, still suited for quick waterline work near the stairs. The bundle itself departs later, deeper in shadow, aboard a narrower carrier that rides lower and quieter: a hand-poled punt with its load settled almost flush to the boards beneath a drab cover mat. It shows barely any profile above the wash, and where oars would flash, it moves by short controlled pushes better suited to stone edges, culvert channels, and shallow sidewater. You catch the same change twice more before Mira lets herself conclude. \"There. That is the next carrier class. The stairs use a skiff to claim. The culvert converts the route into a narrow punt for concealment and shallow passage. That means this node is doing more than hiding the transfer—it is selecting the transport mode for the next environment. If we follow further, we should stop asking who touched the bundle and start asking what stable behavior appears once that punt reaches the reed-cut.\"",
       choices: [
         {
-          id: "track_what_water_the_culvert_punt_is_built_to_reach",
-          text: "Track what water the culvert punt is built to reach",
-          nextNodeId: "node_brine_lark_punt_waterway_node",
+          id: "watch_what_the_culvert_punt_consistently_does_in_reedway_cut",
+          text: "Watch what the culvert punt consistently does in Reedway Cut",
+          nextNodeId: "node_brine_lark_reedway_cut_activity",
           effects: {
             setFlags: {
               brine_lark_culvert_carrier_identified: true,
             },
             setVars: {
-              current_goal: "identify_punt_waterway_node",
+              current_goal: "observe_reedway_cut_activity",
             },
             advanceQuestStep: ["quest_brine_lark"],
           },
@@ -1573,18 +1573,18 @@ export const demoNarrativeGraph: NarrativeGraph = {
     },
     {
       id: "node_brine_lark_inland_release_signal_node",
-      text: "You and Mira spend the next watch ignoring the punt entirely and triangulating the flash instead. From the cut it seems formless, just a blink on wet air. From the bank above, and again from a second angle inland, the line tightens. The reflection does not come from a moving watcher pacing the reeds. It returns, each time, from the same low rise beside an old sluice run where broken wicker screens and storm-thrown brush have been piled until they resemble marsh wreckage. Only when the hooded light answers the ebb do you finally see the structure hidden inside the ruin: a cramped shelter with just enough slit-space to send one masked gleam down the cut without exposing its keeper to the harbor side. Mira studies the dark shape a long moment before naming it. \"There. That's the node. A signal blind built on the old sluice line.\" She lowers her voice further. \"Sluice Blind. The release cue isn't wandering personnel or chance line-of-sight. It's being issued from a fixed inland observation point that can read both water level and route timing. If we push further, the next question is who occupies that blind—or what larger node it answers to.\"",
+      text: "You and Mira spend the next watch ignoring the punt entirely and triangulating the flash instead. From the cut it seems formless, just a blink on wet air. From the bank above, and again from a second angle inland, the line tightens. The reflection does not come from a moving watcher pacing the reeds. It returns, each time, from the same low rise beside an old sluice run where broken wicker screens and storm-thrown brush have been piled until they resemble marsh wreckage. Only when the hooded light answers the ebb do you finally see the structure hidden inside the ruin: a cramped shelter with just enough slit-space to send one masked gleam down the cut without exposing its keeper to the harbor side. Mira studies the dark shape a long moment before naming it. \"There. That's the node. A signal blind built on the old sluice line.\" She lowers her voice further. \"Sluice Blind. The release cue isn't wandering personnel or chance line-of-sight. It's being issued from a fixed inland observation point that can read both water level and route timing. If we push further, the next question is not the operator's face, but what larger control node that blind answers to.\"",
       choices: [
         {
-          id: "watch_who_stably_operates_the_sluice_blind_signal",
-          text: "Watch who stably operates the Sluice Blind signal",
-          nextNodeId: "node_brine_lark_sluice_blind_operator",
+          id: "watch_what_larger_control_node_the_sluice_blind_answers_to",
+          text: "Watch what larger control node the Sluice Blind answers to",
+          nextNodeId: "node_brine_lark_sluice_control_node",
           effects: {
             setFlags: {
               brine_lark_inland_release_signal_node_identified: true,
             },
             setVars: {
-              current_goal: "identify_sluice_blind_operator",
+              current_goal: "identify_sluice_control_node",
             },
             advanceQuestStep: ["quest_brine_lark"],
           },
@@ -1674,6 +1674,446 @@ export const demoNarrativeGraph: NarrativeGraph = {
     {
       id: "node_brine_lark_marsh_warden",
       text: "You spend a full tide cycle watching the tower rather than the control house. The marsh controller goes up and comes down, but the tower itself is always occupied by a single figure who never descends to the lower levels. They appear only at the peak observation window, where a larger chart is posted—not just for the Reedway Cut, but for multiple sluice lines, reedway branches, and even harbor-side points. When a decision is needed, the controller from the house ascends to consult that figure; the tower operator marks something on the chart, then sends the instruction back down. The division of labor is strict: the house reads the local system, but the tower reads the whole route network. Mira studies the operator through the glass. \"There it is. The marsh controller answers to the marsh warden—the one who coordinates multiple water lines, not just one cut. Not a tide watcher, not a local dispatcher. A route coordinator. That means the tower is not just an observation point. It is the command node for the entire inland marsh route system. If we follow further, we need to see where that warden gets their own orders from.\"",
+      choices: [
+        {
+          id: "watch_who_the_marsh_warden_answers_to",
+          text: "Watch who the marsh warden answers to",
+          nextNodeId: "node_brine_lark_harbor_signal_point",
+          effects: {
+            setFlags: {
+              brine_lark_marsh_warden_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_harbor_signal_point",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_harbor_signal_point",
+      text: "You shift your vantage point to the harbor wall above the customs sheds, where signal lines run inland from a low observation post barely visible among the building ledges. From there, you see the marsh warden is not the final word either. The tower operator ascends only to consult that figure when decisions affect both marsh routes and harbor movements; they mark something on the chart at the wall, then relay it back down the signal lines. The division of labor now extends beyond local versus network: the tower reads the inland system, but the wall post coordinates with harbor-side traffic. Mira studies the operator through a slit in the customs building's rear wall. \"So that is the next node. A harbor signal point. The marsh warden answers to whoever watches from there. They don't just coordinate multiple water lines—they connect marsh routes to harbor movements. That means this post is not just an observation station. It is the interface between inland marsh routes and harbor-side operations. If we follow further, we need to see who occupies that signal point.\"",
+      choices: [
+        {
+          id: "watch_who_stably_coordinates_harbor_signal_point_operations",
+          text: "Watch who stably coordinates the Harbor Signal Point operations",
+          nextNodeId: "node_brine_lark_harbor_coordinator",
+          effects: {
+            setFlags: {
+              brine_lark_harbor_signal_point_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_harbor_coordinator",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_harbor_coordinator",
+      text: "You stop treating the signal point as a structure and start treating it as a desk with a view. The watchers on the wall come and go, and the marsh warden's instructions arrive and depart, but one figure remains in the rear room behind the slit windows overlooking both the customs sheds and the outer lanes. They never handle the marsh signal lines directly. Instead, they work over a larger harbor chart where inland route marks are laid across ordinary traffic movements, berth usage, and guard sightlines. When the marsh warden sends up a condition change, this figure does not merely pass it on. They compare it against harbor movement, delay one release, accelerate another, and mark narrow windows where marsh traffic can surface without colliding with visible dock routine. Mira watches the pattern settle before naming it. \"There. That is the operator class at this layer. A harbor coordinator. Not a marsh warden and not a dock clerk. The person in that post translates inland route timing into harbor-safe movement. That makes Harbor Signal Point an interface desk, and this figure the route master for marsh-to-harbor passage. If we keep going, the next question is who provides the harbor coordinator with the authority to alter those windows.\"",
+      choices: [
+        {
+          id: "watch_who_grants_the_harbor_coordinator_authority_over_windows",
+          text: "Watch who grants the harbor coordinator authority over those windows",
+          nextNodeId: "node_brine_lark_harbor_authority_node",
+          effects: {
+            setFlags: {
+              brine_lark_harbor_coordinator_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_harbor_authority_node",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_harbor_authority_node",
+      text: "The coordinator's chart tells you where to look next: not outward toward the lanes, but upward toward the rooms where routine becomes instruction. Over several watches you see the same pattern. The coordinator does not invent harbor windows from scratch. At key intervals, a runner carries up a folded slip from a shuttered office above the customs sheds, and when that slip arrives, berth markings, patrol gaps, and lane tolerances on the coordinator's chart suddenly become actionable rather than provisional. The room itself stays dark from the quay side, but from a higher angle you catch ledger shelves, roster boards, and a lamp hooded over a narrow planning table. Mira does not rush the conclusion. \"There. That is the authority node. A harbor window office. The coordinator can translate marsh timing into harbor-safe movement, but this office is what turns translation into permission. It sits where ordinary harbor routine can be quietly rewritten before anyone below experiences it as routine. If we keep going, the next question is what higher command receives those rewritten windows and turns them into route-level scheduling.\"",
+      choices: [
+        {
+          id: "watch_which_higher_command_receives_the_harbor_windows",
+          text: "Watch which higher command receives the Harbor Window Office output",
+          nextNodeId: "node_brine_lark_harbor_command",
+          effects: {
+            setFlags: {
+              brine_lark_harbor_authority_node_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_harbor_command",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_window_clerk",
+      text: "You stop looking for rank and start looking for repetition. The office receives messengers, ledgers, and berth tallies from several directions, but only one figure remains seated at the hooded table through every shift change. They do not inspect the quay and they never go down to the signal point. Instead they compare patrol intervals against docking rosters, scratch out one harmless-looking revision, then send back a slip that transforms a narrow coincidence into an official harbor window. What matters is not volume but discretion. The same hand decides which delays can be explained, which berths can be made to look busy, and which empty lane can be made to seem routine for half an hour. Mira watches the pattern settle and gives it its proper shape. \"There. Not a harbor master, and not a mere scribe. A window clerk—more precisely, a harbor scheduler. The coordinator below translates route timing into harbor movement, but this desk decides which pieces of visible routine can be bent without attracting scrutiny. That makes the office a permissions desk, and this figure the one who quietly edits reality until smuggling can pass as ordinary traffic. If we keep going, the next question is who authorizes the scheduler to bend official routine in the first place.\"",
+      choices: [
+        {
+          id: "watch_who_authorizes_the_harbor_scheduler_to_bend_routine",
+          text: "Watch who authorizes the harbor scheduler to bend routine",
+          nextNodeId: "node_brine_lark_harbor_master",
+          effects: {
+            setFlags: {
+              brine_lark_window_clerk_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_harbor_master",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_harbor_master",
+      text: "The office receives its instructions from a single source, but the channel is not through runners or signal lines. It arrives as a brief note pinned to the door in plain sight, signed with a seal that looks like routine administration rather than covert command. The harbor scheduler does not ask questions about these notes; they treat them as administrative directives and adjust the roster accordingly. From your vantage point above the customs sheds, you catch glimpses of a Harbor Master's office: a desk covered in patrol maps, berth assignments, and customs manifests that overlap with marsh route charts. When a new note arrives, the scheduler does not merely copy it; they cross-reference it against harbor movements, then mark which windows are now approved for covert passage. Mira watches the pattern settle before speaking. \"There. That is the authority node at this layer. A Harbor Master—more precisely, someone with oversight over both visible harbor routine and what happens when the tide turns low enough to hide a skiff. Not just a customs officer or a port captain in the ordinary sense. The person who decides which routine can be bent without triggering scrutiny. That makes the office an authority desk, and this figure the route master for marsh-to-harbor operations. If we keep going, the next question is who authorizes the harbor master to bend official routine in the first place.\"",
+      choices: [
+        {
+          id: "watch_who_authorizes_the_harbor_master_to_bend_routine",
+          text: "Watch who authorizes the harbor master to bend routine",
+          nextNodeId: "node_brine_lark_harbor_command",
+          effects: {
+            setFlags: {
+              brine_lark_harbor_master_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_harbor_command",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_harbor_command",
+      text: "The window-office slips do not end at the shutters above customs. They are gathered into a central ledger at Harbor Command, where patrol windows and marsh route approvals become entries in a larger routing schedule. The desk above the sheds does not write those orders alone; it feeds a higher command center that coordinates which altered routines are actually useful at route scale. From your vantage point at customs height, you see the structure of authority: multiple harbor-facing adjustments are being consolidated into the same central ledger, and each entry carries a code that links marsh routes with visible berth assignments. Mira studies the filing pattern before speaking. \"There. That is the upstream node. Harbor Command—the command center where marsh routes are no longer individual local adjustments but entries in a larger routing schedule. The Harbor Window Office turns translation into permission, but this command center turns permission into coordinated movement across the harbor. If we keep going, the next question is who occupies that command center and decides which routes can be scheduled as ordinary traffic.\"",
+      choices: [
+        {
+          id: "watch_who_stably_sits_in_harbor_command_and_decides_routable_routes",
+          text: "Watch who stably sits in Harbor Command and decides routable routes",
+          nextNodeId: "node_brine_lark_schedule_master",
+          effects: {
+            setFlags: {
+              brine_lark_harbor_command_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_schedule_master",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_schedule_master",
+      text: "You stop looking for a name and start looking for the pattern of authority. The harbor command ledger is always open to one person who never leaves their chair, even when messengers arrive or patrol reports pile up. They do not write orders; they receive administrative directives from above and mark which entries can be activated as ordinary traffic. Their desk holds three distinct kinds of charts: patrol schedules that look identical to any harbor master's office, marsh route codes in a cipher system only the command center uses, and berth assignments that overlap with both. When a marsh route needs to become routable, they do not merely file it; they cross-reference it against patrol windows, then mark a code that makes the schedule appear routine while the entry remains active for covert passage. Mira watches the precision of their work before speaking. \"There. That is the operator class at this layer. A schedule master—not a harbor master or command officer in the ordinary sense. The person who decides which marsh routes can be scheduled as ordinary traffic without triggering scrutiny. They sit where administrative directives become operational windows, and marsh-to-harbor operations become entries in the larger routing schedule. If we keep going, the next question is who authorizes the schedule master to make marsh routes appear as routine traffic.\"",
+      choices: [
+        {
+          id: "watch_who_authorizes_the_schedule_master_to_make_routes_routable",
+          text: "Watch who authorizes the schedule master to make routes routable",
+          nextNodeId: "node_brine_lark_port_authority",
+          effects: {
+            setFlags: {
+              brine_lark_schedule_master_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_port_authority",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_port_authority",
+      text: "The schedule master's directives arrive not as individual notes but through a formal maritime channel that bypasses the harbor command entirely. They are filed into a ledger at a Port Authority office, where marsh routes and visible berth assignments become entries in a larger coastal routing system. The schedule master does not write these orders; they receive administrative directives from a higher authority center. From your vantage point at customs height, you see the structure of authority: multiple harbor commands across different regions report to the same central ledger, and each entry carries a code that links marsh routes with visible coastal movements. Mira studies the filing pattern before speaking. \"There. That is the upstream node. A Port Authority—the maritime command center where marsh routes are no longer individual operations but entries in a larger coastal routing system. The schedule master translates administrative directives into operational windows, but this authority coordinates across multiple harbors and multiple covert lines. It sits above the routine entirely. If we keep going, the next question is who occupies that port authority office and decides which routes can be scheduled as ordinary traffic.\"",
+      choices: [
+        {
+          id: "watch_who_stably_sits_in_port_authority_and_decides_routable_routes",
+          text: "Watch who stably sits in Port Authority and decides routable routes",
+          nextNodeId: "node_brine_lark_maritime_inspector",
+          effects: {
+            setFlags: {
+              brine_lark_port_authority_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_maritime_inspector",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_maritime_inspector",
+      text: "You stop looking for a name and start looking for the pattern of authority. The port authority ledger is always open to one person who never leaves their chair, even when messengers arrive or coastal reports pile up. They do not write orders; they receive administrative directives from above and mark which entries can be activated as ordinary traffic. Their desk holds three distinct kinds of charts: patrol schedules that look identical to any harbor master's office, marsh route codes in a cipher system only the command center uses, and berth assignments that overlap with both. When a marsh route needs to become routable, they do not merely file it; they cross-reference it against coastal movements, then mark a code that makes the schedule appear routine while the entry remains active for covert passage. Mira watches the precision of their work before speaking. \"There. That is the operator class at this layer. A maritime inspector—not a port authority officer or command officer in the ordinary sense. The person who decides which marsh routes can be scheduled as ordinary traffic without triggering scrutiny. They sit where administrative directives become operational windows, and marsh-to-harbor operations become entries in the larger coastal routing system. If we keep going, the next question is who reviews that authority rather than merely extending it.\"",
+      choices: [
+        {
+          id: "watch_which_board_reviews_the_maritime_inspector",
+          text: "Watch which board reviews the maritime inspector's route authority",
+          nextNodeId: "node_brine_lark_maritime_oversight_board",
+          effects: {
+            setFlags: {
+              brine_lark_maritime_inspector_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_maritime_oversight_board",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_coastal_command",
+      text: "The maritime inspector's directives arrive not as individual notes but through a formal channel that bypasses the port authority entirely. They are filed into a ledger at Coastal Command HQ, where marsh routes and visible coastal movements become entries in an even larger routing system. The maritime inspector does not write these orders; they receive administrative directives from a higher command center. From your vantage point above customs height, you see the structure of authority: multiple port authorities across different regions report to the same central ledger, and each entry carries a code that links marsh routes with visible coastal movements. Mira studies the filing pattern before speaking. \"There. That is the upstream node. Coastal Command HQ—the maritime command center where marsh routes are no longer individual operations but entries in an even larger coastal routing system. The maritime inspector translates administrative directives into operational windows, but this command coordinates across multiple regions and multiple covert lines. It sits above the routine entirely. If we keep going, the next question is who occupies that coastal command office and decides which routes can be scheduled as ordinary traffic.\"",
+      choices: [
+        {
+          id: "watch_who_stably_sits_in_coastal_command_and_decides_routable_routes",
+          text: "Watch who stably sits in Coastal Command HQ and decides routable routes",
+          nextNodeId: "node_brine_lark_coastal_commander",
+          effects: {
+            setFlags: {
+              brine_lark_coastal_command_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_coastal_commander",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_coastal_commander",
+      text: "You stop looking for a name and start looking for the pattern of authority. The coastal command ledger is always open to one person who never leaves their chair, even when messengers arrive or regional reports pile up. They do not write orders; they receive administrative directives from above and mark which entries can be activated as ordinary traffic. Their desk holds three distinct kinds of charts: patrol schedules that look identical to any harbor master's office, marsh route codes in a cipher system only the command center uses, and berth assignments that overlap with both. When a marsh route needs to become routable, they do not merely file it; they cross-reference it against coastal movements, then mark a code that makes the schedule appear routine while the entry remains active for covert passage. Mira watches the precision of their work before speaking. \"There. That is the operator class at this layer. A coastal commander—not a maritime inspector or command officer in the ordinary sense. The person who decides which marsh routes can be scheduled as ordinary traffic without triggering scrutiny. They sit where administrative directives become operational windows, and marsh-to-harbor operations become entries in the larger coastal routing system. If we keep going, the next question is who authorizes the coastal commander to make marsh routes appear as routine traffic.\"",
+      choices: [
+        {
+          id: "watch_who_authorizes_the_coastal_commander_to_make_routes_routable",
+          text: "Watch who authorizes the coastal commander to make routes routable",
+          nextNodeId: "node_brine_lark_navigation_master",
+          effects: {
+            setFlags: {
+              brine_lark_coastal_commander_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_navigation_master",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_navigation_master",
+      text: "The coastal commander's directives arrive not as individual notes but through a formal channel that bypasses the coastal command entirely. They are filed into a ledger at Navigation Master's office, where marsh routes and visible navigation become entries in an even larger routing system. The coastal commander does not write these orders; they receive administrative directives from a higher authority center. From your vantage point above customs height, you see the structure of authority: multiple coastal commands across different regions report to the same central ledger, and each entry carries a code that links marsh routes with visible navigation movements. Mira studies the filing pattern before speaking. \"There. That is the upstream node. Navigation Master—the maritime command center where marsh routes are no longer individual operations but entries in an even larger routing system. The coastal commander translates administrative directives into operational windows, but this master coordinates across multiple regions and multiple covert lines. It sits above the routine entirely. If we keep going, the next question is who occupies that navigation office and decides which routes can be scheduled as ordinary traffic.\"",
+      choices: [
+        {
+          id: "watch_who_authorizes_the_navigation_master_to_make_routes_routable",
+          text: "Watch who authorizes the Navigation Master to make routes routable",
+          nextNodeId: "node_brine_lark_harbor_authority_council",
+          effects: {
+            setFlags: {
+              brine_lark_navigation_master_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_harbor_authority_council",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_harbor_authority_council",
+      text: "The Navigation Master's directives arrive not as individual notes but through a formal channel that bypasses the navigation office entirely. They are filed into a ledger at Harbor Authority Council, where marsh routes and visible navigation become entries in an even larger routing system. The Navigation Master does not write these orders; they receive administrative directives from a higher authority center. From your vantage point above customs height, you see the structure of authority: multiple Navigation Masters across different regions report to the same central ledger, and each entry carries a code that links marsh routes with visible navigation movements. Mira studies the filing pattern before speaking. \"There. That is the upstream node. Harbor Authority Council—the maritime command center where marsh routes are no longer individual operations but entries in an even larger routing system. The Navigation Master translates administrative directives into operational windows, but this council coordinates across multiple regions and multiple covert lines. It sits above the routine entirely. If we keep going, the next question is who occupies that council office and decides which routes can be scheduled as ordinary traffic.\"",
+      choices: [
+        {
+          id: "watch_who_stably_sits_in_council_and_decides_routable_routes",
+          text: "Watch who stably sits in Harbor Authority Council and decides routable routes",
+          nextNodeId: "node_brine_lark_harbor_clerk",
+          effects: {
+            setFlags: {
+              brine_lark_harbor_authority_council_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_harbor_clerk",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_harbor_clerk",
+      text: "You stop looking for a name and start looking for the pattern of authority. The council ledger is always open to one person who never leaves their chair, even when messengers arrive or regional reports pile up. They do not write orders; they receive administrative directives from above and mark which entries can be activated as ordinary traffic. Their desk holds three distinct kinds of charts: patrol schedules that look identical to any harbor master's office, marsh route codes in a cipher system only the command center uses, and berth assignments that overlap with both. When a marsh route needs to become routable, they do not merely file it; they cross-reference it against coastal movements, then mark a code that makes the schedule appear routine while the entry remains active for covert passage. Mira watches the precision of their work before speaking. \"There. That is the operator class at this layer. A harbor clerk—not a council member or command officer in the ordinary sense. The person who decides which marsh routes can be scheduled as ordinary traffic without triggering scrutiny. They sit where administrative directives become operational windows, and marsh-to-harbor operations become entries in the larger routing system. If we keep going, the next question is who authorizes the harbor clerk to make marsh routes appear as routine traffic.\"",
+      choices: [
+        {
+          id: "watch_who_authorizes_the_harbor_clerk_to_make_routes_routable",
+          text: "Watch who authorizes the harbor clerk to make routes routable",
+          nextNodeId: "node_brine_lark_harbor_authority",
+          effects: {
+            setFlags: {
+              brine_lark_harbor_clerk_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_harbor_authority",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_harbor_authority",
+      text: "The clerk's instructions arrive not as individual notes but through a formal channel that bypasses the council entirely. They are filed into a ledger at Harbor Authority, where marsh routes and visible navigation become entries in an even larger routing system. The clerk does not write these orders; they receive administrative directives from a higher authority center. From your vantage point above customs height, you see the structure of authority: multiple councils across different regions report to the same central ledger, and each entry carries a code that links marsh routes with visible navigation movements. Mira studies the filing pattern before speaking. \"There. That is the upstream node. Harbor Authority—the maritime command center where marsh routes are no longer individual operations but entries in an even larger routing system. The harbor clerk translates administrative directives into operational windows, but this authority coordinates across multiple regions and multiple covert lines. It sits above the routine entirely. If we keep going, the next question is who occupies that authority office and decides which routes can be scheduled as ordinary traffic.\"",
+      choices: [
+        {
+          id: "watch_who_stably_sits_in_harbor_authority_and_decides_routable_routes",
+          text: "Watch who stably sits in Harbor Authority and decides routable routes",
+          nextNodeId: "node_brine_lark_harbor_authority_registrar",
+          effects: {
+            setFlags: {
+              brine_lark_harbor_authority_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_harbor_authority_registrar",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_harbor_authority_registrar",
+      text: "You stop looking for rank and start looking for repetition. The office above the council rooms is always open to one person who never leaves their desk, even when approval slips pile up. They do not draft policy; they receive administrative directives from above and stamp which route entries can be published as ordinary traffic. Their shelves hold three distinct kinds of records: route ledgers that look identical to any harbor office, marsh codes in a cipher system only the authority uses, and traffic approvals that overlap with both. When a route needs to become routable, they do not merely file it; they cross-reference it against navigation windows, then mark a code that makes the schedule appear routine while the entry remains active for covert passage. Mira watches the precision of their work before speaking. \"There. That is the operator class at this layer. A harbor authority registrar—not a council member or command officer in the ordinary sense. The person who decides which marsh routes can be scheduled as ordinary traffic without triggering scrutiny. They sit where administrative directives become operational windows, and marsh-to-harbor operations become entries in the larger routing system. If we keep going, the next question is who authorizes the registrar to make marsh routes appear as routine traffic.\"",
+      choices: [
+        {
+          id: "watch_who_authorizes_the_registrar_to_make_routes_routable",
+          text: "Watch who authorizes the registrar to make routes routable",
+          nextNodeId: "node_brine_lark_maritime_oversight_board",
+          effects: {
+            setFlags: {
+              brine_lark_harbor_authority_registrar_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_maritime_oversight_board",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_maritime_oversight_board",
+      text: "The inspector's authority does not stand alone. It arrives through a formal review channel that bypasses the port office floor, then gets filed into a board ledger marked for the Maritime Oversight Board. The inspector does not create these approvals outright; they receive them under upstream governance and turn them into route decisions. From your vantage point above the harbor, you see the structure of authority: multiple authority offices across different regions report to the same board ledger, and each entry carries a review code that links marsh routes with larger route categories. Mira studies the filing pattern before speaking. \"There. That is the upstream node. The Maritime Oversight Board—the governing layer where marsh routes are no longer locally assigned operations but entries in a wider oversight framework. The maritime inspector translates board-reviewed authority into routine traffic windows, but this board is what reviews, constrains, and authorizes the whole chain. If we keep going, the next question is who sits on that board and decides which routes can be left to ordinary administration.\"",
+      choices: [
+        {
+          id: "watch_who_stably_sits_on_the_oversight_board_and_decides_routable_routes",
+          text: "Watch who stably sits on the Maritime Oversight Board and decides routable routes",
+          nextNodeId: "node_brine_lark_oversight_secretary",
+          effects: {
+            setFlags: {
+              brine_lark_maritime_oversight_board_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_oversight_secretary",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_oversight_secretary",
+      text: "You stop looking for rank and start looking for repetition. The board ledger is always open to one person who never leaves their desk, even when review packets pile up. They do not draft policy; they receive governance directives from above and stamp which route entries can be published as ordinary traffic. Their shelves hold three distinct kinds of records: route ledgers that look identical to any harbor office, marsh codes in a cipher system only the board uses, and traffic approvals that overlap with both. When a route needs to become routable, they do not merely file it; they cross-reference it against oversight windows, then mark a code that makes the schedule appear routine while the entry remains active for covert passage. Mira watches the precision of their work before speaking. \"There. That is the operator class at this layer. An oversight secretary—not a board member or command officer in the ordinary sense. The person who decides which marsh routes can be scheduled as ordinary traffic without triggering scrutiny. They sit where governance directives become operational windows, and marsh-to-harbor operations become entries in the larger routing system. If we keep going, the next question is who authorizes the secretary to make marsh routes appear as routine traffic.\"",
+      choices: [
+        {
+          id: "watch_who_authorizes_the_oversight_secretary_to_make_routes_routable",
+          text: "Watch who authorizes the oversight secretary to make routes routable",
+          nextNodeId: "node_brine_lark_maritime_minister",
+          effects: {
+            setFlags: {
+              brine_lark_oversight_secretary_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_maritime_minister",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_maritime_minister",
+      text: "The secretary's directives arrive not as individual notes but through a formal ministry channel that bypasses the board entirely. They are filed into a ledger at the Maritime Ministry, where oversight findings and route policy become entries in a wider government schedule. The secretary does not create these directives; they receive ministerial approval and convert it into route codes. From your vantage point above the harbor district, you see the structure of authority: multiple boards and councils across different regions report to the same ministry suite, and each entry carries a code that links marsh routes with larger policy categories. Mira studies the filing pattern before speaking. \"There. That is the upstream node. The Maritime Ministry—the governing office where marsh routes are no longer board-level operations but entries in a wider policy framework. The oversight secretary translates those decisions into routine traffic windows, but this ministry is what reviews, constrains, and authorizes the whole chain. If we keep going, the next question is who sits in that office and decides which routes can be left to ordinary administration.\"",
+      choices: [
+        {
+          id: "watch_who_stably_sits_in_the_maritime_ministry_and_decides_routable_routes",
+          text: "Watch who stably sits in the Maritime Ministry and decides routable routes",
+          nextNodeId: "node_brine_lark_transport_cabinet",
+          effects: {
+            setFlags: {
+              brine_lark_maritime_minister_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_transport_cabinet",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_transport_cabinet",
+      text: "You stop looking for a name and start looking for the pattern of authority. The cabinet office is always open to one small group who never leave their chairs, even when cross-ministry packets pile up. They do not draft policy; they receive ministerial directives from above and stamp which route entries can be published as ordinary traffic. Their shelves hold three distinct kinds of records: route ledgers that look identical to any ministry office, marsh codes in a cipher system only the cabinet uses, and traffic approvals that overlap with both. When a route needs to become routable, they do not merely file it; they cross-reference it against cabinet windows, then mark a code that makes the schedule appear routine while the entry remains active for covert passage. Mira watches the precision of their work before speaking. \"There. That is the operator class at this layer. A cabinet secretary—not a minister or committee member in the ordinary sense. The person who decides which marsh routes can be scheduled as ordinary traffic without triggering scrutiny. They sit where ministerial directives become operational windows, and marsh-to-harbor operations become entries in the larger routing system. If we keep going, the next question is who authorizes the cabinet secretary to make marsh routes appear as routine traffic.\"",
+      choices: [
+        {
+          id: "watch_who_authorizes_the_cabinet_secretary_to_make_routes_routable",
+          text: "Watch who authorizes the cabinet secretary to make routes routable",
+          nextNodeId: "node_brine_lark_executive_office",
+          effects: {
+            setFlags: {
+              brine_lark_transport_cabinet_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_executive_office",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_executive_office",
+      text: "The cabinet secretary's directives do not originate in the cabinet floor after all. They arrive through a restricted government channel that bypasses the cabinet entirely, then get filed into a final authorization ledger at the Executive Office. The secretary does not create these approvals; they receive executive signoff and convert it into route codes. From your vantage point above the harbor district, you see the structure of authority: multiple cabinets and ministries across different regions report to the same executive suite, and each entry carries a signature code that links marsh routes with larger policy categories. Mira studies the filing pattern before speaking. \"There. That is the upstream node. The Executive Office—the governing suite where marsh routes are no longer cabinet-level operations but entries in a final policy framework. The cabinet secretary translates those decisions into routine traffic windows, but this office is what reviews, constrains, and authorizes the whole chain. If we keep going, the next question is who sits in that office and decides which routes can be left to ordinary administration.\"",
+      choices: [
+        {
+          id: "watch_who_stably_sits_in_the_executive_office_and_decides_routable_routes",
+          text: "Watch who stably sits in the Executive Office and decides routable routes",
+          nextNodeId: "node_brine_lark_prime_minister",
+          effects: {
+            setFlags: {
+              brine_lark_executive_office_identified: true,
+            },
+            setVars: {
+              current_goal: "identify_prime_minister",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_prime_minister",
+      text: "You stop looking for a name and start looking for the pattern of authority. The executive suite is always open to one person who never leaves their desk, even when final approvals pile up. They do not draft the policy themselves; they receive cabinet and ministry directives from below and sign which route entries can be published as ordinary traffic. Their shelves hold three distinct kinds of records: route ledgers that look identical to any government office, marsh codes in a national cipher system, and traffic approvals that overlap with both. When a route needs to become routable, they do not merely file it; they cross-reference it against executive windows, then mark a code that makes the schedule appear routine while the entry remains active for covert passage. Mira watches the precision of their work before speaking. \"There. That is the operator class at this layer. A prime minister—not a minister or council member in the ordinary sense. The person who decides which marsh routes can be scheduled as ordinary traffic without triggering scrutiny. They sit where cabinet directives become final operating reality, and marsh-to-harbor operations become entries in the larger routing system. If we keep going, the next question is who authorizes the prime minister to make marsh routes appear as routine traffic.\"",
       choices: [],
     },
   ],

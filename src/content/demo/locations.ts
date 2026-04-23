@@ -101,4 +101,58 @@ export const demoLocations: LocationDefinition[] = [
     description: "A tall, camouflaged tower built into the marsh rise behind the control house, with a single lamp at its peak and a network of signal lines running down to the sluice system.",
     connections: [{ to: "harbor", travelMinutes: 35 }],
   },
+  {
+    id: "harbor_signal_point",
+    name: "Harbor Signal Point",
+    description: "A low, camouflaged observation post at the harbor wall above the customs sheds, with signal lines running inland to the marsh control tower and charts showing both marsh routes and harbor movements.",
+    connections: [{ to: "harbor", travelMinutes: 20 }],
+  },
+  {
+    id: "coordinator_post",
+    name: "Harbor Coordinator's Post",
+    description: "A small room at the rear of Harbor Signal Point overlooking both marsh channels and harbor traffic lanes, with a large chart connecting inland routes to harbor movements.",
+    connections: [{ to: "harbor", travelMinutes: 15 }],
+  },
+  {
+    id: "harbor_window_office",
+    name: "Harbor Window Office",
+    description: "A shuttered office above the customs sheds where berth rosters, patrol intervals, and traffic windows can be quietly adjusted before they become visible dock routine.",
+    connections: [{ to: "harbor", travelMinutes: 15 }],
+  },
+  {
+    id: "coastal_command_hq",
+    name: "Coastal Command HQ",
+    description: "A fortified office building at the edge of the marsh where maritime directives and coastal routing approvals are filed, with signal lines connecting to the port authority below.",
+    connections: [{ to: "harbor", travelMinutes: 40 }],
+  },
+  {
+    id: "harbor_authority_office",
+    name: "Harbor Authority Office",
+    description: "A narrow upper-floor office above the council rooms where route ledgers, approval slips, and ordinary-traffic codes are stamped before the schedules are published.",
+    connections: [{ to: "harbor", travelMinutes: 15 }],
+  },
+  {
+    id: "maritime_ministry",
+    name: "Maritime Ministry",
+    description: "A top-floor ministry suite overlooking the harbor district, where oversight boards are reviewed and route policy is signed before being sent back down the chain.",
+    connections: [{ to: "harbor", travelMinutes: 20 }],
+  },
+  {
+    id: "transport_cabinet",
+    name: "Transport Cabinet",
+    description: "A sealed cabinet office above the ministry level where cross-ministry route policy is finalized before ordinary administration receives it.",
+    connections: [{ to: "harbor", travelMinutes: 25 }],
+  },
+  {
+    id: "executive_office",
+    name: "Executive Office",
+    description: "A restricted government suite above the cabinet floor where final route authorizations are signed before policy becomes operating reality.",
+    connections: [{ to: "harbor", travelMinutes: 30 }],
+  },
+  {
+    id: "prime_ministers_office",
+    name: "Prime Minister's Office",
+    description: "The top executive suite above the harbor district, where final policy is signed and the last route authorizations are approved before publication.",
+    connections: [{ to: "harbor", travelMinutes: 35 }],
+  },
 ];

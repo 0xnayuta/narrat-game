@@ -11,6 +11,28 @@
 - 运行时边界：`GameSession`
 - UI 边界：`DemoApp`
 
+当前内容侧还处于：
+
+- **主链结构清理 + 可扩展内容骨架稳定化** 阶段
+- 已对 `quest_brine_lark` 做过一轮主链压缩清理
+- 当前默认目标不再是继续无限上追治理层级，而是：
+  1. 维护已压缩后的稳定主链
+  2. 让 narrative / quest / 文档保持一致
+  3. 为后续横向分支、条件系统、效果模型接入做准备
+
+Brine Lark 当前状态：
+
+- 高层垂直链已做温和压缩
+- 一部分旧 narrative 节点仍保留在代码中，但已不属于默认主链推进
+- `quest_brine_lark.stepIds` 已缩短，按当前保留主链工作
+- 相关索引文档位于：
+  - `docs/brine-lark-routing-index.md`
+  - `docs/brine-lark/main-chain-cleanup.md`
+  - `docs/brine-lark/soft-cleanup-plan.md`
+  - `docs/brine-lark/nodes.md`
+  - `docs/brine-lark/locations.md`
+  - `docs/brine-lark/roles.md`
+
 事件系统当前状态：
 
 - Phase A：`priority` 已完成
@@ -43,6 +65,11 @@
 2. Narrative / Quest 效果模型增强。
 3. NPC / 任务 / 事件联动，逐步让 `eventHistory` 真正参与内容规则。
 4. 在新增能力前，优先保持现有运行路径和测试稳定。
+5. 内容侧优先维护**已压缩后的主链清晰度**，不要重新把主链扩回过密的垂直治理层。
+6. 若继续推进 `Brine Lark`，优先：
+   - 保持当前主链一致性
+   - 从中层稳定节点做横向扩展
+   - 或把该链条接入条件 / 效果 / 事件系统
 
 ## 工作方式
 
@@ -53,12 +80,18 @@
 5. 如果需求与当前结构冲突，先说明冲突，再给出最小调整方案。
 6. 如需创建 TODO、占位实现或技术债标记，要明确写出。
 7. 不要擅自提交 git commit，不要执行危险或不可逆操作，除非我明确要求。
+8. 涉及 `Brine Lark` 时，先区分：
+   - 当前默认主链节点
+   - 已绕过但保留在代码里的背景节点
+   - 文档索引中的保留层 / 压缩层
+9. 除非我明确要求，不要再次把 `Brine Lark` 主链往更高治理层无限延长；优先保持当前清理结果稳定。
 
 ## 架构原则
 
 1. 保持 `content / engine / ui` 分层，UI 不承载核心规则逻辑。
 2. 核心系统优先低耦合、尽量纯函数化，并通过 TypeScript 类型定义边界。
 3. 对外行为先稳定，再逐步扩展能力。
+4. 内容结构也应遵循“稳定主链优先、压缩冗余层、再做横向扩展”的原则。
 
 ## 外部参考约束
 
