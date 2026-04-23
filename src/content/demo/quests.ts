@@ -45,4 +45,14 @@ export const demoQuests: QuestDefinition[] = [
       "step_identify_drowned_lantern_contact",
     ],
   },
+  {
+    id: "quest_brine_lark",
+    title: "Track Brine Lark",
+    status: "inactive",
+    stepIds: [
+      "step_search_tide_warehouse",
+      "step_watch_shift_change",
+      "step_identify_exchange_contact",
+    ],
+  },
 ];

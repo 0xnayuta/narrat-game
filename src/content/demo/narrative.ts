@@ -915,6 +915,109 @@ export const demoNarrativeGraph: NarrativeGraph = {
     {
       id: "node_drowned_lantern_contact_confirmed",
       text: "Mira nods once. \"Then Brine Lark is our next point of pressure. We may not know every face behind Black Sail yet, but we know which runner's shadow to follow when this line moves again.\"",
+      choices: [
+        {
+          id: "ask_where_brine_lark_runs_goods",
+          text: "Ask where Brine Lark is most likely to surface next",
+          nextNodeId: "node_brine_lark_start_point",
+          effects: {
+            setFlags: {
+              brine_lark_followup_started: true,
+            },
+            setVars: {
+              current_goal: "track_brine_lark_route",
+            },
+            setQuests: {
+              quest_brine_lark: {
+                status: "active",
+                currentStepId: "step_search_tide_warehouse",
+              },
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_start_point",
+      text: "Mira answers without hesitation. \"Watch the tide warehouse behind the customs ropeshed. A runner like Brine Lark needs a place to swap tags, dry slips, and vanish before the dock crews change. If that name is still active, that warehouse is the next board to lift.\"",
+      choices: [
+        {
+          id: "search_tide_warehouse_for_brine_lark_trace",
+          text: "Search the tide warehouse behind the customs ropeshed",
+          nextNodeId: "node_brine_lark_warehouse_trace",
+          effects: {
+            setFlags: {
+              brine_lark_warehouse_trace_found: true,
+            },
+            setVars: {
+              current_goal: "inspect_brine_lark_warehouse_trace",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_warehouse_trace",
+      text: "Inside the tide warehouse, you find a split rope seal and a chalked tally mark hidden behind stacked salt crates. The mark matches the slip pattern Mira described, and the dust around it suggests someone has been using this corner as a relay point shortly before dawn.",
+      choices: [
+        {
+          id: "ask_mira_what_the_warehouse_mark_implies",
+          text: "Ask Mira what the warehouse mark implies",
+          nextNodeId: "node_brine_lark_route_window",
+          effects: {
+            setFlags: {
+              brine_lark_route_window_identified: true,
+            },
+            setVars: {
+              current_goal: "watch_brine_lark_shift_change",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_route_window",
+      text: "Mira studies the chalk mark, then points toward the warehouse's rear loading door. \"This is a shift-change signal. Brine Lark's people are not using the front. If the pattern holds, the next handoff will slip through the back door just before dawn when the night crews peel away and the day clerks haven't settled in yet.\"",
+      choices: [
+        {
+          id: "commit_to_watch_brine_lark_shift_change",
+          text: "Agree to watch the rear loading door before dawn",
+          nextNodeId: "node_brine_lark_watch_plan",
+          effects: {
+            setFlags: {
+              brine_lark_shift_watch_committed: true,
+            },
+            setVars: {
+              current_goal: "watch_brine_lark_rear_door",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_watch_plan",
+      text: "Mira gives a short nod. \"Then we stop chasing scraps and start watching the route itself. Be in place before first light. If Brine Lark uses that rear door, we catch the handoff instead of reading about it afterward.\"",
+      choices: [
+        {
+          id: "keep_watch_through_shift_change",
+          text: "Keep watch through the shift change",
+          nextNodeId: "node_brine_lark_shift_change_observed",
+          effects: {
+            setFlags: {
+              brine_lark_shift_change_observed: true,
+            },
+            setVars: {
+              current_goal: "assess_brine_lark_handoff",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_shift_change_observed",
+      text: "Just before dawn, a hooded figure slips through the rear loading door and passes a wrapped tag bundle to a waiting dock clerk before vanishing back into the dim lane behind the ropeshed. It happens too cleanly to be chance—Brine Lark's route is real, and now you have seen the handoff pattern with your own eyes.",
       choices: [],
     },
   ],

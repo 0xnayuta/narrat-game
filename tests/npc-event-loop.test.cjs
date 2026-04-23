@@ -1074,6 +1074,55 @@ test("started black sail stakeout should lead into a minimal contact and net-clo
   assert.equal(confirmTarget.state.vars.current_goal, "trace_brine_lark_network");
   assert.equal(confirmTarget.state.quests.quest_drowned_lantern?.status, "completed");
   assert.equal(confirmTarget.scene?.nodeId, "node_drowned_lantern_contact_confirmed");
+  assert.deepEqual(confirmTarget.scene?.choices, [
+    { id: "ask_where_brine_lark_runs_goods", text: "Ask where Brine Lark is most likely to surface next" },
+  ]);
+
+  const followBrineLark = session.choose("ask_where_brine_lark_runs_goods");
+  assert.equal(followBrineLark.triggeredEventId, null);
+  assert.equal(followBrineLark.state.flags.brine_lark_followup_started, true);
+  assert.equal(followBrineLark.state.vars.current_goal, "track_brine_lark_route");
+  assert.equal(followBrineLark.state.quests.quest_brine_lark?.status, "active");
+  assert.equal(followBrineLark.state.quests.quest_brine_lark?.currentStepId, "step_search_tide_warehouse");
+  assert.equal(followBrineLark.scene?.nodeId, "node_brine_lark_start_point");
+  assert.deepEqual(followBrineLark.scene?.choices, [
+    { id: "search_tide_warehouse_for_brine_lark_trace", text: "Search the tide warehouse behind the customs ropeshed" },
+  ]);
+
+  const searchWarehouse = session.choose("search_tide_warehouse_for_brine_lark_trace");
+  assert.equal(searchWarehouse.triggeredEventId, null);
+  assert.equal(searchWarehouse.state.flags.brine_lark_warehouse_trace_found, true);
+  assert.equal(searchWarehouse.state.vars.current_goal, "inspect_brine_lark_warehouse_trace");
+  assert.equal(searchWarehouse.state.quests.quest_brine_lark?.currentStepId, "step_watch_shift_change");
+  assert.equal(searchWarehouse.scene?.nodeId, "node_brine_lark_warehouse_trace");
+  assert.deepEqual(searchWarehouse.scene?.choices, [
+    { id: "ask_mira_what_the_warehouse_mark_implies", text: "Ask Mira what the warehouse mark implies" },
+  ]);
+
+  const routeWindow = session.choose("ask_mira_what_the_warehouse_mark_implies");
+  assert.equal(routeWindow.triggeredEventId, null);
+  assert.equal(routeWindow.state.flags.brine_lark_route_window_identified, true);
+  assert.equal(routeWindow.state.vars.current_goal, "watch_brine_lark_shift_change");
+  assert.equal(routeWindow.state.quests.quest_brine_lark?.currentStepId, "step_identify_exchange_contact");
+  assert.equal(routeWindow.scene?.nodeId, "node_brine_lark_route_window");
+  assert.deepEqual(routeWindow.scene?.choices, [
+    { id: "commit_to_watch_brine_lark_shift_change", text: "Agree to watch the rear loading door before dawn" },
+  ]);
+
+  const watchPlan = session.choose("commit_to_watch_brine_lark_shift_change");
+  assert.equal(watchPlan.triggeredEventId, null);
+  assert.equal(watchPlan.state.flags.brine_lark_shift_watch_committed, true);
+  assert.equal(watchPlan.state.vars.current_goal, "watch_brine_lark_rear_door");
+  assert.equal(watchPlan.scene?.nodeId, "node_brine_lark_watch_plan");
+  assert.deepEqual(watchPlan.scene?.choices, [
+    { id: "keep_watch_through_shift_change", text: "Keep watch through the shift change" },
+  ]);
+
+  const observeHandoff = session.choose("keep_watch_through_shift_change");
+  assert.equal(observeHandoff.triggeredEventId, null);
+  assert.equal(observeHandoff.state.flags.brine_lark_shift_change_observed, true);
+  assert.equal(observeHandoff.state.vars.current_goal, "assess_brine_lark_handoff");
+  assert.equal(observeHandoff.scene?.nodeId, "node_brine_lark_shift_change_observed");
 });
 
 test("black sail quest skeleton should activate and advance across key branch milestones", () => {
