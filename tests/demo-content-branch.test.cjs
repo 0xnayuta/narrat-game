@@ -254,6 +254,47 @@ test("demo black sail stakeout should allow resetting the sting plan back to its
   assert.equal(nextState.quests.quest_black_sail_sting.currentStepId, "step_prepare_stakeout");
 });
 
+test("drowned lantern exchange window should reveal route recap branch when coal berth route was recorded", () => {
+  const runtime = new NarrativeRuntime(demoNarrativeGraph);
+  runtime.jumpTo("node_drowned_lantern_exchange_window");
+
+  const stateWithRouteRecap = buildBranchState({
+    currentLocationId: "harbor",
+    flags: {
+      drowned_lantern_shed_trace_found: true,
+      drowned_lantern_exchange_window_found: true,
+      drowned_lantern_coal_berth_route_noted: true,
+    },
+    quests: {
+      quest_drowned_lantern: { status: "active", currentStepId: "step_identify_drowned_lantern_contact" },
+    },
+    vars: {
+      current_goal: "identify_drowned_lantern_exchange_window",
+    },
+  });
+
+  const visibleChoices = filterVisibleChoices(runtime.getCurrentChoices(), stateWithRouteRecap);
+  assert.deepEqual(
+    visibleChoices.map((choice) => choice.id),
+    ["connect_coal_berth_lane_to_the_dawn_exchange", "ask_who_handles_the_dawn_exchange"],
+  );
+
+  const routeChoice = runtime.choose("connect_coal_berth_lane_to_the_dawn_exchange");
+  assert.equal(routeChoice.node.id, "node_drowned_lantern_exchange_window_route_confirmed");
+
+  const afterRouteChoice = applyNarrativeChoiceEffects(stateWithRouteRecap, routeChoice.effects, demoQuests);
+  assert.equal(afterRouteChoice.flags.drowned_lantern_route_pattern_used, true);
+  assert.equal(afterRouteChoice.flags.drowned_lantern_contact_suspect_identified, true);
+  assert.equal(afterRouteChoice.vars.current_goal, "verify_drowned_lantern_contact_suspect");
+  assert.equal(
+    afterRouteChoice.quests.quest_drowned_lantern.currentStepId,
+    "step_identify_drowned_lantern_contact",
+  );
+
+  const nameRunner = runtime.choose("name_the_route_runner_as_the_contact_suspect");
+  assert.equal(nameRunner.node.id, "node_drowned_lantern_contact_suspect");
+});
+
 test("drowned lantern exchange window should reveal insight branch when customs stairs observation was recorded", () => {
   const runtime = new NarrativeRuntime(demoNarrativeGraph);
   runtime.jumpTo("node_drowned_lantern_exchange_window");

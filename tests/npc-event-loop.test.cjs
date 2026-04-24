@@ -1284,6 +1284,55 @@ test("started black sail stakeout should lead into a minimal contact and net-clo
   assert.equal(observeHandoff.scene?.nodeId, "node_brine_lark_shift_change_observed");
 });
 
+test("returning to the coal berth during the drowned lantern shed search should trigger a route recap", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 2, hour: 8, minute: 30 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      drowned_lantern_identified_as_contact: true,
+      drowned_lantern_search_started: true,
+      drowned_lantern_shed_trace_found: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_drowned_lantern: { status: "active", currentStepId: "step_trace_dawn_exchange" },
+    },
+    inventory: {},
+    vars: { current_goal: "inspect_drowned_lantern_shed_trace", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_coal_berth_arrival: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {},
+      triggerScopes: {},
+    },
+  });
+
+  const routeRecap = session.travelTo("coal_berth");
+  assert.equal(routeRecap.triggeredEventId, "evt_drowned_lantern_coal_berth_route_recap");
+  assert.equal(routeRecap.scene?.nodeId, "node_drowned_lantern_coal_berth_route_recap");
+  assert.deepEqual(routeRecap.scene?.choices, [
+    {
+      id: "mark_the_coal_berth_to_sheds_route",
+      text: "Mark the lane between the coal berth and customs sheds as part of the Drowned Lantern route",
+    },
+  ]);
+
+  const markRoute = session.choose("mark_the_coal_berth_to_sheds_route");
+  assert.equal(markRoute.triggeredEventId, null);
+  assert.equal(markRoute.state.flags.drowned_lantern_coal_berth_route_noted, true);
+  assert.equal(markRoute.state.vars.current_goal, "inspect_drowned_lantern_shed_trace");
+  assert.equal(markRoute.scene?.nodeId, "node_drowned_lantern_coal_berth_route_recap_end");
+});
+
 test("returning to customs tide stairs during the drowned lantern shed search should trigger a lower-landing observation", () => {
   const session = createDemoSession();
 

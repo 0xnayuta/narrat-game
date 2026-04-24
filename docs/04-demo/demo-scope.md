@@ -26,6 +26,13 @@
 - **扩展链**：Black Sail trail → sting（7+3 步）、Drowned Lantern（3 步）、Brine Lark（已压缩）
 - **NPC**：Vendor（市场）、Mira（港口）
 
+## Drowned Lantern 横向回顾点
+
+当前 Drowned Lantern 链保持 3 步主线不变，横向补点用于强化“观察 → 记录 → 后续小分支”的内容模式：
+
+- **Customs Tide Stairs lower landing**：进入 `customs_tide_stairs` 时触发 `evt_customs_stairs_return_glance`，记录 `customs_stairs_exchange_point_noted`，可通过 Mira recap 折回 `node_drowned_lantern_exchange_window`。
+- **Coal Berth route recap**：进入 `coal_berth` 时触发 `evt_drowned_lantern_coal_berth_route_recap`，记录 `drowned_lantern_coal_berth_route_noted`，在 `node_drowned_lantern_exchange_window` 解锁 route-pattern recap 分支。
+
 ## Brine Lark 链（已压缩）
 
 **当前状态**：主链已从原始长链压缩到 43 步 retained 层，不再向高层治理层扩展。

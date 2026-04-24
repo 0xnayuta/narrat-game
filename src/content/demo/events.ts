@@ -365,6 +365,34 @@ export const demoEvents: EventDefinition[] = [
     },
   },
   {
+    id: "evt_drowned_lantern_coal_berth_route_recap",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 8,
+    conditions: {
+      locationIds: ["coal_berth"],
+      flags: {
+        drowned_lantern_shed_trace_found: true,
+        drowned_lantern_exchange_window_found: false,
+      },
+      vars: {
+        current_goal: "inspect_drowned_lantern_shed_trace",
+      },
+      questSteps: {
+        quest_drowned_lantern: "step_trace_dawn_exchange",
+      },
+      eventHistory: {
+        onceTriggered: {
+          evt_coal_berth_arrival: true,
+        },
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_drowned_lantern_coal_berth_route_recap",
+    },
+  },
+  {
     id: "evt_brine_lark_breaker_culvert_return_ripple",
     type: "arrival",
     trigger: "on-location-enter",

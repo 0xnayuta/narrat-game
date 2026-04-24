@@ -985,6 +985,30 @@ export const demoNarrativeGraph: NarrativeGraph = {
       choices: [],
     },
     {
+      id: "node_drowned_lantern_coal_berth_route_recap",
+      text: "Back at the coal berth, the old handoff stops looking like a single smuggling point and starts looking like the dry end of a route. The customs sheds give the runner paper cover; the berth gives them water access; between them, the same narrow lane keeps showing just enough shadow for someone carrying tide slips to pass without joining the cargo crews.",
+      choices: [
+        {
+          id: "mark_the_coal_berth_to_sheds_route",
+          text: "Mark the lane between the coal berth and customs sheds as part of the Drowned Lantern route",
+          nextNodeId: "node_drowned_lantern_coal_berth_route_recap_end",
+          effects: {
+            setFlags: {
+              drowned_lantern_coal_berth_route_noted: true,
+            },
+            setVars: {
+              current_goal: "inspect_drowned_lantern_shed_trace",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_coal_berth_route_recap_end",
+      text: "You fix the route in memory as a movement pattern rather than a place: dry paper from the sheds, water access from the berth, and a runner who only needs a few quiet steps between them before dawn.",
+      choices: [],
+    },
+    {
       id: "node_harbor_watch_customs_stairs_recap",
       text: "Mira listens without interrupting while you describe the lower landing below the customs sightline. \"That matters,\" she says at last. \"The shed gave us the paper trail, but the stairs give us the handoff shape. If the Drowned Lantern uses a dawn exchange, that landing may be where the runner keeps the cargo hands out of sight.\"",
       choices: [
@@ -1028,6 +1052,25 @@ export const demoNarrativeGraph: NarrativeGraph = {
           },
         },
         {
+          id: "connect_coal_berth_lane_to_the_dawn_exchange",
+          text: "Connect the coal berth lane to the dawn exchange route",
+          conditions: {
+            flags: {
+              drowned_lantern_coal_berth_route_noted: true,
+            },
+          },
+          nextNodeId: "node_drowned_lantern_exchange_window_route_confirmed",
+          effects: {
+            setFlags: {
+              drowned_lantern_contact_suspect_identified: true,
+              drowned_lantern_route_pattern_used: true,
+            },
+            setVars: {
+              current_goal: "verify_drowned_lantern_contact_suspect",
+            },
+          },
+        },
+        {
           id: "ask_who_handles_the_dawn_exchange",
           text: "Ask Mira who is most likely handling that dawn exchange",
           nextNodeId: "node_drowned_lantern_contact_suspect",
@@ -1058,6 +1101,25 @@ export const demoNarrativeGraph: NarrativeGraph = {
               current_goal: "trace_brine_lark_network",
             },
             completeQuest: ["quest_drowned_lantern"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_exchange_window_route_confirmed",
+      text: "Mira follows your route sketch from the sheds to the coal berth and gives a small, grim nod. \"That is courier behavior, not cargo behavior. Someone is keeping the paperwork dry, staying close enough to water to vanish, and never standing where the heavy crews have to remember them. That points us toward the same kind of dawn runner.\"",
+      choices: [
+        {
+          id: "name_the_route_runner_as_the_contact_suspect",
+          text: "Name the route runner as the Drowned Lantern contact suspect",
+          nextNodeId: "node_drowned_lantern_contact_suspect",
+          effects: {
+            setFlags: {
+              drowned_lantern_contact_suspect_identified: true,
+            },
+            setVars: {
+              current_goal: "verify_drowned_lantern_contact_suspect",
+            },
           },
         },
       ],
