@@ -767,6 +767,30 @@ export const demoNarrativeGraph: NarrativeGraph = {
       choices: [],
     },
     {
+      id: "node_harbor_watch_north_channel_fresh_feedback",
+      text: "Mira has not yet folded the harbor map away. \"If that wake line is still fresh in your head, use it before the tide rewrites the marks. At the coal berth, do not just search crates—look for where a water route becomes a dock route. Fresh rope, wet soot, a landing angle that does not match ordinary loading.\"",
+      choices: [
+        {
+          id: "note_miras_fresh_wake_warning",
+          text: "Note Mira's warning and head for the coal berth",
+          nextNodeId: "node_harbor_watch_north_channel_fresh_feedback_end",
+          effects: {
+            setFlags: {
+              black_sail_north_channel_recent_feedback_heard: true,
+            },
+            setVars: {
+              current_goal: "investigate_black_sail_berth",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_watch_north_channel_fresh_feedback_end",
+      text: "You leave the watch with Mira's last instruction narrowed into a practical test: at the coal berth, read the landing marks as the landward end of the north-channel route.",
+      choices: [],
+    },
+    {
       id: "node_coal_berth_arrival",
       text: "The old coal berth sits in shadow beyond the customs sheds. Fresh boot marks cut through the soot, and a skiff rope has been looped around a bollard polished by recent use.",
       choices: [

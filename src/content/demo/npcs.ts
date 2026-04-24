@@ -110,6 +110,28 @@ export const demoNpcs: NPCDefinition[] = [
         },
       },
       {
+        id: "harbor-watch-north-channel-fresh-feedback",
+        label: "Ask Mira about the fresh north-channel wake line",
+        nodeId: "node_harbor_watch_north_channel_fresh_feedback",
+        requiredFlags: {
+          harbor_watch_contacted: true,
+          black_sail_north_channel_wake_pattern_noted: true,
+          black_sail_berth_identified: true,
+          black_sail_north_channel_recent_feedback_heard: false,
+        },
+        requiredQuestSteps: {
+          quest_black_sail_trail: "step_investigate_black_sail_berth",
+        },
+        requiredVars: {
+          current_goal: "investigate_black_sail_berth",
+        },
+        eventHistory: {
+          lastTriggeredWithinMinutes: {
+            evt_north_channel_return_wake_pattern: 45,
+          },
+        },
+      },
+      {
         id: "harbor-watch-repeat",
         label: "Speak with Mira again",
         nodeId: "node_harbor_watch_repeat",

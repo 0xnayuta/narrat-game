@@ -1026,6 +1026,97 @@ test("north channel marker should lead back to Mira and identify the black sail 
   assert.equal(berthTip.scene?.nodeId, "node_harbor_watch_black_sail_tip");
 });
 
+test("Mira should offer a short fresh-wake feedback after a recent north channel recap", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 2, hour: 1, minute: 35 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      stall_discovered: true,
+      compass_vendor_reacted: true,
+      harbor_watch_contacted: true,
+      signal_tower_clue_found: true,
+      pier_message_found: true,
+      north_channel_decoded: true,
+      north_channel_marker_found: true,
+      black_sail_north_channel_wake_pattern_noted: true,
+      black_sail_berth_identified: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "active", currentStepId: "step_investigate_black_sail_berth" },
+    },
+    inventory: {},
+    vars: { current_goal: "investigate_black_sail_berth", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_north_channel_return_wake_pattern: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {
+        evt_north_channel_return_wake_pattern: 1510,
+      },
+      triggerScopes: {},
+    },
+  });
+
+  const freshFeedback = session.interactWithNpc("npc_harbor_watch_01");
+  assert.equal(freshFeedback.scene?.nodeId, "node_harbor_watch_north_channel_fresh_feedback");
+  assert.deepEqual(freshFeedback.scene?.choices, [
+    { id: "note_miras_fresh_wake_warning", text: "Note Mira's warning and head for the coal berth" },
+  ]);
+
+  const noteWarning = session.choose("note_miras_fresh_wake_warning");
+  assert.equal(noteWarning.triggeredEventId, null);
+  assert.equal(noteWarning.state.flags.black_sail_north_channel_recent_feedback_heard, true);
+  assert.equal(noteWarning.state.vars.current_goal, "investigate_black_sail_berth");
+  assert.equal(noteWarning.scene?.nodeId, "node_harbor_watch_north_channel_fresh_feedback_end");
+});
+
+test("Mira fresh-wake feedback should not steal repeat interaction after the short window expires", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 2, hour: 2, minute: 10 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      stall_discovered: true,
+      compass_vendor_reacted: true,
+      harbor_watch_contacted: true,
+      signal_tower_clue_found: true,
+      pier_message_found: true,
+      north_channel_decoded: true,
+      north_channel_marker_found: true,
+      black_sail_north_channel_wake_pattern_noted: true,
+      black_sail_berth_identified: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "active", currentStepId: "step_investigate_black_sail_berth" },
+    },
+    inventory: {},
+    vars: { current_goal: "investigate_black_sail_berth", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_north_channel_return_wake_pattern: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {
+        evt_north_channel_return_wake_pattern: 1510,
+      },
+      triggerScopes: {},
+    },
+  });
+
+  const miraRepeat = session.interactWithNpc("npc_harbor_watch_01");
+  assert.equal(miraRepeat.scene?.nodeId, "node_harbor_watch_repeat");
+});
+
 test("black sail berth clue should continue into a minimal coal berth investigation", () => {
   const session = createDemoSession();
 

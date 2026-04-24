@@ -31,6 +31,7 @@
 当前 Black Sail trail 主线保持 7 步不变，横向补点用于强化中段路线理解，不新增 quest step：
 
 - **North Channel wake pattern**：回到 `north_channel` 时触发 `evt_north_channel_return_wake_pattern`，记录 `black_sail_north_channel_wake_pattern_noted`，在 `node_harbor_watch_black_sail_tip` 解锁 north-channel-to-coal-berth recap 分支。
+- **Mira fresh-wake feedback**：在 `evt_north_channel_return_wake_pattern` 触发后的短窗口内回到 Mira，可触发 `harbor-watch-north-channel-fresh-feedback`，给出面向 coal berth 搜查的短时提示。
 
 ## Drowned Lantern 横向回顾点
 
