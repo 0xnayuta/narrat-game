@@ -26,7 +26,7 @@ src/
 │       ├── bundle.ts       统一导出
 │       ├── events.ts       22 个事件
 │       ├── locations.ts    23 个地点
-│       ├── narrative.ts    叙事图（2483 行，110+ choices）
+│       ├── narrative.ts    叙事图（2505 行，120+ choices）
 │       ├── npcs.ts         2 个 NPC，8 个 interactions
 │       ├── quests.ts       4 条任务链
 │       └── loader.ts       内容加载

@@ -1201,6 +1201,17 @@ export const demoNarrativeGraph: NarrativeGraph = {
       text: "Mira does not hesitate. \"Then it is the tally-keeper. The one they call Brine Lark. A dawn runner who carries tags, names, and tide slips between crews without ever touching cargo. If your stairs observation is right, he is the one using that landing at first light.\"",
       choices: [
         {
+          id: "close_the_drowned_lantern_file_from_insight",
+          text: "Close the Drowned Lantern file before following Brine Lark",
+          nextNodeId: "node_drowned_lantern_case_boundary_from_insight",
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_case_boundary_from_insight",
+      text: "You and Mira set the pieces in order: Black Sail used the berth, the Drowned Lantern name covered the dawn runner, and the lower tide stairs exposed how that runner kept paper and cargo moving without joining either crew. The alias is no longer the mystery—it is the handoff role between Black Sail and the next line. What remains is to follow the runner who fits it.",
+      choices: [
+        {
           id: "ask_where_brine_lark_runs_goods_from_insight",
           text: "Ask where Brine Lark is most likely to surface next",
           nextNodeId: "node_brine_lark_start_point",
@@ -1239,6 +1250,17 @@ export const demoNarrativeGraph: NarrativeGraph = {
     {
       id: "node_drowned_lantern_contact_confirmed",
       text: "Mira nods once. \"Then Brine Lark is our next point of pressure. We may not know every face behind Black Sail yet, but we know which runner's shadow to follow when this line moves again.\"",
+      choices: [
+        {
+          id: "close_the_drowned_lantern_file",
+          text: "Close the Drowned Lantern file before following Brine Lark",
+          nextNodeId: "node_drowned_lantern_case_boundary",
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_case_boundary",
+      text: "You and Mira lay out the short chain one last time: the Black Sail berth produced the ledger stub, the customs sheds held the Drowned Lantern tide slip, the dawn window narrowed the role, and the suspect resolved into a runner rather than a cargo hand. The Drowned Lantern lead is no longer open-ended; it has become a handoff boundary pointing at Brine Lark.",
       choices: [
         {
           id: "ask_where_brine_lark_runs_goods",

@@ -1375,6 +1375,14 @@ test("started black sail stakeout should lead into a minimal contact and net-clo
   assert.equal(confirmTarget.state.quests.quest_drowned_lantern?.status, "completed");
   assert.equal(confirmTarget.scene?.nodeId, "node_drowned_lantern_contact_confirmed");
   assert.deepEqual(confirmTarget.scene?.choices, [
+    { id: "close_the_drowned_lantern_file", text: "Close the Drowned Lantern file before following Brine Lark" },
+  ]);
+
+  const caseBoundary = session.choose("close_the_drowned_lantern_file");
+  assert.equal(caseBoundary.triggeredEventId, null);
+  assert.equal(caseBoundary.state.quests.quest_drowned_lantern?.status, "completed");
+  assert.equal(caseBoundary.scene?.nodeId, "node_drowned_lantern_case_boundary");
+  assert.deepEqual(caseBoundary.scene?.choices, [
     { id: "ask_where_brine_lark_runs_goods", text: "Ask where Brine Lark is most likely to surface next" },
   ]);
 

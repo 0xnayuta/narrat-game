@@ -408,6 +408,9 @@ test("drowned lantern exchange window should reveal insight branch when customs 
   assert.equal(afterConfirm.vars.current_goal, "trace_brine_lark_network");
   assert.equal(afterConfirm.quests.quest_drowned_lantern.status, "completed");
 
+  const closeFile = runtime.choose("close_the_drowned_lantern_file_from_insight");
+  assert.equal(closeFile.node.id, "node_drowned_lantern_case_boundary_from_insight");
+
   const followBrineLark = runtime.choose("ask_where_brine_lark_runs_goods_from_insight");
   assert.equal(followBrineLark.node.id, "node_brine_lark_start_point");
 
