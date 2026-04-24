@@ -213,7 +213,7 @@ Intro → Black Sail → Drowned Lantern → Brine Lark water-route boundary
 
 ### 第 3 步：设置 Brine Lark demo 终点
 
-把默认可玩链停在 Breaker Culvert / Reedway Cut 一带。
+把默认可玩链停在 Breaker Culvert / Reedway Cut 一带。当前推荐终点详见 `docs/04-demo/brine-lark-demo-boundary-plan.md`：默认收束到 `node_brine_lark_reedway_cut_activity` 后的 demo boundary。
 
 高层治理链保留在代码或 archive 中，但不再作为默认主线继续推进。
 

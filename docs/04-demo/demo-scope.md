@@ -50,7 +50,9 @@
 
 ## Brine Lark 链（已压缩）
 
-**当前状态**：主链已从原始长链压缩到 43 步 retained 层，不再向高层治理层扩展。
+**当前代码状态**：主链已从原始长链压缩到 43 步 retained 层，不再向高层治理层扩展。
+
+**后续默认体验目标**：按 `docs/04-demo/brine-lark-demo-boundary-plan.md`，优先把默认可玩链收束到 `node_brine_lark_reedway_cut_activity` 后的 demo boundary；高层治理段保留为背景 / 历史素材，不再作为默认主线推进目标。
 
 ### 主链保留节点（43 步）
 
