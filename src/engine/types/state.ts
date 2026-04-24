@@ -47,9 +47,9 @@ export interface GameState {
   inventory: InventoryState;
   vars: Record<string, number | string | boolean>;
   /**
-   * Optional forward-compatible event history slice.
-   * Runtime currently keeps legacy flags/vars keys for compatibility.
+   * Optional event history slice used as the primary event-history boundary.
+   * Legacy event flags/vars are compatibility inputs and must be accessed through
+   * the event history adapter rather than new runtime/UI logic.
    */
   eventHistory?: EventHistoryState;
-  // TODO: Move once/cooldown history fully from flags/vars into eventHistory.
 }

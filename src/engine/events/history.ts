@@ -248,6 +248,10 @@ export function hasTriggeredOnceEvent(state: GameState, event: EventDefinition):
   return history.onceTriggeredByEventId[event.id] === true;
 }
 
+/**
+ * @deprecated Use isEventInCooldownWindow for selector/runtime filtering.
+ * This helper only checks the global cooldown entry and is retained for compatibility tests.
+ */
 export function hasEventCooldownActive(state: GameState, event: EventDefinition): boolean {
   const cooldownMinutes = getEventCooldownMinutes(event);
   if (cooldownMinutes <= 0) {

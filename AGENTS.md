@@ -19,13 +19,17 @@
 - **阶段 2**：`Narrative / Quest Effect Model Stabilization`
   - `startQuest` 语义修复（幂等：保留 active/completed/failed）
   - 4 个 manual `setQuests` 激活全部替换为语义化的 `startQuest`
-  - `docs/conditions-effects-summary.md` 和 `docs/current-prototype-architecture.md` 已同步更新
+  - `docs/conditions-effects-summary.md` 和 `docs/01-architecture/architecture-overview.md` 已同步更新
 - **阶段 3**：`DoL 参考就绪`
   - 自有 engine / content / ui / tests 分层稳定
   - Demo 闭环完整（阶段 2 完成）
-  - 具体问题清单存在（58 条 TODO）
-  - 参考边界控制机制就位（`docs/reference-policy.md` + `AGENTS.md` 约束）
+  - 参考边界控制机制就位（`docs/99-reference/reference-policy.md` + `AGENTS.md` 约束）
   - `docs/dol-reference-plan.md` 已建立，首个参考专题：**事件 cooldowns / windowed history 策略**
+- **阶段 4**：`事件 cooldowns / windowed history 策略`
+  - `isEventInCooldownWindow` 已接入 selector 候选过滤
+  - `eventHistory.triggerScopes` 已支持 per-trigger cooldown
+  - travel / wait / after-choice 触发路径会写入 global + trigger-scoped cooldown 历史
+  - 核心回归：`test:events` 44/44、`test:demo-session` 8/8、`test:demo-flow` 1/1、`type-check` 通过
 
 当前默认目标：
 
@@ -38,19 +42,15 @@ Brine Lark 当前状态：
 - 高层垂直链已做温和压缩
 - 一部分旧 narrative 节点仍保留在代码中，但已不属于默认主链推进
 - `quest_brine_lark.stepIds` 已缩短，按当前保留主链工作
-- 相关索引文档位于：
-  - `docs/brine-lark-routing-index.md`
-  - `docs/brine-lark/main-chain-cleanup.md`
-  - `docs/brine-lark/soft-cleanup-plan.md`
-  - `docs/brine-lark/nodes.md`
-  - `docs/brine-lark/locations.md`
-  - `docs/brine-lark/roles.md`
+- 当前状态详见 `docs/04-demo/demo-scope.md`
+- 历史细节归档于 `docs/_archive/brine-lark/`
 
 事件系统当前状态：
 
 - Phase A：`priority` ✅
 - Phase B：`weight` + 可注入 RNG ✅
 - Phase C：`cooldownMinutes` + `eventHistory` 迁移路径 ✅
+- Phase D：`windowed cooldown` + `triggerScopes` ✅
 
 当前默认事件历史策略：
 
@@ -110,7 +110,7 @@ Brine Lark 当前状态：
 2. DoL 参考目录：`G:\source\repos\degrees-of-lewdity`（仅用于阅读与分析）。
 3. 必须先提炼机制，再按本项目边界独立实现。
 4. 参考结果不得破坏 `content / engine / ui` 分层。
-5. 如需参考细则，遵循 `docs/reference-policy.md`。
+5. 如需参考细则，遵循 `docs/99-reference/reference-policy.md`。
 
 ## 结束输出要求
 

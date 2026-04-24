@@ -4,28 +4,20 @@
 
 **事件 cooldowns / windowed history 策略**
 
-## 2. 当前已知问题
+## 2. 原始问题与当前状态
 
-`src/engine/events/selector.ts` 存在以下 TODO：
+本专题来自原先 `src/engine/events/selector.ts` 中关于扩展 cooldown/windowed history/per-trigger scopes 的待办。该 selector 待办已在阶段 4 中完成并移除。当前状态：
 
-```
-TODO: Extend cooldown to richer policies (windowed history, per-trigger scopes).
-```
+| 缺口 | 阶段 4 后状态 |
+|---|---|
+| 时间窗口冷却 | 已通过 `isEventInCooldownWindow` 在 selector 层过滤窗口内事件 |
+| 触发器作用域 | 已通过 `eventHistory.triggerScopes["eventId:trigger"]` 支持 per-trigger cooldown |
+| 存档中的事件历史 | `eventHistory` 为主逻辑边界；legacy `flags`/`vars` 仅通过 adapter/迁移兼容 |
+| 事件密度控制 | 当前完成“距上次触发 N 分钟内不再入选”；“每 N 分钟最多 M 次”未引入，避免过早扩展 |
 
-**具体缺口**：
+保留的相关 TODO：
 
-| 缺口 | 当前实现 | 理想实现 |
-|---|---|---|
-| 时间窗口冷却 | `hasEventCooldownActive` 只检查"冷却中/已冷却"二元状态 | 能在 N 分钟窗口内记录多次触发，用于控制事件密度 |
-| 触发器作用域 | 共享全局 cooldown 命名空间 | 同一事件按不同 trigger（on-location-enter / on-time-check）可有独立冷却窗口 |
-| 存档中的事件历史 | 存在 legacy `flags`/`vars` 分散存储（如 `event.once.*`、`event.cooldown.*`） | 应统一到 `eventHistory` slice，selector 按时间窗口过滤而非二元判断 |
-| 事件密度控制 | 靠 `once: true`（一次性）和 `priority` 排序 | 应有"每 N 分钟最多触发 M 次"的窗口策略 |
-
-相关 TODO：
-
-- `src/engine/events/selector.ts:3` — "Extend cooldown to richer policies (windowed history, per-trigger scopes)"
-- `src/engine/events/history.ts:3` — "TODO: Move to a dedicated event history slice if save/runtime complexity grows"
-- `src/engine/types/state.ts:54` — "TODO: Move once/cooldown history fully from flags/vars into eventHistory"
+- `src/engine/types/state.ts` — 仅保留 legacy 兼容边界说明；新逻辑不得直接读写 legacy event key
 
 ## 3. 提炼结论（不含复制代码）
 
@@ -85,44 +77,38 @@ saveVersions 数组记录所有历史版本（last() 取最新）
 
 **做**（最小范围）：
 
-#### Step 1：扩展 `EventHistoryState`
+#### Step 1：扩展 `EventHistoryState` ✅（已完成）
 
-在 `src/engine/events/history.ts` 中扩展 `EventHistoryState`：
+实际落地在 `src/engine/types/events.ts`：
 
 ```typescript
-// 当前 shape：
 interface EventHistoryState {
   onceTriggeredByEventId: Record<string, boolean>;
-  lastTriggeredAt: Record<string, number>; // timestamp
-  lastTriggeredByTrigger: Record<string, string>; // trigger -> eventId
-}
-
-// 新增（最小增量）：
-interface EventHistoryEntry {
-  onceTriggered: boolean;
-  lastTriggeredAt: number;      // timestamp (ms)
-  triggerCount: number;         // 触发次数
-  triggerScopes: Record<string, number>; // trigger-specific timestamps
+  cooldownLastTriggeredMinuteByEventId: Record<string, number>;
+  triggerScopes: Record<string, number>; // "eventId:trigger" -> absolute minute
 }
 ```
 
-#### Step 2：更新 `hasEventCooldownActive` 支持时间窗口
+未引入 object-based history entry 或 trigger count，保持当前 shape 最小增量。
 
-在 `src/engine/events/history.ts` 中新增：
+#### Step 2：新增 `isEventInCooldownWindow` 支持时间窗口 ✅（已完成）
+
+已在 `src/engine/events/history.ts` 中新增：
 
 ```typescript
-/**
- * 检查事件是否在 cooldown 窗口内。
- * 如果 eventDefinition.cooldownMinutes > 0：
- *   - 距上次触发不足 cooldownMinutes 分钟 → 视为冷却中
- *   - 距上次触发已超过 cooldownMinutes 分钟 → 冷却结束
- * 如果 eventDefinition.cooldownMinutes 未定义或 0：使用 legacy once 逻辑
- */
 export function isEventInCooldownWindow(
   state: GameState,
   event: EventDefinition,
 ): boolean { /* ... */ }
 ```
+
+语义：
+
+- `cooldownMinutes <= 0`：不在冷却窗口内
+- 优先读取 `triggerScopes["eventId:trigger"]`
+- 缺少 trigger-scope 时回退 `cooldownLastTriggeredMinuteByEventId[event.id]`
+- 距上次触发不足 `cooldownMinutes` 分钟时视为冷却中
+- `once: true` 仍由 `hasTriggeredOnceEvent` 独立处理
 
 #### Step 3：更新 `selectEvent` / `getCandidateEvents`
 
@@ -204,9 +190,11 @@ npm run test:events
 
 ## 相关文件
 
-- `docs/reference-policy.md` — 参考策略总纲
-- `docs/current-prototype-architecture.md` — 引擎架构入口
-- `src/engine/events/selector.ts` — 事件选择器（待改动）
-- `src/engine/events/history.ts` — 事件历史（待改动）
-- `src/engine/types/state.ts` — 状态类型（待改动）
-- `tests/events-history.test.cjs` — 事件历史测试（待新增）
+- `docs/99-reference/reference-policy.md` — 参考策略总纲
+- `docs/01-architecture/architecture-overview.md` — 当前架构入口
+- `src/engine/events/selector.ts` — 事件选择器（已接入窗口过滤）
+- `src/engine/events/history.ts` — 事件历史 adapter 与 cooldown helper
+- `src/engine/types/events.ts` — `EventHistoryState` 类型定义
+- `tests/events-history.test.cjs` — 事件历史与 cooldown 窗口测试
+- `tests/events-selector.test.cjs` — selector 窗口过滤测试
+- `tests/demo-session.test.cjs` — restoreState 集成测试

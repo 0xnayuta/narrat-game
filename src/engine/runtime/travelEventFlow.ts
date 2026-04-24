@@ -1,6 +1,6 @@
 /**
  * Responsibility: Orchestrate a minimal happy-path flow: travel -> time advance -> event check -> narrative start.
- * TODO: Extend with failure results, cooldowns and multi-event resolution strategies.
+ * TODO: Extend with failure results and multi-event resolution strategies if runtime scope grows.
  */
 
 import {

@@ -12,7 +12,8 @@
 
 ## 当前阶段
 
-- 阶段 4（进行中）：事件 cooldowns / windowed history 策略
+- 阶段 4：事件 cooldowns / windowed history 策略已完成
+- 当前默认工作：保持 engine 稳定，优先做横向内容扩展或小范围一致性修正
 - 参考计划：`docs/dol-reference-plan.md`
 
 ## 禁止事项
@@ -27,7 +28,7 @@
 
 - 不要把 Brine Lark 主链往更高治理层无限延长
 - 优先横向扩展（小观察 → 轻记录 → 后续小分支）
-- 详见 `docs/brine-lark-routing-index.md`
+- 详见 `docs/04-demo/demo-scope.md`；历史细节归档于 `docs/_archive/brine-lark/`
 
 ## DoL 参考约束
 
