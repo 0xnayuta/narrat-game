@@ -1430,6 +1430,82 @@ test("customs stairs recap interaction should not steal Mira repeat outside its 
   assert.equal(afterExchangeDecoded[0].label, "Speak with Mira again");
 });
 
+test("returning to Breaker Culvert during Brine Lark should unlock an eventHistory-gated Mira recap", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 4, hour: 7, minute: 20 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      brine_lark_followup_started: true,
+      brine_lark_waterline_receiver_identified: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_brine_lark: { status: "active", currentStepId: "step_observe_breaker_culvert_activity" },
+    },
+    inventory: {},
+    vars: { current_goal: "observe_breaker_culvert_activity", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {},
+      cooldownLastTriggeredMinuteByEventId: {},
+    },
+  });
+
+  const culvertRipple = session.travelTo("breaker_culvert");
+  assert.equal(culvertRipple.triggeredEventId, "evt_brine_lark_breaker_culvert_return_ripple");
+  assert.equal(culvertRipple.scene?.nodeId, "node_brine_lark_breaker_culvert_return_ripple");
+  assert.deepEqual(culvertRipple.scene?.choices, [
+    {
+      id: "note_the_culvert_rhythm_for_mira",
+      text: "Fix the culvert's short inward pull as part of the route pattern",
+    },
+  ]);
+
+  const noteRhythm = session.choose("note_the_culvert_rhythm_for_mira");
+  assert.equal(noteRhythm.triggeredEventId, null);
+  assert.equal(noteRhythm.state.flags.brine_lark_culvert_rhythm_noted, true);
+  assert.equal(noteRhythm.state.vars.current_goal, "observe_breaker_culvert_activity");
+  assert.equal(noteRhythm.scene?.nodeId, "node_brine_lark_breaker_culvert_return_ripple_end");
+
+  session.closeScene();
+
+  const returnToHarbor = session.travelTo("harbor");
+  assert.equal(returnToHarbor.triggeredEventId, null);
+
+  const npcs = session.getAvailableNpcs();
+  assert.equal(npcs.length, 1);
+  assert.equal(npcs[0].npcId, "npc_harbor_watch_01");
+  assert.equal(npcs[0].label, "Tell Mira about the Breaker Culvert tide rhythm");
+
+  const miraRecap = session.interactWithNpc("npc_harbor_watch_01");
+  assert.equal(miraRecap.scene?.nodeId, "node_harbor_watch_brine_lark_culvert_recap");
+  assert.deepEqual(miraRecap.scene?.choices, [
+    {
+      id: "ask_mira_to_apply_the_culvert_rhythm_to_the_watch",
+      text: "Ask Mira to apply the culvert rhythm to the next watch",
+    },
+  ]);
+
+  const applyRhythm = session.choose("ask_mira_to_apply_the_culvert_rhythm_to_the_watch");
+  assert.equal(applyRhythm.triggeredEventId, null);
+  assert.equal(applyRhythm.state.flags.brine_lark_culvert_recap_used, true);
+  assert.equal(applyRhythm.state.quests.quest_brine_lark?.currentStepId, "step_observe_breaker_culvert_activity");
+  assert.equal(applyRhythm.scene?.nodeId, "node_brine_lark_breaker_culvert_activity");
+  assert.deepEqual(applyRhythm.scene?.choices, [
+    {
+      id: "watch_what_kind_of_carrier_leaves_the_culvert",
+      text: "Watch what kind of carrier leaves the culvert next",
+    },
+  ]);
+});
+
 test("black sail quest skeleton should activate and advance across key branch milestones", () => {
   const session = createDemoSession();
 

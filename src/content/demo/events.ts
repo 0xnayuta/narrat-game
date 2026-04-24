@@ -365,6 +365,28 @@ export const demoEvents: EventDefinition[] = [
     },
   },
   {
+    id: "evt_brine_lark_breaker_culvert_return_ripple",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 8,
+    conditions: {
+      locationIds: ["breaker_culvert"],
+      flags: {
+        brine_lark_waterline_receiver_identified: true,
+      },
+      vars: {
+        current_goal: "observe_breaker_culvert_activity",
+      },
+      questSteps: {
+        quest_brine_lark: "step_observe_breaker_culvert_activity",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_brine_lark_breaker_culvert_return_ripple",
+    },
+  },
+  {
     id: "evt_black_sail_stakeout",
     type: "ambient",
     trigger: "on-time-check",

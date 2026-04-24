@@ -1677,6 +1677,49 @@ export const demoNarrativeGraph: NarrativeGraph = {
       ],
     },
     {
+      id: "node_brine_lark_breaker_culvert_return_ripple",
+      text: "Returning to Breaker Culvert after the waterline pickup, you notice the arch differently. The skiff did not vanish on any random backwash; the water pulls inward for a short, repeatable breath before the outer chop folds over the mouth again. That rhythm would give a hidden pair of hands just enough time to receive by touch, shift the load, and let the visible skiff back out looking empty.",
+      choices: [
+        {
+          id: "note_the_culvert_rhythm_for_mira",
+          text: "Fix the culvert's short inward pull as part of the route pattern",
+          nextNodeId: "node_brine_lark_breaker_culvert_return_ripple_end",
+          effects: {
+            setFlags: {
+              brine_lark_culvert_rhythm_noted: true,
+            },
+            setVars: {
+              current_goal: "observe_breaker_culvert_activity",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_breaker_culvert_return_ripple_end",
+      text: "You leave the culvert mouth alone before the watch pattern becomes obvious. The detail is small, but it gives the hidden transfer a shape: not just a place where the skiff disappears, but a tide-breath that makes the disappearance useful.",
+      choices: [],
+    },
+    {
+      id: "node_harbor_watch_brine_lark_culvert_recap",
+      text: "Mira listens to your account of the culvert's inward pull and taps the table twice, matching the rhythm. \"That is the missing beat. The stairs explain how they claim the bundle; the culvert explains how they make the first skiff stop mattering. If the water gives them that short hidden pocket, we should read the culvert as a transfer chamber, not a destination.\"",
+      choices: [
+        {
+          id: "ask_mira_to_apply_the_culvert_rhythm_to_the_watch",
+          text: "Ask Mira to apply the culvert rhythm to the next watch",
+          nextNodeId: "node_brine_lark_breaker_culvert_activity",
+          effects: {
+            setFlags: {
+              brine_lark_culvert_recap_used: true,
+            },
+            setVars: {
+              current_goal: "observe_breaker_culvert_activity",
+            },
+          },
+        },
+      ],
+    },
+    {
       id: "node_brine_lark_breaker_culvert_activity",
       text: "The next watch is the hardest yet, because almost nothing visible happens unless you already know where to look. The skiff slips into the Breaker Culvert shadow and does not emerge at once. For several breaths the arch mouth shows only backwash and weed. Then a hooded lamp glints once deep inside—too dim for signaling at distance, bright enough to mark a confined handoff point. When the skiff edges back into view, the bundle is no longer hanging where it was taken aboard, but it has not been carried onward into the harbor either. You catch the same sequence twice more before trusting it: inside the culvert, the pickup crew pauses just long enough for a second pair of hands to verify the outer marker set by touch and position, settle the bundle into a different hold, and prepare it for the next movement under deeper cover. No bargaining, no unpacking, no spoken challenge. Mira draws the line immediately. \"So the culvert is not a destination. It is a concealed transfer chamber. The first stable behavior here is marker confirmation under cover, followed by a load shift. The route comes in on the skiff we can see, then is re-seated for whatever can carry it farther without exposing the stairs connection. If we keep going, the next question is what kind of carrier the culvert sends out.\"",
       choices: [

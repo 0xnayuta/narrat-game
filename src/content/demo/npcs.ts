@@ -90,6 +90,26 @@ export const demoNpcs: NPCDefinition[] = [
         },
       },
       {
+        id: "harbor-watch-brine-lark-culvert-recap",
+        label: "Tell Mira about the Breaker Culvert tide rhythm",
+        nodeId: "node_harbor_watch_brine_lark_culvert_recap",
+        requiredFlags: {
+          harbor_watch_contacted: true,
+          brine_lark_culvert_rhythm_noted: true,
+        },
+        requiredQuestSteps: {
+          quest_brine_lark: "step_observe_breaker_culvert_activity",
+        },
+        requiredVars: {
+          current_goal: "observe_breaker_culvert_activity",
+        },
+        eventHistory: {
+          onceTriggered: {
+            evt_brine_lark_breaker_culvert_return_ripple: true,
+          },
+        },
+      },
+      {
         id: "harbor-watch-repeat",
         label: "Speak with Mira again",
         nodeId: "node_harbor_watch_repeat",
