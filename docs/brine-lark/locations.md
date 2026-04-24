@@ -23,6 +23,11 @@
 - `executive_office` — Executive Office
 - `prime_ministers_office` — Prime Minister's Office
 
+## Horizontal eventHistory recap usage
+
+- `breaker_culvert` also hosts `evt_brine_lark_breaker_culvert_return_ripple`, a side observation that records `brine_lark_culvert_rhythm_noted` and unlocks Mira's `harbor-watch-brine-lark-culvert-recap` interaction.
+- This usage keeps `breaker_culvert` as the same retained main-chain location; it does not add a new main-chain location or governance layer.
+
 ## Background / de-emphasized locations still present in code or notes
 - `coastal_command_hq` — Coastal Command HQ
 - `harbor_authority_office` — Harbor Authority Office

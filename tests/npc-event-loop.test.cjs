@@ -1506,6 +1506,76 @@ test("returning to Breaker Culvert during Brine Lark should unlock an eventHisto
   ]);
 });
 
+test("Brine Lark culvert recap interaction should not steal Mira repeat outside its exact eventHistory window", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 4, hour: 8, minute: 0 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      brine_lark_followup_started: true,
+      brine_lark_waterline_receiver_identified: true,
+      brine_lark_culvert_rhythm_noted: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_brine_lark: { status: "active", currentStepId: "step_observe_breaker_culvert_activity" },
+    },
+    inventory: {},
+    vars: { current_goal: "observe_breaker_culvert_activity", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {},
+      cooldownLastTriggeredMinuteByEventId: {},
+    },
+  });
+
+  const withoutEventHistory = session.getAvailableNpcs();
+  assert.equal(withoutEventHistory.length, 1);
+  assert.equal(withoutEventHistory[0].npcId, "npc_harbor_watch_01");
+  assert.equal(withoutEventHistory[0].label, "Speak with Mira again");
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 4, hour: 8, minute: 10 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      brine_lark_followup_started: true,
+      brine_lark_waterline_receiver_identified: true,
+      brine_lark_culvert_rhythm_noted: true,
+      brine_lark_culvert_recap_used: true,
+      brine_lark_breaker_culvert_activity_observed: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_brine_lark: { status: "active", currentStepId: "step_identify_culvert_carrier" },
+    },
+    inventory: {},
+    vars: { current_goal: "identify_culvert_carrier", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_brine_lark_breaker_culvert_return_ripple: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {},
+    },
+  });
+
+  const afterCulvertActivity = session.getAvailableNpcs();
+  assert.equal(afterCulvertActivity.length, 1);
+  assert.equal(afterCulvertActivity[0].npcId, "npc_harbor_watch_01");
+  assert.equal(afterCulvertActivity[0].label, "Speak with Mira again");
+});
+
 test("black sail quest skeleton should activate and advance across key branch milestones", () => {
   const session = createDemoSession();
 

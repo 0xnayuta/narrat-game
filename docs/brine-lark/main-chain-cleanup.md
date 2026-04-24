@@ -72,7 +72,22 @@ outer marker set
 - `Executive Office`
 - `prime minister`
 
-## 3. De-emphasized / bypassed layers
+## 3. Horizontal eventHistory recap points
+
+These are **sideways validation beats**, not new retained main-chain steps. They may add observation, memory, NPC recap, or alternate framing around an existing retained node, but should return to the current main chain without extending the vertical ladder.
+
+### Breaker Culvert return ripple
+- Event: `evt_brine_lark_breaker_culvert_return_ripple`
+- Observation nodes:
+  - `node_brine_lark_breaker_culvert_return_ripple`
+  - `node_brine_lark_breaker_culvert_return_ripple_end`
+- Recorded flag: `brine_lark_culvert_rhythm_noted`
+- NPC recap interaction: `harbor-watch-brine-lark-culvert-recap`
+- Recap node: `node_harbor_watch_brine_lark_culvert_recap`
+- Return point: `node_brine_lark_breaker_culvert_activity`
+- Quest behavior: does **not** add or advance a new Brine Lark main-chain step; it preserves `step_observe_breaker_culvert_activity` until the existing culvert activity choice advances normally.
+
+## 4. De-emphasized / bypassed layers
 
 These still exist in code or history, but are no longer part of the default main-chain climb.
 
@@ -98,7 +113,7 @@ These remain in the active chain and should not currently be treated as removed:
 - `marsh control node`
 - `harbor authority node`
 
-## 4. Practical rule for future writing
+## 5. Practical rule for future writing
 
 1. Extend sideways from retained middle nodes first.
 2. Treat bypassed layers as optional background unless a new feature requires them.

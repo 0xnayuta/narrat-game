@@ -41,6 +41,17 @@ This index is maintained in **current-main-chain-first** form.
 - `Executive Office`
 - `prime minister`
 
+## Horizontal eventHistory recap nodes
+
+These nodes are side branches around retained main-chain nodes. They are not additional main-chain ladder steps.
+
+### Breaker Culvert recap
+- `node_brine_lark_breaker_culvert_return_ripple`
+- `node_brine_lark_breaker_culvert_return_ripple_end`
+- `node_harbor_watch_brine_lark_culvert_recap`
+
+This recap is unlocked by `evt_brine_lark_breaker_culvert_return_ripple` and the NPC interaction `harbor-watch-brine-lark-culvert-recap`, then returns to `node_brine_lark_breaker_culvert_activity`.
+
 ## Bypassed / de-emphasized nodes still present in code
 - `skiff downstream node`
 - `punt waterway node`
