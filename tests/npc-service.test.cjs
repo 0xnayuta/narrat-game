@@ -145,6 +145,79 @@ test("NpcService should resolve first and repeat interaction variants", () => {
   ]);
 });
 
+test("NpcService should expose eventHistory mismatch details in debug info", () => {
+  const eventHistoryNpcs = [
+    {
+      id: "mira",
+      name: "Mira",
+      homeLocationId: "harbor",
+      interactions: [
+        {
+          id: "customs-stairs-recap",
+          label: "Discuss the customs stairs",
+          nodeId: "node_customs_stairs_recap",
+          eventHistory: {
+            onceTriggered: { evt_customs_stairs_return_glance: true },
+            lastTriggeredWithinMinutes: { evt_recent_signal: 30 },
+          },
+        },
+      ],
+    },
+  ];
+
+  const debugInfo = getNpcInteractionDebugInfo(
+    {
+      ...baseState,
+      currentLocationId: "harbor",
+      time: { day: 1, hour: 8, minute: 0 },
+      eventHistory: {
+        onceTriggeredByEventId: {},
+        cooldownLastTriggeredMinuteByEventId: {
+          evt_recent_signal: 400,
+        },
+      },
+    },
+    eventHistoryNpcs,
+  );
+
+  assert.equal(debugInfo.length, 1);
+  assert.equal(debugInfo[0].resolvedInteractionId, null);
+
+  const rule = debugInfo[0].rules[0];
+  assert.equal(rule.ruleId, "customs-stairs-recap");
+  assert.equal(rule.matched, false);
+  assert.deepEqual(
+    rule.reasons.map((reason) => ({
+      code: reason.code,
+      key: reason.key,
+      expected: reason.expected,
+      actual: reason.actual,
+    })),
+    [
+      {
+        code: "eventHistory",
+        key: "evt_customs_stairs_return_glance",
+        expected: true,
+        actual: false,
+      },
+      {
+        code: "eventHistory",
+        key: "evt_recent_signal",
+        expected: { lastTriggeredWithinMinutes: 30 },
+        actual: 80,
+      },
+    ],
+  );
+  assert.match(
+    rule.reasons[0].message,
+    /eventHistory\.onceTriggered\.evt_customs_stairs_return_glance/,
+  );
+  assert.match(
+    rule.reasons[1].message,
+    /eventHistory\.lastTriggeredWithinMinutes\.evt_recent_signal/,
+  );
+});
+
 test("NpcService should provide debug reasons for blocked interaction rules", () => {
   const blockedState = {
     ...baseState,

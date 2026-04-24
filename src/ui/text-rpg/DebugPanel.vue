@@ -86,7 +86,7 @@
                         v-for="reason in group.reasons"
                         :key="`${reason.code}:${reason.key ?? reason.message}`"
                       >
-                        {{ reason.message }}
+                        {{ formatNpcReason(reason) }}
                       </li>
                     </ul>
                   </li>
@@ -119,13 +119,20 @@ interface QuestEntry {
   stepId: string | null;
 }
 
-type NpcReasonCode = "flag" | "quest" | "var" | "timeOfDay";
+type NpcReasonCode =
+  | "flag"
+  | "quest"
+  | "questStep"
+  | "var"
+  | "timeOfDay"
+  | "eventHistory"
+  | "group";
 
 interface NpcReasonDebugEntry {
   code: NpcReasonCode;
   key?: string;
-  expected?: string | number | boolean;
-  actual?: string | number | boolean | "missing";
+  expected?: unknown;
+  actual?: unknown;
   message: string;
 }
 
@@ -142,13 +149,24 @@ interface NpcDebugEntry {
   rules: NpcRuleDebugEntry[];
 }
 
-const reasonGroupOrder: NpcReasonCode[] = ["flag", "quest", "var", "timeOfDay"];
+const reasonGroupOrder: NpcReasonCode[] = [
+  "flag",
+  "quest",
+  "questStep",
+  "var",
+  "timeOfDay",
+  "eventHistory",
+  "group",
+];
 
 const reasonGroupLabels: Record<NpcReasonCode, string> = {
   flag: "Flags",
   quest: "Quests",
+  questStep: "Quest steps",
   var: "Vars",
   timeOfDay: "Time",
+  eventHistory: "Event history",
+  group: "Groups",
 };
 
 function groupNpcReasonsByCode(reasons: NpcReasonDebugEntry[]) {
@@ -181,17 +199,46 @@ function getNpcReasonCodeSummary(npc: NpcDebugEntry): string {
   return nonZero.map((entry) => `${entry.code}:${entry.count}`).join(", ");
 }
 
+function formatDebugValue(value: unknown): string {
+  if (value === undefined) {
+    return "undefined";
+  }
+  if (typeof value === "string") {
+    return value;
+  }
+  return JSON.stringify(value);
+}
+
+function formatNpcReason(reason: NpcReasonDebugEntry): string {
+  const details: string[] = [];
+  if (reason.key !== undefined) {
+    details.push(`key=${reason.key}`);
+  }
+  if (reason.expected !== undefined) {
+    details.push(`expected=${formatDebugValue(reason.expected)}`);
+  }
+  if (reason.actual !== undefined) {
+    details.push(`actual=${formatDebugValue(reason.actual)}`);
+  }
+
+  if (details.length === 0) {
+    return reason.message;
+  }
+  return `${reason.message} (${details.join(", ")})`;
+}
+
 function getRuleReasonCompactSummary(rule: NpcRuleDebugEntry): string {
   if (rule.reasons.length === 0) {
     return "no reasons";
   }
 
   const [first, ...rest] = rule.reasons;
+  const firstSummary = formatNpcReason(first);
   if (rest.length === 0) {
-    return first.message;
+    return firstSummary;
   }
 
-  return `${first.message} (+${rest.length})`;
+  return `${firstSummary} (+${rest.length})`;
 }
 
 const openRuleDetails = ref<Record<string, boolean>>({});
