@@ -70,6 +70,28 @@ export const demoNpcs: NPCDefinition[] = [
         },
       },
       {
+        id: "harbor-watch-drowned-lantern-coal-route-feedback",
+        label: "Ask Mira about the coal-berth route line",
+        nodeId: "node_harbor_watch_drowned_lantern_coal_route_feedback",
+        requiredFlags: {
+          harbor_watch_contacted: true,
+          drowned_lantern_coal_berth_route_noted: true,
+          drowned_lantern_exchange_window_found: false,
+          drowned_lantern_coal_route_feedback_heard: false,
+        },
+        requiredQuestSteps: {
+          quest_drowned_lantern: "step_trace_dawn_exchange",
+        },
+        requiredVars: {
+          current_goal: "inspect_drowned_lantern_shed_trace",
+        },
+        eventHistory: {
+          lastTriggeredWithinMinutes: {
+            evt_drowned_lantern_coal_berth_route_recap: 45,
+          },
+        },
+      },
+      {
         id: "harbor-watch-customs-stairs-recap",
         label: "Tell Mira about the customs stairs lower landing",
         nodeId: "node_harbor_watch_customs_stairs_recap",

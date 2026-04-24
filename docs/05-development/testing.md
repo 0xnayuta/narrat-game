@@ -25,7 +25,7 @@ npm run test:world             # 世界服务（3 个）
 npm run type-check
 ```
 
-**当前 `tests/*.cjs` 总计 192 个 `test(...)` 用例**。按需运行对应模块。
+**当前 `tests/*.cjs` 总计 194 个 `test(...)` 用例**。按需运行对应模块。
 
 ## 测试文件位置
 

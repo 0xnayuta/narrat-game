@@ -1081,6 +1081,30 @@ export const demoNarrativeGraph: NarrativeGraph = {
       choices: [],
     },
     {
+      id: "node_harbor_watch_drowned_lantern_coal_route_feedback",
+      text: "Mira studies your coal-berth route sketch and keeps one finger on the short lane back toward the customs sheds. \"That is useful while it is fresh. The berth is not the answer by itself, but it tells us the runner stays close enough to water to vanish and close enough to paperwork to keep a dry excuse. Do not treat the Drowned Lantern as a place. Treat it as the moment someone crosses from paper cover to water cover before dawn.\"",
+      choices: [
+        {
+          id: "note_miras_coal_route_warning",
+          text: "Note Mira's route warning and keep tracing the dawn exchange",
+          nextNodeId: "node_harbor_watch_drowned_lantern_coal_route_feedback_end",
+          effects: {
+            setFlags: {
+              drowned_lantern_coal_route_feedback_heard: true,
+            },
+            setVars: {
+              current_goal: "inspect_drowned_lantern_shed_trace",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_watch_drowned_lantern_coal_route_feedback_end",
+      text: "You leave the map marked with a simple distinction: the coal berth shows the dry approach, but the dawn exchange will be where that approach turns into a handoff. The Drowned Lantern lead stays pointed at the runner, not the cargo pile.",
+      choices: [],
+    },
+    {
       id: "node_harbor_watch_customs_stairs_recap",
       text: "Mira listens without interrupting while you describe the lower landing below the customs sightline. \"That matters,\" she says at last. \"The shed gave us the paper trail, but the stairs give us the handoff shape. If the Drowned Lantern uses a dawn exchange, that landing may be where the runner keeps the cargo hands out of sight.\"",
       choices: [

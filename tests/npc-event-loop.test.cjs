@@ -1482,6 +1482,97 @@ test("returning to the coal berth during the drowned lantern shed search should 
   assert.equal(markRoute.scene?.nodeId, "node_drowned_lantern_coal_berth_route_recap_end");
 });
 
+test("Mira should offer fresh Drowned Lantern route feedback after a recent coal berth recap", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 2, hour: 8, minute: 50 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      drowned_lantern_identified_as_contact: true,
+      drowned_lantern_search_started: true,
+      drowned_lantern_shed_trace_found: true,
+      drowned_lantern_coal_berth_route_noted: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_drowned_lantern: { status: "active", currentStepId: "step_trace_dawn_exchange" },
+    },
+    inventory: {},
+    vars: { current_goal: "inspect_drowned_lantern_shed_trace", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_drowned_lantern_coal_berth_route_recap: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {
+        evt_drowned_lantern_coal_berth_route_recap: 1950,
+      },
+      triggerScopes: {},
+    },
+  });
+
+  const routeFeedback = session.interactWithNpc("npc_harbor_watch_01");
+  assert.equal(routeFeedback.scene?.nodeId, "node_harbor_watch_drowned_lantern_coal_route_feedback");
+  assert.deepEqual(routeFeedback.scene?.choices, [
+    {
+      id: "note_miras_coal_route_warning",
+      text: "Note Mira's route warning and keep tracing the dawn exchange",
+    },
+  ]);
+
+  const noteWarning = session.choose("note_miras_coal_route_warning");
+  assert.equal(noteWarning.triggeredEventId, null);
+  assert.equal(noteWarning.state.flags.drowned_lantern_coal_route_feedback_heard, true);
+  assert.equal(noteWarning.state.vars.current_goal, "inspect_drowned_lantern_shed_trace");
+  assert.equal(noteWarning.state.quests.quest_drowned_lantern?.currentStepId, "step_trace_dawn_exchange");
+  assert.equal(noteWarning.scene?.nodeId, "node_harbor_watch_drowned_lantern_coal_route_feedback_end");
+});
+
+test("Mira Drowned Lantern route feedback should not steal repeat interaction after the short window expires", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 2, hour: 9, minute: 30 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      drowned_lantern_identified_as_contact: true,
+      drowned_lantern_search_started: true,
+      drowned_lantern_shed_trace_found: true,
+      drowned_lantern_coal_berth_route_noted: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_drowned_lantern: { status: "active", currentStepId: "step_trace_dawn_exchange" },
+    },
+    inventory: {},
+    vars: { current_goal: "inspect_drowned_lantern_shed_trace", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_drowned_lantern_coal_berth_route_recap: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {
+        evt_drowned_lantern_coal_berth_route_recap: 1950,
+      },
+      triggerScopes: {},
+    },
+  });
+
+  const miraRepeat = session.interactWithNpc("npc_harbor_watch_01");
+  assert.equal(miraRepeat.scene?.nodeId, "node_harbor_watch_repeat");
+});
+
 test("returning to customs tide stairs during the drowned lantern shed search should trigger a lower-landing observation", () => {
   const session = createDemoSession();
 
