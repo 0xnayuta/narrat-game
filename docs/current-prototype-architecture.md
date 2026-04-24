@@ -6,7 +6,8 @@ It does not describe every skeleton file in `src/engine`; some files are intenti
 
 Related notes:
 - `docs/black-sail-quest-current-goal-boundary.md` — current boundary for `quest_black_sail_trail` vs `vars.current_goal` in the Black Sail demo branch.
-- `docs/narrative-quest-effect-model-stabilization-plan.md` — active next-phase plan for stabilizing narrative effects, quest-step semantics, and content authoring rules.
+- `docs/narrative-quest-effect-model-stabilization-plan.md` — completed phase: Narrative / Quest Effect Model Stabilization.
+- `docs/dol-reference-plan.md` — active DoL reference plan: event cooldowns / windowed history strategy.
 
 ## Current runtime entry
 Two runtime entries currently exist:

@@ -20,6 +20,12 @@
   - `startQuest` 语义修复（幂等：保留 active/completed/failed）
   - 4 个 manual `setQuests` 激活全部替换为语义化的 `startQuest`
   - `docs/conditions-effects-summary.md` 和 `docs/current-prototype-architecture.md` 已同步更新
+- **阶段 3**：`DoL 参考就绪`
+  - 自有 engine / content / ui / tests 分层稳定
+  - Demo 闭环完整（阶段 2 完成）
+  - 具体问题清单存在（58 条 TODO）
+  - 参考边界控制机制就位（`docs/reference-policy.md` + `AGENTS.md` 约束）
+  - `docs/dol-reference-plan.md` 已建立，首个参考专题：**事件 cooldowns / windowed history 策略**
 
 当前默认目标：
 
