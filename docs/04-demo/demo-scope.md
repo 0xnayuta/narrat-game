@@ -8,20 +8,20 @@
 
 | 能力 | 验证方式 |
 |---|---|
-| 玩家状态（flags / vars / quests / time） | UI 实时展示，145 个测试覆盖 |
+| 玩家状态（flags / vars / quests / time） | UI 实时展示，192 个测试覆盖 |
 | 时间推进（travel / wait） | DemoApp travel/wait 按钮 |
 | 地点切换（23 个地点） | DemoApp Travel 区域 |
-| NPC 交互（2 个 NPC，7 个 interactions） | DemoApp NPC 按钮 |
-| 事件触发（33 个事件，4 种 trigger） | UI "Last event" 区域 + DebugPanel |
-| 叙事节点执行（2348 行，130+ choices） | TextPanel + ChoiceList |
+| NPC 交互（2 个 NPC，8 个 interactions） | DemoApp NPC 按钮 |
+| 事件触发（22 个事件，4 种 trigger） | UI "Last event" 区域 + DebugPanel |
+| 叙事节点执行（2483 行，110+ choices） | TextPanel + ChoiceList |
 | 任务推进（4 条任务链） | HudStats + DebugPanel |
 | 存档/读档 | DemoApp Save/Load 按钮 |
 | 条件过滤（flags / vars / quests / questSteps / eventHistory） | ChoiceList 自动过滤 |
-| 效果应用（setFlags / setVars / startQuest / advanceQuestStep / completeQuest） | 145 个测试覆盖 |
+| 效果应用（setFlags / setVars / startQuest / advanceQuestStep / completeQuest） | 192 个测试覆盖 |
 
 ## Demo 内容范围
 
-- **地点**：`home` → `street` → `market` → `harbor`（主路径）+ 22 个扩展地点
+- **地点**：`home` → `street` → `market` → `harbor`（主路径）+ 19 个扩展地点
 - **主任务**：`quest_intro_walk`（3 步）
 - **扩展链**：Black Sail trail → sting（7+3 步）、Drowned Lantern（3 步）、Brine Lark（已压缩）
 - **NPC**：Vendor（市场）、Mira（港口）

@@ -24,10 +24,10 @@ src/
 ├── content/        内容包（JSON schema 风格，engine 无直接依赖具体内容）
 │   └── demo/      Demo 内容包
 │       ├── bundle.ts       统一导出
-│       ├── events.ts       33 个事件
+│       ├── events.ts       22 个事件
 │       ├── locations.ts    23 个地点
-│       ├── narrative.ts    叙事图（2348 行，130+ choices）
-│       ├── npcs.ts         2 个 NPC，7 个 interactions
+│       ├── narrative.ts    叙事图（2483 行，110+ choices）
+│       ├── npcs.ts         2 个 NPC，8 个 interactions
 │       ├── quests.ts       4 条任务链
 │       └── loader.ts       内容加载
 │
@@ -52,15 +52,15 @@ src/
 
 ## 测试入口
 
-- `npm run test:events` — 事件系统（33 个）
+- `npm run test:events` — 事件系统（44 个）
 - `npm run test:npc-matcher` — NPC 匹配（18 个）
 - `npm run test:quest-effects` — 任务效果（23 个）
-- `npm run test:demo-session` — Session 集成（7 个）
+- `npm run test:demo-session` — Session 集成（8 个）
 - `npm run test:demo-flow` — Demo 全流程（1 个）
-- `npm run test:npc-event-loop` — NPC → choice → event 闭环（33 个）
+- `npm run test:npc-event-loop` — NPC → choice → event 闭环（37 个）
 - `npm run type-check` — 类型检查
 
-**总计 145 个测试**，全部通过。
+**当前 `tests/*.cjs` 总计 192 个 `test(...)` 用例**。按需运行对应模块。
 
 ## 权威文档
 

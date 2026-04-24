@@ -3,32 +3,29 @@
 ## 测试命令
 
 ```bash
-# 全部测试
-npm run test:all
-
 # 按模块
-npm run test:events          # 事件系统（33 个）
-npm run test:npc-matcher     # NPC 匹配（18 个）
-npm run test:quest-effects   # 任务效果（23 个）
-npm run test:demo-session    # Session 集成（7 个）
-npm run test:demo-flow       # 全流程（1 个）
-npm run test:npc-event-loop  # NPC → choice → event 闭环（33 个）
+npm run test:events            # 事件系统（44 个）
+npm run test:npc-matcher       # NPC 匹配（18 个）
+npm run test:quest-effects     # 任务效果（23 个）
+npm run test:demo-session      # Session 集成（8 个）
+npm run test:demo-flow         # 全流程（1 个）
+npm run test:npc-event-loop    # NPC → choice → event 闭环（37 个）
 npm run test:choice-visibility # Choice 可见性（17 个）
-npm run test:content         # Content bundle 验证（1 个）
-npm run test:demo-branch     # 内容分支可见性（8 个）
-npm run test:npc             # NPC service（4 个）
-npm run test:save            # 存档 roundtrip（3 个）
-npm run test:add-vars        # addVars / addStats（10 个）
-npm run test:initial-vars    # 初始状态（3 个）
-npm run test:narrative       # Narrative 运行时（3 个）
-npm run test:time            # 时间系统（3 个）
-npm run test:world           # 世界服务（3 个）
+npm run test:content           # Content bundle 验证（1 个）
+npm run test:demo-branch       # 内容分支可见性（10 个）
+npm run test:npc               # NPC service（4 个）
+npm run test:save              # 存档 roundtrip（3 个）
+npm run test:add-vars          # addVars / addStats（10 个）
+npm run test:initial-vars      # 初始状态（3 个）
+npm run test:narrative         # Narrative 运行时（3 个）
+npm run test:time              # 时间系统（5 个）
+npm run test:world             # 世界服务（3 个）
 
 # 类型检查
 npm run type-check
 ```
 
-**总计 145 个测试**，全部通过。
+**当前 `tests/*.cjs` 总计 192 个 `test(...)` 用例**。按需运行对应模块；`test:save` 若触发 tsconfig bundler/module 报错，按已知配置问题单独处理。
 
 ## 测试文件位置
 
@@ -44,6 +41,7 @@ tests/
 ├── choice-visibility.test.cjs       Choice 条件过滤
 ├── content-bundle.test.cjs          ContentBundle 验证
 ├── demo-content-branch.test.cjs     分支可见性
+├── demo-compass-branch.test.cjs     Compass 分支可见性
 ├── npc-service.test.cjs             NPC service + debug info
 ├── save-roundtrip.test.cjs         Save/load roundtrip
 ├── add-vars-stats.test.cjs          addVars / addStats

@@ -36,7 +36,7 @@ ui/          → 前端展示，Vue 组件，不承载核心规则逻辑
 
 ## 结果
 
-- Engine 层完全可独立测试（145 个测试）
+- Engine / content / session 边界具备独立测试覆盖（当前 192 个 `test(...)` 用例）
 - UI 层通过 `GameSession` 公开 API 交互，不依赖内部实现
 - 内容层通过类型契约与 engine 交互，可独立演进
 
