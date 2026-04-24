@@ -1433,6 +1433,80 @@ test("started black sail stakeout should lead into a minimal contact and net-clo
   assert.equal(observeHandoff.scene?.nodeId, "node_brine_lark_shift_change_observed");
 });
 
+test("Mira should offer a Black Sail aftermath feedback before following the ledger stub", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 3, hour: 22, minute: 45 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      black_sail_sting_prepared: true,
+      black_sail_stakeout_started: true,
+      black_sail_sting_resolved: true,
+      black_sail_courier_captured: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_black_sail_sting: { status: "completed", currentStepId: "step_close_the_net" },
+    },
+    inventory: {},
+    vars: { current_goal: "review_black_sail_aftermath", gold: 35 },
+  });
+
+  const aftermathFeedback = session.interactWithNpc("npc_harbor_watch_01");
+  assert.equal(aftermathFeedback.scene?.nodeId, "node_harbor_watch_black_sail_aftermath_feedback");
+  assert.deepEqual(aftermathFeedback.scene?.choices, [
+    {
+      id: "note_miras_black_sail_aftermath_read",
+      text: "Note Mira's read on the seizure and return to the ledger stub",
+    },
+  ]);
+
+  const noteRead = session.choose("note_miras_black_sail_aftermath_read");
+  assert.equal(noteRead.triggeredEventId, null);
+  assert.equal(noteRead.state.flags.black_sail_aftermath_feedback_heard, true);
+  assert.equal(noteRead.state.vars.current_goal, "review_black_sail_aftermath");
+  assert.equal(noteRead.state.quests.quest_black_sail_sting?.status, "completed");
+  assert.equal(noteRead.scene?.nodeId, "node_harbor_watch_black_sail_aftermath_feedback_end");
+});
+
+test("Mira Black Sail aftermath feedback should not steal repeat after it was heard", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 3, hour: 22, minute: 55 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      black_sail_sting_prepared: true,
+      black_sail_stakeout_started: true,
+      black_sail_sting_resolved: true,
+      black_sail_courier_captured: true,
+      black_sail_aftermath_feedback_heard: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_black_sail_sting: { status: "completed", currentStepId: "step_close_the_net" },
+    },
+    inventory: {},
+    vars: { current_goal: "review_black_sail_aftermath", gold: 35 },
+  });
+
+  const miraRepeat = session.interactWithNpc("npc_harbor_watch_01");
+  assert.equal(miraRepeat.scene?.nodeId, "node_harbor_watch_repeat");
+});
+
 test("returning to the coal berth during the drowned lantern shed search should trigger a route recap", () => {
   const session = createDemoSession();
 

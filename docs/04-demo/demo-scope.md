@@ -8,16 +8,16 @@
 
 | 能力 | 验证方式 |
 |---|---|
-| 玩家状态（flags / vars / quests / time） | UI 实时展示，194 个测试覆盖 |
+| 玩家状态（flags / vars / quests / time） | UI 实时展示，196 个测试覆盖 |
 | 时间推进（travel / wait） | DemoApp travel/wait 按钮 |
 | 地点切换（23 个地点） | DemoApp Travel 区域 |
-| NPC 交互（2 个 NPC，9 个 interactions） | DemoApp NPC 按钮 |
+| NPC 交互（2 个 NPC，10 个 interactions） | DemoApp NPC 按钮 |
 | 事件触发（22 个事件，4 种 trigger） | UI "Last event" 区域 + DebugPanel |
-| 叙事节点执行（2529 行，120+ choices） | TextPanel + ChoiceList |
+| 叙事节点执行（2553 行，120+ choices） | TextPanel + ChoiceList |
 | 任务推进（4 条任务链） | HudStats + DebugPanel |
 | 存档/读档 | DemoApp Save/Load 按钮 |
 | 条件过滤（flags / vars / quests / questSteps / eventHistory） | ChoiceList 自动过滤 |
-| 效果应用（setFlags / setVars / startQuest / advanceQuestStep / completeQuest） | 194 个测试覆盖 |
+| 效果应用（setFlags / setVars / startQuest / advanceQuestStep / completeQuest） | 196 个测试覆盖 |
 
 ## Demo 内容范围
 
@@ -32,6 +32,7 @@
 
 - **North Channel wake pattern**：回到 `north_channel` 时触发 `evt_north_channel_return_wake_pattern`，记录 `black_sail_north_channel_wake_pattern_noted`，在 `node_harbor_watch_black_sail_tip` 解锁 north-channel-to-coal-berth recap 分支。
 - **Mira fresh-wake feedback**：在 `evt_north_channel_return_wake_pattern` 触发后的短窗口内回到 Mira，可触发 `harbor-watch-north-channel-fresh-feedback`，给出面向 coal berth 搜查的短时提示。
+- **Mira aftermath feedback**：`harbor-watch-black-sail-aftermath-feedback` 在 sting 解决、ledger stub 后续线索展开前提供一次 seizure pattern recap，帮助把 Black Sail 线收束到可追踪模式。
 
 ## Drowned Lantern 横向回顾点
 

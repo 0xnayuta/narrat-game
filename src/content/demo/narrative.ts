@@ -954,6 +954,30 @@ export const demoNarrativeGraph: NarrativeGraph = {
       ],
     },
     {
+      id: "node_harbor_watch_black_sail_aftermath_feedback",
+      text: "Mira keeps her voice low while the seized rope and ledger stub dry on the watch table. \"The useful part is not that we caught one courier. It is that Black Sail had to expose a working habit: marked rope, one skiff, one berth, one runner who thought the paperwork would stay quiet. That gives us a pattern to press instead of a rumor to chase.\"",
+      choices: [
+        {
+          id: "note_miras_black_sail_aftermath_read",
+          text: "Note Mira's read on the seizure and return to the ledger stub",
+          nextNodeId: "node_harbor_watch_black_sail_aftermath_feedback_end",
+          effects: {
+            setFlags: {
+              black_sail_aftermath_feedback_heard: true,
+            },
+            setVars: {
+              current_goal: "review_black_sail_aftermath",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_watch_black_sail_aftermath_feedback_end",
+      text: "You mark the seizure as a pattern, not a victory lap: the berth is exposed, the courier is caught, and the ledger stub is the live thread that can still lead beyond Black Sail's first line.",
+      choices: [],
+    },
+    {
       id: "node_black_sail_next_lead",
       text: "Mira turns the damp ledger stub toward the lantern light. \"This mark isn't for the berth—it's for a runner called the Drowned Lantern. If Black Sail still has a route open after tonight, that name is where the next trail starts.\"",
       choices: [

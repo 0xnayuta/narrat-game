@@ -26,8 +26,8 @@ src/
 │       ├── bundle.ts       统一导出
 │       ├── events.ts       22 个事件
 │       ├── locations.ts    23 个地点
-│       ├── narrative.ts    叙事图（2529 行，120+ choices）
-│       ├── npcs.ts         2 个 NPC，9 个 interactions
+│       ├── narrative.ts    叙事图（2553 行，120+ choices）
+│       ├── npcs.ts         2 个 NPC，10 个 interactions
 │       ├── quests.ts       4 条任务链
 │       └── loader.ts       内容加载
 │
@@ -60,7 +60,7 @@ src/
 - `npm run test:npc-event-loop` — NPC → choice → event 闭环（37 个）
 - `npm run type-check` — 类型检查
 
-**当前 `tests/*.cjs` 总计 194 个 `test(...)` 用例**。按需运行对应模块。
+**当前 `tests/*.cjs` 总计 196 个 `test(...)` 用例**。按需运行对应模块。
 
 ## 权威文档
 

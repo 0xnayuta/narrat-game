@@ -70,6 +70,23 @@ export const demoNpcs: NPCDefinition[] = [
         },
       },
       {
+        id: "harbor-watch-black-sail-aftermath-feedback",
+        label: "Ask Mira what the Black Sail seizure changes",
+        nodeId: "node_harbor_watch_black_sail_aftermath_feedback",
+        requiredFlags: {
+          harbor_watch_contacted: true,
+          black_sail_sting_resolved: true,
+          black_sail_courier_captured: true,
+          black_sail_aftermath_feedback_heard: false,
+        },
+        requiredQuests: {
+          quest_black_sail_sting: "completed",
+        },
+        requiredVars: {
+          current_goal: "review_black_sail_aftermath",
+        },
+      },
+      {
         id: "harbor-watch-drowned-lantern-coal-route-feedback",
         label: "Ask Mira about the coal-berth route line",
         nodeId: "node_harbor_watch_drowned_lantern_coal_route_feedback",
