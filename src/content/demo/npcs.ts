@@ -76,9 +76,10 @@ export const demoNpcs: NPCDefinition[] = [
         requiredFlags: {
           harbor_watch_contacted: true,
         },
-        requiredQuests: {
-          quest_black_sail_trail: "active",
-        },
+        any: [
+          { requiredQuests: { quest_black_sail_trail: "active" } },
+          { requiredQuests: { quest_black_sail_trail: "completed" } },
+        ],
       },
     ],
     tags: ["guard"],

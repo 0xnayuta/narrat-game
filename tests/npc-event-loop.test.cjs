@@ -188,6 +188,31 @@ test("vendor should still be available later in the day once the market intro pa
   assert.equal(npcs[0].label, "Talk to Vendor");
 });
 
+test("re-entering the market after completing the intro should trigger an eventHistory-driven return glance", () => {
+  const session = createDemoSession();
+
+  const street = session.travelTo("street");
+  assert.equal(street.triggeredEventId, "evt_street_arrival");
+
+  session.choose("go_market");
+  session.closeScene();
+
+  const market = session.travelTo("market");
+  assert.equal(market.triggeredEventId, "evt_market_morning");
+
+  const finishWalk = session.choose("finish_walk");
+  assert.equal(finishWalk.state.quests.quest_intro_walk?.status, "completed");
+  session.choose("leave_market_for_now");
+  session.closeScene();
+
+  const streetAgain = session.travelTo("street");
+  assert.equal(streetAgain.triggeredEventId, null);
+
+  const marketReturn = session.travelTo("market");
+  assert.equal(marketReturn.triggeredEventId, "evt_market_return_glance");
+  assert.equal(marketReturn.scene?.nodeId, "node_market_return_glance");
+});
+
 test("quest step condition should gate NPC interaction then advance via event", () => {
   const session = createDemoSession();
 
@@ -507,7 +532,93 @@ test("compass lead should continue into a minimal harbor watch follow-up", () =>
   assert.equal(repeatNpcs[0].label, "Speak with Mira again");
 });
 
- test("harbor watch lead should continue into the old signal tower", () => {
+ test("returning to harbor after Mira's clue should trigger a small patrol-glance follow-up before the tower", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 1, hour: 9, minute: 0 },
+    currentLocationId: "market",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      stall_discovered: true,
+      compass_vendor_reacted: true,
+      harbor_watch_contacted: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "active", currentStepId: "step_search_signal_tower" },
+    },
+    inventory: {},
+    vars: { current_goal: "investigate_signal_tower", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: { evt_harbor_arrival: true },
+      cooldownLastTriggeredMinuteByEventId: {},
+    },
+  });
+
+  const harborReturn = session.travelTo("harbor");
+  assert.equal(harborReturn.triggeredEventId, "evt_harbor_return_patrol_glance");
+  assert.equal(harborReturn.scene?.nodeId, "node_harbor_return_patrol_glance");
+  assert.deepEqual(harborReturn.scene?.choices, [
+    { id: "mark_the_quieter_route_to_the_tower", text: "Mark the quieter route toward the old signal tower before moving on" },
+  ]);
+
+  const markRoute = session.choose("mark_the_quieter_route_to_the_tower");
+  assert.equal(markRoute.triggeredEventId, null);
+  assert.equal(markRoute.state.flags.harbor_patrol_gap_noted, true);
+  assert.equal(markRoute.state.vars.current_goal, "investigate_signal_tower");
+  assert.equal(markRoute.scene?.nodeId, "node_harbor_return_patrol_glance_end");
+});
+
+test("returning to the signal tower after noting the harbor gap should trigger a quiet-approach follow-up", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 1, hour: 10, minute: 0 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      stall_discovered: true,
+      compass_vendor_reacted: true,
+      harbor_watch_contacted: true,
+      harbor_patrol_gap_noted: true,
+      signal_tower_clue_found: false,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "active", currentStepId: "step_search_signal_tower" },
+    },
+    inventory: {},
+    vars: { current_goal: "investigate_signal_tower", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_harbor_arrival: true,
+        evt_harbor_return_patrol_glance: true,
+        evt_signal_tower_arrival: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {},
+    },
+  });
+
+  const towerReturn = session.travelTo("signal_tower");
+  assert.equal(towerReturn.triggeredEventId, "evt_signal_tower_return_approach");
+  assert.equal(towerReturn.scene?.nodeId, "node_signal_tower_return_approach");
+  assert.deepEqual(towerReturn.scene?.choices, [
+    { id: "keep_to_the_shadowed_stair", text: "Keep to the shadowed stair and fix the quiet approach before searching" },
+  ]);
+
+  const quietApproach = session.choose("keep_to_the_shadowed_stair");
+  assert.equal(quietApproach.triggeredEventId, null);
+  assert.equal(quietApproach.state.flags.signal_tower_quiet_approach_noted, true);
+  assert.equal(quietApproach.state.vars.current_goal, "investigate_signal_tower");
+  assert.equal(quietApproach.scene?.nodeId, "node_signal_tower_return_approach_end");
+});
+
+test("harbor watch lead should continue into the old signal tower", () => {
   const session = createDemoSession();
 
   session.restoreState({
@@ -701,6 +812,53 @@ test("night harbor signal should continue into a minimal pier investigation", ()
   assert.equal(capsule.state.vars.current_goal, "pier_message_found");
   assert.equal(capsule.state.quests.quest_black_sail_trail?.currentStepId, "step_decode_pier_message");
   assert.equal(capsule.scene?.nodeId, "node_pier_capsule_clue");
+});
+
+test("night harbor signal should reveal a shadow-route branch when prior harbor and tower observations were recorded", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 1, hour: 21, minute: 55 },
+    currentLocationId: "signal_tower",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      stall_discovered: true,
+      compass_vendor_reacted: true,
+      harbor_watch_contacted: true,
+      signal_tower_clue_found: true,
+      harbor_patrol_gap_noted: true,
+      signal_tower_quiet_approach_noted: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "active", currentStepId: "step_watch_harbor_at_night" },
+    },
+    inventory: {},
+    vars: { current_goal: "wait_for_harbor_signal", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_signal_tower_return_approach: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {},
+    },
+  });
+
+  const nightSignal = session.travelTo("harbor");
+  assert.equal(nightSignal.triggeredEventId, "evt_harbor_night_signal");
+  assert.equal(nightSignal.scene?.nodeId, "node_harbor_night_signal");
+  assert.deepEqual(nightSignal.scene?.choices, [
+    { id: "follow_pier_signal_by_shadow_route", text: "Use the shadowed warehouse line and approach the pier from cover" },
+    { id: "follow_pier_signal", text: "Head for the far pier before the light disappears" },
+  ]);
+
+  const shadowRoute = session.choose("follow_pier_signal_by_shadow_route");
+  assert.equal(shadowRoute.triggeredEventId, null);
+  assert.equal(shadowRoute.state.flags.black_sail_shadow_route_taken, true);
+  assert.equal(shadowRoute.state.vars.current_goal, "investigate_pier_signal");
+  assert.equal(shadowRoute.state.quests.quest_black_sail_trail?.currentStepId, "step_follow_pier_signal");
+  assert.equal(shadowRoute.scene?.nodeId, "node_harbor_night_signal_shadow_route_end");
 });
 
 test("pier message should lead back to Mira and decode the north channel clue", () => {
@@ -939,6 +1097,7 @@ test("prepared black sail sting should unlock a minimal night stakeout event", (
   assert.equal(toHarbor.scene?.nodeId, "node_black_sail_stakeout");
   assert.deepEqual(toHarbor.scene?.choices, [
     { id: "take_stakeout_position", text: "Take your place overlooking the coal berth" },
+    { id: "reset_stakeout_plan", text: "Tell Mira you need to reset the plan and try again on another tide" },
   ]);
 
   const takePosition = session.choose("take_stakeout_position");
@@ -1123,6 +1282,51 @@ test("started black sail stakeout should lead into a minimal contact and net-clo
   assert.equal(observeHandoff.state.flags.brine_lark_shift_change_observed, true);
   assert.equal(observeHandoff.state.vars.current_goal, "assess_brine_lark_handoff");
   assert.equal(observeHandoff.scene?.nodeId, "node_brine_lark_shift_change_observed");
+});
+
+test("returning to customs tide stairs during the drowned lantern shed search should trigger a lower-landing observation", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 2, hour: 8, minute: 30 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      drowned_lantern_identified_as_contact: true,
+      drowned_lantern_search_started: true,
+      drowned_lantern_shed_trace_found: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_drowned_lantern: { status: "active", currentStepId: "step_trace_dawn_exchange" },
+    },
+    inventory: {},
+    vars: { current_goal: "inspect_drowned_lantern_shed_trace", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_coal_berth_arrival: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {},
+    },
+  });
+
+  const stairsGlance = session.travelTo("customs_tide_stairs");
+  assert.equal(stairsGlance.triggeredEventId, "evt_customs_stairs_return_glance");
+  assert.equal(stairsGlance.scene?.nodeId, "node_customs_stairs_return_glance");
+  assert.deepEqual(stairsGlance.scene?.choices, [
+    { id: "note_the_lower_landing_exchange_point", text: "Fix the lower landing as a secondary exchange point in memory" },
+  ]);
+
+  const noteLanding = session.choose("note_the_lower_landing_exchange_point");
+  assert.equal(noteLanding.triggeredEventId, null);
+  assert.equal(noteLanding.state.flags.customs_stairs_exchange_point_noted, true);
+  assert.equal(noteLanding.state.vars.current_goal, "inspect_drowned_lantern_shed_trace");
+  assert.equal(noteLanding.scene?.nodeId, "node_customs_stairs_return_glance_end");
 });
 
 test("black sail quest skeleton should activate and advance across key branch milestones", () => {

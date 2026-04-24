@@ -118,6 +118,30 @@ export const demoEvents: EventDefinition[] = [
     },
   },
   {
+    id: "evt_market_return_glance",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 8,
+    conditions: {
+      locationIds: ["market"],
+      vars: {
+        current_goal: "market_visited",
+      },
+      quests: {
+        quest_intro_walk: "completed",
+      },
+      eventHistory: {
+        onceTriggered: {
+          evt_market_morning: true,
+        },
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_market_return_glance",
+    },
+  },
+  {
     id: "evt_compass_lead",
     type: "follow-up",
     trigger: "after-choice",
@@ -172,6 +196,64 @@ export const demoEvents: EventDefinition[] = [
     },
     payload: {
       narrativeNodeId: "node_signal_tower_arrival",
+    },
+  },
+  {
+    id: "evt_harbor_return_patrol_glance",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 8,
+    conditions: {
+      locationIds: ["harbor"],
+      flags: {
+        harbor_watch_contacted: true,
+        signal_tower_clue_found: false,
+      },
+      vars: {
+        current_goal: "investigate_signal_tower",
+      },
+      questSteps: {
+        quest_black_sail_trail: "step_search_signal_tower",
+      },
+      eventHistory: {
+        onceTriggered: {
+          evt_harbor_arrival: true,
+        },
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_harbor_return_patrol_glance",
+    },
+  },
+  {
+    id: "evt_signal_tower_return_approach",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 8,
+    conditions: {
+      locationIds: ["signal_tower"],
+      flags: {
+        harbor_watch_contacted: true,
+        harbor_patrol_gap_noted: true,
+        signal_tower_clue_found: false,
+      },
+      vars: {
+        current_goal: "investigate_signal_tower",
+      },
+      questSteps: {
+        quest_black_sail_trail: "step_search_signal_tower",
+      },
+      eventHistory: {
+        onceTriggered: {
+          evt_signal_tower_arrival: true,
+          evt_harbor_return_patrol_glance: true,
+        },
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_signal_tower_return_approach",
     },
   },
   {
@@ -252,6 +334,34 @@ export const demoEvents: EventDefinition[] = [
     },
     payload: {
       narrativeNodeId: "node_coal_berth_arrival",
+    },
+  },
+  {
+    id: "evt_customs_stairs_return_glance",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 8,
+    conditions: {
+      locationIds: ["customs_tide_stairs"],
+      flags: {
+        drowned_lantern_shed_trace_found: true,
+        drowned_lantern_exchange_window_found: false,
+      },
+      vars: {
+        current_goal: "inspect_drowned_lantern_shed_trace",
+      },
+      questSteps: {
+        quest_drowned_lantern: "step_trace_dawn_exchange",
+      },
+      eventHistory: {
+        onceTriggered: {
+          evt_coal_berth_arrival: true,
+        },
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_customs_stairs_return_glance",
     },
   },
   {

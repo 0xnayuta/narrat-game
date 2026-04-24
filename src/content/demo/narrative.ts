@@ -104,6 +104,11 @@ export const demoNarrativeGraph: NarrativeGraph = {
       choices: [],
     },
     {
+      id: "node_market_return_glance",
+      text: "When you step onto the market floor again, the place no longer reads as a blur of first impressions. You recognize the quieter seam between the louder stalls almost immediately, and the memory of that earlier calm makes the whole square feel more legible than it did the first time through.",
+      choices: [],
+    },
+    {
       id: "node_vendor_intro",
       text: "The vendor watches you approach and offers a quick greeting.",
       choices: [
@@ -435,6 +440,30 @@ export const demoNarrativeGraph: NarrativeGraph = {
       choices: [],
     },
     {
+      id: "node_harbor_return_patrol_glance",
+      text: "Coming back to the harbor after speaking with Mira, you read the place differently. The watch post no longer feels like a single fixed desk but the center of a moving pattern: dockhands drift through the bright lanes, while the guards' real sightlines leave a quieter seam along the warehouse side where someone trying not to be remembered could pass without haste.",
+      choices: [
+        {
+          id: "mark_the_quieter_route_to_the_tower",
+          text: "Mark the quieter route toward the old signal tower before moving on",
+          nextNodeId: "node_harbor_return_patrol_glance_end",
+          effects: {
+            setFlags: {
+              harbor_patrol_gap_noted: true,
+            },
+            setVars: {
+              current_goal: "investigate_signal_tower",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_return_patrol_glance_end",
+      text: "You take a moment to fix the quieter route in memory: not hidden exactly, but easy to miss if you were only looking at the main planks and the watch lamps. When you turn away, the tower approach already feels narrower and more deliberate than it did the first time Mira pointed you toward it.",
+      choices: [],
+    },
+    {
       id: "node_signal_tower_arrival",
       text: "The old signal tower creaks in the harbor wind. Inside, dust covers the stairs, but there are fresher marks near the lantern room.",
       choices: [
@@ -456,6 +485,30 @@ export const demoNarrativeGraph: NarrativeGraph = {
     {
       id: "node_signal_tower_clue",
       text: "Behind the old beacon housing, you find a scrap of oilskin marked with tide times and a hand-drawn symbol matching the compass casing.",
+      choices: [],
+    },
+    {
+      id: "node_signal_tower_return_approach",
+      text: "On the second approach, the tower stops feeling like a landmark and starts feeling like a route problem. With the harbor patrol gap already fixed in memory, you notice how the warped stair and the lee side of the old beacon wall let you come up under cover from the brighter dock line without ever fully presenting yourself to the open planks below.",
+      choices: [
+        {
+          id: "keep_to_the_shadowed_stair",
+          text: "Keep to the shadowed stair and fix the quiet approach before searching",
+          nextNodeId: "node_signal_tower_return_approach_end",
+          effects: {
+            setFlags: {
+              signal_tower_quiet_approach_noted: true,
+            },
+            setVars: {
+              current_goal: "investigate_signal_tower",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_signal_tower_return_approach_end",
+      text: "You slow just long enough to map the quiet approach properly: where the stair groans, where the wall blocks sight from below, and where you can pause without becoming a silhouette in the lantern-room opening. When you move again, the tower feels less like a dare and more like a space you can work through on purpose.",
       choices: [],
     },
     {
@@ -559,6 +612,31 @@ export const demoNarrativeGraph: NarrativeGraph = {
       text: "Well after dark, a shuttered lantern flashes twice from beneath the far pier. The compass needle jerks toward the water before going still again.",
       choices: [
         {
+          id: "follow_pier_signal_by_shadow_route",
+          text: "Use the shadowed warehouse line and approach the pier from cover",
+          conditions: {
+            flags: {
+              harbor_patrol_gap_noted: true,
+              signal_tower_quiet_approach_noted: true,
+            },
+            eventHistory: {
+              onceTriggered: {
+                evt_signal_tower_return_approach: true,
+              },
+            },
+          },
+          nextNodeId: "node_harbor_night_signal_shadow_route_end",
+          effects: {
+            setFlags: {
+              black_sail_shadow_route_taken: true,
+            },
+            setVars: {
+              current_goal: "investigate_pier_signal",
+            },
+            advanceQuestStep: ["quest_black_sail_trail"],
+          },
+        },
+        {
           id: "follow_pier_signal",
           text: "Head for the far pier before the light disappears",
           nextNodeId: "node_harbor_night_signal_end",
@@ -570,6 +648,11 @@ export const demoNarrativeGraph: NarrativeGraph = {
           },
         },
       ],
+    },
+    {
+      id: "node_harbor_night_signal_shadow_route_end",
+      text: "Instead of cutting straight across the open planks, you slip along the warehouse shadow and let the old patrol seam carry you forward. The move costs a few breaths, but by the time you angle toward the far pier you already know where the lamps do not quite reach.",
+      choices: [],
     },
     {
       id: "node_harbor_night_signal_end",
@@ -705,6 +788,17 @@ export const demoNarrativeGraph: NarrativeGraph = {
               current_goal: "hold_black_sail_stakeout",
             },
             advanceQuestStep: ["quest_black_sail_sting"],
+          },
+        },
+        {
+          id: "reset_stakeout_plan",
+          text: "Tell Mira you need to reset the plan and try again on another tide",
+          nextNodeId: "node_harbor_watch_sting_plan",
+          effects: {
+            setVars: {
+              current_goal: "prepare_black_sail_sting",
+            },
+            resetQuestStep: ["quest_black_sail_sting"],
           },
         },
       ],
@@ -877,9 +971,52 @@ export const demoNarrativeGraph: NarrativeGraph = {
       ],
     },
     {
+      id: "node_customs_stairs_return_glance",
+      text: "On the way back from the coal berth, the customs tide stairs catch your attention differently. The steps are half tide-washed and easy to overlook, but now that you have seen how the sheds work as a handoff layer, you notice how the lower landing stays dry just long enough for someone to trade a sealed slip below the customs sightline before the water comes back.",
+      choices: [
+        {
+          id: "note_the_lower_landing_exchange_point",
+          text: "Fix the lower landing as a secondary exchange point in memory",
+          nextNodeId: "node_customs_stairs_return_glance_end",
+          effects: {
+            setFlags: {
+              customs_stairs_exchange_point_noted: true,
+            },
+            setVars: {
+              current_goal: "inspect_drowned_lantern_shed_trace",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_customs_stairs_return_glance_end",
+      text: "You take a moment to read the tide marks on the lower step. At the right hour, the water pulls back far enough for a fast handoff—no ledger chest, no dry shelf, just one pair of hands and another passing below the customs window. You file it away and move on.",
+      choices: [],
+    },
+    {
       id: "node_drowned_lantern_exchange_window",
       text: "Mira studies the tide slip and traces a thumb over the salt-soft wax. \"This isn't a meeting place—it's a timing mark. Dawn-side exchange means they pass ledgers and cargo tags at first light, then move the runner before the harbor wakes. If we press this lead, the next move is to identify which contact answers that window.\"",
       choices: [
+        {
+          id: "suggest_the_customs_stairs_lower_landing",
+          text: "Suggest the customs stairs lower landing as a possible exchange point",
+          conditions: {
+            flags: {
+              customs_stairs_exchange_point_noted: true,
+            },
+          },
+          nextNodeId: "node_drowned_lantern_exchange_window_confirmed",
+          effects: {
+            setFlags: {
+              drowned_lantern_contact_suspect_identified: true,
+              drowned_lantern_stairs_insight_used: true,
+            },
+            setVars: {
+              current_goal: "verify_drowned_lantern_contact_suspect",
+            },
+          },
+        },
         {
           id: "ask_who_handles_the_dawn_exchange",
           text: "Ask Mira who is most likely handling that dawn exchange",
@@ -890,6 +1027,51 @@ export const demoNarrativeGraph: NarrativeGraph = {
             },
             setVars: {
               current_goal: "verify_drowned_lantern_contact_suspect",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_exchange_window_confirmed",
+      text: "Mira's eyes narrow. \"The tide stairs. That makes sense—no shed, no chest, just the right gap in the water and one pair of hands passing another below the customs sightline. If you noticed that, the runner probably uses it too. That narrows who we're looking for.\"",
+      choices: [
+        {
+          id: "confirm_brine_lark_direct_from_stairs_insight",
+          text: "Tell Mira the tide stairs exchange points straight at a dawn runner, not a cargo hand",
+          nextNodeId: "node_drowned_lantern_contact_confirmed_from_insight",
+          effects: {
+            setFlags: {
+              brine_lark_identified_as_target: true,
+            },
+            setVars: {
+              current_goal: "trace_brine_lark_network",
+            },
+            completeQuest: ["quest_drowned_lantern"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_contact_confirmed_from_insight",
+      text: "Mira does not hesitate. \"Then it is the tally-keeper. The one they call Brine Lark. A dawn runner who carries tags, names, and tide slips between crews without ever touching cargo. If your stairs observation is right, he is the one using that landing at first light.\"",
+      choices: [
+        {
+          id: "ask_where_brine_lark_runs_goods_from_insight",
+          text: "Ask where Brine Lark is most likely to surface next",
+          nextNodeId: "node_brine_lark_start_point",
+          effects: {
+            setFlags: {
+              brine_lark_followup_started: true,
+            },
+            setVars: {
+              current_goal: "track_brine_lark_route",
+            },
+            setQuests: {
+              quest_brine_lark: {
+                status: "active",
+                currentStepId: "step_search_tide_warehouse",
+              },
             },
           },
         },

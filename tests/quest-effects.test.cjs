@@ -124,6 +124,20 @@ test("applyNarrativeChoiceEffects should start a quest at its first step", () =>
   assert.equal(result.quests.q1.currentStepId, "step_a");
 });
 
+test("applyNarrativeChoiceEffects should start a quest even when runtime state entry is missing", () => {
+  const state = {
+    ...baseState,
+    quests: {},
+  };
+
+  const result = applyNarrativeChoiceEffects(state, {
+    startQuest: ["q1"],
+  }, questDefs);
+
+  assert.equal(result.quests.q1.status, "active");
+  assert.equal(result.quests.q1.currentStepId, "step_a");
+});
+
 test("applyNarrativeChoiceEffects should reset and set quest step", () => {
   const state = {
     ...baseState,

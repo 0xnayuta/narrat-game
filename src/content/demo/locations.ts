@@ -39,6 +39,7 @@ export const demoLocations: LocationDefinition[] = [
       { to: "pier", travelMinutes: 5 },
       { to: "north_channel", travelMinutes: 15 },
       { to: "coal_berth", travelMinutes: 10 },
+      { to: "customs_tide_stairs", travelMinutes: 10 },
     ],
   },
   {

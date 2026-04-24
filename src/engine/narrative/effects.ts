@@ -107,17 +107,18 @@ export function applyNarrativeChoiceEffects(
 
     if (effects.startQuest && effects.startQuest.length > 0) {
       for (const questId of effects.startQuest) {
-        const current = nextQuests[questId];
-        if (!current) {
+        const firstStepId = getFirstQuestStepId(questId, stepIndex);
+        if (!stepIndex.has(questId)) {
           continue;
         }
 
+        const current = nextQuests[questId];
         nextQuests = {
           ...nextQuests,
           [questId]: {
             ...current,
             status: "active",
-            currentStepId: getFirstQuestStepId(questId, stepIndex),
+            currentStepId: firstStepId,
           },
         };
       }

@@ -30,6 +30,7 @@ function buildBranchState(overrides = {}) {
     quests: {
       quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
       quest_black_sail_trail: { status: "inactive", currentStepId: undefined },
+      quest_black_sail_sting: { status: "inactive", currentStepId: undefined },
       ...(overrides.quests ?? {}),
     },
     inventory: {},
@@ -223,4 +224,102 @@ test("demo vendor stall tip should show compass follow-up only when compass_owne
   assert.equal(nextState.vars.current_goal, "investigate_compass");
   assert.equal(nextState.quests.quest_black_sail_trail.status, "active");
   assert.equal(nextState.quests.quest_black_sail_trail.currentStepId, "step_find_mira");
+});
+
+test("demo black sail stakeout should allow resetting the sting plan back to its first step", () => {
+  const runtime = new NarrativeRuntime(demoNarrativeGraph);
+  runtime.jumpTo("node_black_sail_stakeout");
+
+  const state = buildBranchState({
+    currentLocationId: "harbor",
+    vars: {
+      current_goal: "hold_black_sail_stakeout",
+    },
+    quests: {
+      quest_black_sail_sting: { status: "active", currentStepId: "step_hold_stakeout" },
+    },
+  });
+
+  const visibleChoices = filterVisibleChoices(runtime.getCurrentChoices(), state);
+  assert.deepEqual(
+    visibleChoices.map((choice) => choice.id),
+    ["take_stakeout_position", "reset_stakeout_plan"],
+  );
+
+  const choiceResult = runtime.choose("reset_stakeout_plan");
+  const nextState = applyNarrativeChoiceEffects(state, choiceResult.effects, demoQuests);
+  assert.equal(choiceResult.node.id, "node_harbor_watch_sting_plan");
+  assert.equal(nextState.vars.current_goal, "prepare_black_sail_sting");
+  assert.equal(nextState.quests.quest_black_sail_sting.status, "active");
+  assert.equal(nextState.quests.quest_black_sail_sting.currentStepId, "step_prepare_stakeout");
+});
+
+test("drowned lantern exchange window should reveal insight branch when customs stairs observation was recorded", () => {
+  const runtime = new NarrativeRuntime(demoNarrativeGraph);
+  runtime.jumpTo("node_drowned_lantern_exchange_window");
+
+  // Without customs_stairs_exchange_point_noted, only the default ask is visible
+  const stateWithoutInsight = buildBranchState({
+    currentLocationId: "harbor",
+    flags: {
+      drowned_lantern_shed_trace_found: true,
+      drowned_lantern_exchange_window_found: true,
+    },
+    quests: {
+      quest_drowned_lantern: { status: "active", currentStepId: "step_identify_drowned_lantern_contact" },
+    },
+    vars: {
+      current_goal: "identify_drowned_lantern_exchange_window",
+    },
+  });
+  const choicesWithoutInsight = filterVisibleChoices(runtime.getCurrentChoices(), stateWithoutInsight);
+  assert.equal(choicesWithoutInsight.length, 1);
+  assert.equal(choicesWithoutInsight[0].id, "ask_who_handles_the_dawn_exchange");
+
+  // With customs_stairs_exchange_point_noted, both choices are visible
+  const stateWithInsight = buildBranchState({
+    currentLocationId: "harbor",
+    flags: {
+      drowned_lantern_shed_trace_found: true,
+      drowned_lantern_exchange_window_found: true,
+      customs_stairs_exchange_point_noted: true,
+    },
+    quests: {
+      quest_drowned_lantern: { status: "active", currentStepId: "step_identify_drowned_lantern_contact" },
+    },
+    vars: {
+      current_goal: "identify_drowned_lantern_exchange_window",
+    },
+  });
+  const choicesWithInsight = filterVisibleChoices(runtime.getCurrentChoices(), stateWithInsight);
+  assert.equal(choicesWithInsight.length, 2);
+  assert.equal(choicesWithInsight[0].id, "suggest_the_customs_stairs_lower_landing");
+  assert.equal(choicesWithInsight[1].id, "ask_who_handles_the_dawn_exchange");
+
+  // Choosing the insight branch sets the correct flags while preserving the current quest step
+  const insightChoice = runtime.choose("suggest_the_customs_stairs_lower_landing");
+  const afterInsight = applyNarrativeChoiceEffects(stateWithInsight, insightChoice.effects, demoQuests);
+  assert.equal(afterInsight.flags.drowned_lantern_stairs_insight_used, true);
+  assert.equal(afterInsight.flags.drowned_lantern_contact_suspect_identified, true);
+  assert.equal(afterInsight.vars.current_goal, "verify_drowned_lantern_contact_suspect");
+  assert.equal(afterInsight.quests.quest_drowned_lantern.currentStepId, "step_identify_drowned_lantern_contact");
+  assert.equal(insightChoice.node.id, "node_drowned_lantern_exchange_window_confirmed");
+
+  // The insight path now has a real downstream choice — directly confirm Brine Lark
+  const confirmChoice = runtime.choose("confirm_brine_lark_direct_from_stairs_insight");
+  assert.equal(confirmChoice.node.id, "node_drowned_lantern_contact_confirmed_from_insight");
+
+  const afterConfirm = applyNarrativeChoiceEffects(afterInsight, confirmChoice.effects, demoQuests);
+  assert.equal(afterConfirm.flags.brine_lark_identified_as_target, true);
+  assert.equal(afterConfirm.vars.current_goal, "trace_brine_lark_network");
+  assert.equal(afterConfirm.quests.quest_drowned_lantern.status, "completed");
+
+  const followBrineLark = runtime.choose("ask_where_brine_lark_runs_goods_from_insight");
+  assert.equal(followBrineLark.node.id, "node_brine_lark_start_point");
+
+  const afterFollow = applyNarrativeChoiceEffects(afterConfirm, followBrineLark.effects, demoQuests);
+  assert.equal(afterFollow.flags.brine_lark_followup_started, true);
+  assert.equal(afterFollow.vars.current_goal, "track_brine_lark_route");
+  assert.equal(afterFollow.quests.quest_brine_lark.status, "active");
+  assert.equal(afterFollow.quests.quest_brine_lark.currentStepId, "step_search_tide_warehouse");
 });
