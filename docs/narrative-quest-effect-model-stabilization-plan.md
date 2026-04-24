@@ -253,4 +253,8 @@ A short report listing all quest-related effects in src/content/demo/narrative.t
 classified as semantic / suspicious / legacy-compatible.
 ```
 
+Output:
+
+- `docs/narrative-quest-effects-audit.md`
+
 Then pick one small cleanup target from that report.

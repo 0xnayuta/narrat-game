@@ -113,14 +113,17 @@ export function applyNarrativeChoiceEffects(
         }
 
         const current = nextQuests[questId];
-        nextQuests = {
-          ...nextQuests,
-          [questId]: {
-            ...current,
-            status: "active",
-            currentStepId: firstStepId,
-          },
-        };
+        // Only start if quest is inactive; preserve active/completed/failed
+        if (current?.status === "inactive" || !current) {
+          nextQuests = {
+            ...nextQuests,
+            [questId]: {
+              ...current,
+              status: "active",
+              currentStepId: firstStepId,
+            },
+          };
+        }
       }
     }
 

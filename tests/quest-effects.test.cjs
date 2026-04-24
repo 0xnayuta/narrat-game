@@ -266,3 +266,54 @@ test("applyNarrativeChoiceEffects completeQuest should take precedence over ques
   assert.equal(result.quests.q1.status, "completed");
   assert.equal(result.quests.q1.currentStepId, "step_c");
 });
+
+test("applyNarrativeChoiceEffects startQuest should not rewind already active quest", () => {
+  const state = {
+    ...baseState,
+    quests: {
+      q1: { status: "active", currentStepId: "step_c" },
+    },
+  };
+  const result = applyNarrativeChoiceEffects(
+    state,
+    { startQuest: ["q1"] },
+    questDefs,
+  );
+  // Should NOT rewind to first step; should preserve current step
+  assert.equal(result.quests.q1.status, "active");
+  assert.equal(result.quests.q1.currentStepId, "step_c");
+});
+
+test("applyNarrativeChoiceEffects startQuest should not reopen completed quest", () => {
+  const state = {
+    ...baseState,
+    quests: {
+      q1: { status: "completed", currentStepId: "step_b" },
+    },
+  };
+  const result = applyNarrativeChoiceEffects(
+    state,
+    { startQuest: ["q1"] },
+    questDefs,
+  );
+  // Should preserve completed status and step
+  assert.equal(result.quests.q1.status, "completed");
+  assert.equal(result.quests.q1.currentStepId, "step_b");
+});
+
+test("applyNarrativeChoiceEffects startQuest should not reopen failed quest", () => {
+  const state = {
+    ...baseState,
+    quests: {
+      q1: { status: "failed", currentStepId: "step_a" },
+    },
+  };
+  const result = applyNarrativeChoiceEffects(
+    state,
+    { startQuest: ["q1"] },
+    questDefs,
+  );
+  // Should preserve failed status and step
+  assert.equal(result.quests.q1.status, "failed");
+  assert.equal(result.quests.q1.currentStepId, "step_a");
+});
