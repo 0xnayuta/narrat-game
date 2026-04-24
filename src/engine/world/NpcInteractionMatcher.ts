@@ -10,13 +10,12 @@ import {
   type StateConditions,
 } from "../conditions/state";
 import type { GameState, NPCInteractionConditions } from "../types";
-import type { ComparableValue, ScalarConditionValue } from "../types/conditions";
 
 export interface NpcInteractionMismatchReason {
-  code: "flag" | "quest" | "questStep" | "var" | "timeOfDay" | "group";
+  code: "flag" | "quest" | "questStep" | "var" | "timeOfDay" | "eventHistory" | "group";
   key?: string;
-  expected?: ScalarConditionValue | string;
-  actual?: ComparableValue | "missing";
+  expected?: unknown;
+  actual?: unknown;
   message: string;
 }
 
@@ -32,6 +31,7 @@ function toStateConditions(conditions: NPCInteractionConditions): StateCondition
     questSteps: conditions.requiredQuestSteps,
     vars: conditions.requiredVars,
     timeOfDay: conditions.requiredTimeOfDay,
+    eventHistory: conditions.eventHistory,
     all: conditions.all?.map(toStateConditions),
     any: conditions.any?.map(toStateConditions),
     not: conditions.not ? toStateConditions(conditions.not) : undefined,
@@ -44,8 +44,8 @@ function toNpcInteractionMismatchReason(
   return {
     code: reason.code as NpcInteractionMismatchReason["code"],
     key: reason.key,
-    expected: reason.expected as ScalarConditionValue | string | undefined,
-    actual: reason.actual as ComparableValue | "missing" | undefined,
+    expected: reason.expected,
+    actual: reason.actual,
     message: reason.message,
   };
 }

@@ -1,4 +1,5 @@
 import type { ScalarConditionValue } from "./conditions";
+import type { EventHistoryConditions } from "./events";
 
 /**
  * Directed connection between two locations in the world graph.
@@ -36,6 +37,8 @@ export interface NPCInteractionConditions {
   requiredQuestSteps?: Record<string, string>;
   requiredVars?: Record<string, ScalarConditionValue>;
   requiredTimeOfDay?: "morning" | "afternoon" | "evening" | "night";
+  /** Match against logical eventHistory through the adapter layer. */
+  eventHistory?: EventHistoryConditions;
   /** Every nested condition block must match (AND semantics). */
   all?: NPCInteractionConditions[];
   /** At least one nested condition block must match (OR semantics). */

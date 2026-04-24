@@ -248,6 +248,127 @@ test("evaluateNpcInteractionConditions should report questStep mismatch reasons"
   assert.equal(result.reasons[1].actual, "missing");
 });
 
+test("matchesNpcInteractionRule should support eventHistory onceTriggered conditions", () => {
+  const state = {
+    ...baseState,
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_market_return_glance: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {},
+    },
+  };
+
+  assert.equal(
+    matchesNpcInteractionRule(state, {
+      id: "event-history-once-match",
+      label: "Event history once match",
+      nodeId: "node",
+      eventHistory: {
+        onceTriggered: { evt_market_return_glance: true },
+      },
+    }),
+    true,
+  );
+
+  assert.equal(
+    matchesNpcInteractionRule(state, {
+      id: "event-history-once-mismatch",
+      label: "Event history once mismatch",
+      nodeId: "node",
+      eventHistory: {
+        onceTriggered: { evt_missing: true },
+      },
+    }),
+    false,
+  );
+});
+
+test("matchesNpcInteractionRule should support eventHistory lastTriggeredWithinMinutes conditions", () => {
+  const state = {
+    ...baseState,
+    time: { day: 1, hour: 8, minute: 0 },
+    eventHistory: {
+      onceTriggeredByEventId: {},
+      cooldownLastTriggeredMinuteByEventId: {
+        evt_recent_signal: 470,
+        evt_old_signal: 400,
+      },
+    },
+  };
+
+  assert.equal(
+    matchesNpcInteractionRule(state, {
+      id: "event-history-recent-match",
+      label: "Event history recent match",
+      nodeId: "node",
+      eventHistory: {
+        lastTriggeredWithinMinutes: { evt_recent_signal: 30 },
+      },
+    }),
+    true,
+  );
+
+  assert.equal(
+    matchesNpcInteractionRule(state, {
+      id: "event-history-recent-mismatch",
+      label: "Event history recent mismatch",
+      nodeId: "node",
+      eventHistory: {
+        lastTriggeredWithinMinutes: { evt_old_signal: 30 },
+      },
+    }),
+    false,
+  );
+});
+
+test("evaluateNpcInteractionConditions should report eventHistory mismatch reasons", () => {
+  const result = evaluateNpcInteractionConditions(baseState, {
+    eventHistory: {
+      onceTriggered: { evt_market_return_glance: true },
+    },
+  });
+
+  assert.equal(result.matched, false);
+  assert.deepEqual(
+    result.reasons.map((reason) => reason.code),
+    ["eventHistory"],
+  );
+  assert.equal(result.reasons[0].key, "evt_market_return_glance");
+  assert.equal(result.reasons[0].expected, true);
+  assert.equal(result.reasons[0].actual, false);
+});
+
+test("matchesNpcInteractionRule should support eventHistory in nested groups", () => {
+  const state = {
+    ...baseState,
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_harbor_return_patrol_glance: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {},
+    },
+  };
+
+  assert.equal(
+    matchesNpcInteractionRule(state, {
+      id: "event-history-nested-match",
+      label: "Event history nested match",
+      nodeId: "node",
+      all: [
+        { requiredVars: { reputation: { ">=": 1 } } },
+        {
+          any: [
+            { eventHistory: { onceTriggered: { evt_missing: true } } },
+            { eventHistory: { onceTriggered: { evt_harbor_return_patrol_glance: true } } },
+          ],
+        },
+      ],
+    }),
+    true,
+  );
+});
+
 test("matchesNpcInteractionRule should support any groups", () => {
   assert.equal(
     matchesNpcInteractionRule(baseState, {

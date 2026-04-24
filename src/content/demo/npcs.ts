@@ -70,6 +70,26 @@ export const demoNpcs: NPCDefinition[] = [
         },
       },
       {
+        id: "harbor-watch-customs-stairs-recap",
+        label: "Tell Mira about the customs stairs lower landing",
+        nodeId: "node_harbor_watch_customs_stairs_recap",
+        requiredFlags: {
+          harbor_watch_contacted: true,
+          customs_stairs_exchange_point_noted: true,
+        },
+        requiredQuestSteps: {
+          quest_drowned_lantern: "step_trace_dawn_exchange",
+        },
+        requiredVars: {
+          current_goal: "inspect_drowned_lantern_shed_trace",
+        },
+        eventHistory: {
+          onceTriggered: {
+            evt_customs_stairs_return_glance: true,
+          },
+        },
+      },
+      {
         id: "harbor-watch-repeat",
         label: "Speak with Mira again",
         nodeId: "node_harbor_watch_repeat",

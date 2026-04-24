@@ -1327,6 +1327,107 @@ test("returning to customs tide stairs during the drowned lantern shed search sh
   assert.equal(noteLanding.state.flags.customs_stairs_exchange_point_noted, true);
   assert.equal(noteLanding.state.vars.current_goal, "inspect_drowned_lantern_shed_trace");
   assert.equal(noteLanding.scene?.nodeId, "node_customs_stairs_return_glance_end");
+
+  session.closeScene();
+
+  const returnToHarbor = session.travelTo("harbor");
+  assert.equal(returnToHarbor.triggeredEventId, null);
+
+  const npcs = session.getAvailableNpcs();
+  assert.equal(npcs.length, 1);
+  assert.equal(npcs[0].npcId, "npc_harbor_watch_01");
+  assert.equal(npcs[0].label, "Tell Mira about the customs stairs lower landing");
+
+  const miraRecap = session.interactWithNpc("npc_harbor_watch_01");
+  assert.equal(miraRecap.scene?.nodeId, "node_harbor_watch_customs_stairs_recap");
+  assert.deepEqual(miraRecap.scene?.choices, [
+    {
+      id: "ask_mira_to_fold_the_stairs_into_the_dawn_exchange",
+      text: "Ask Mira to fold the stairs observation into the dawn exchange note",
+    },
+  ]);
+
+  const decodeExchange = session.choose("ask_mira_to_fold_the_stairs_into_the_dawn_exchange");
+  assert.equal(decodeExchange.triggeredEventId, null);
+  assert.equal(decodeExchange.state.flags.drowned_lantern_exchange_window_found, true);
+  assert.equal(decodeExchange.state.vars.current_goal, "identify_drowned_lantern_exchange_window");
+  assert.equal(decodeExchange.state.quests.quest_drowned_lantern?.currentStepId, "step_identify_drowned_lantern_contact");
+  assert.equal(decodeExchange.scene?.nodeId, "node_drowned_lantern_exchange_window");
+  assert.deepEqual(decodeExchange.scene?.choices, [
+    {
+      id: "suggest_the_customs_stairs_lower_landing",
+      text: "Suggest the customs stairs lower landing as a possible exchange point",
+    },
+    {
+      id: "ask_who_handles_the_dawn_exchange",
+      text: "Ask Mira who is most likely handling that dawn exchange",
+    },
+  ]);
+});
+
+test("customs stairs recap interaction should not steal Mira repeat outside its exact eventHistory window", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 2, hour: 9, minute: 0 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      customs_stairs_exchange_point_noted: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_drowned_lantern: { status: "active", currentStepId: "step_trace_dawn_exchange" },
+    },
+    inventory: {},
+    vars: { current_goal: "inspect_drowned_lantern_shed_trace", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {},
+      cooldownLastTriggeredMinuteByEventId: {},
+    },
+  });
+
+  const withoutEventHistory = session.getAvailableNpcs();
+  assert.equal(withoutEventHistory.length, 1);
+  assert.equal(withoutEventHistory[0].npcId, "npc_harbor_watch_01");
+  assert.equal(withoutEventHistory[0].label, "Speak with Mira again");
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 2, hour: 9, minute: 10 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      harbor_watch_contacted: true,
+      black_sail_network_confirmed: true,
+      customs_stairs_exchange_point_noted: true,
+      drowned_lantern_exchange_window_found: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "completed", currentStepId: "step_investigate_black_sail_berth" },
+      quest_drowned_lantern: { status: "active", currentStepId: "step_identify_drowned_lantern_contact" },
+    },
+    inventory: {},
+    vars: { current_goal: "identify_drowned_lantern_exchange_window", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_customs_stairs_return_glance: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {},
+    },
+  });
+
+  const afterExchangeDecoded = session.getAvailableNpcs();
+  assert.equal(afterExchangeDecoded.length, 1);
+  assert.equal(afterExchangeDecoded[0].npcId, "npc_harbor_watch_01");
+  assert.equal(afterExchangeDecoded[0].label, "Speak with Mira again");
 });
 
 test("black sail quest skeleton should activate and advance across key branch milestones", () => {

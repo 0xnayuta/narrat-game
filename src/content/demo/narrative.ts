@@ -995,6 +995,26 @@ export const demoNarrativeGraph: NarrativeGraph = {
       choices: [],
     },
     {
+      id: "node_harbor_watch_customs_stairs_recap",
+      text: "Mira listens without interrupting while you describe the lower landing below the customs sightline. \"That matters,\" she says at last. \"The shed gave us the paper trail, but the stairs give us the handoff shape. If the Drowned Lantern uses a dawn exchange, that landing may be where the runner keeps the cargo hands out of sight.\"",
+      choices: [
+        {
+          id: "ask_mira_to_fold_the_stairs_into_the_dawn_exchange",
+          text: "Ask Mira to fold the stairs observation into the dawn exchange note",
+          nextNodeId: "node_drowned_lantern_exchange_window",
+          effects: {
+            setFlags: {
+              drowned_lantern_exchange_window_found: true,
+            },
+            setVars: {
+              current_goal: "identify_drowned_lantern_exchange_window",
+            },
+            advanceQuestStep: ["quest_drowned_lantern"],
+          },
+        },
+      ],
+    },
+    {
       id: "node_drowned_lantern_exchange_window",
       text: "Mira studies the tide slip and traces a thumb over the salt-soft wax. \"This isn't a meeting place—it's a timing mark. Dawn-side exchange means they pass ledgers and cargo tags at first light, then move the runner before the harbor wakes. If we press this lead, the next move is to identify which contact answers that window.\"",
       choices: [
