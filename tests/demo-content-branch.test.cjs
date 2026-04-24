@@ -254,6 +254,59 @@ test("demo black sail stakeout should allow resetting the sting plan back to its
   assert.equal(nextState.quests.quest_black_sail_sting.currentStepId, "step_prepare_stakeout");
 });
 
+test("black sail tip should reveal north channel recap branch when wake pattern was recorded", () => {
+  const runtime = new NarrativeRuntime(demoNarrativeGraph);
+  runtime.jumpTo("node_harbor_watch_black_sail_tip");
+
+  const stateWithoutWakePattern = buildBranchState({
+    currentLocationId: "harbor",
+    flags: {
+      north_channel_decoded: true,
+      north_channel_marker_found: true,
+      black_sail_berth_identified: true,
+    },
+    quests: {
+      quest_black_sail_trail: { status: "active", currentStepId: "step_investigate_black_sail_berth" },
+    },
+    vars: {
+      current_goal: "investigate_black_sail_berth",
+    },
+  });
+  assert.deepEqual(filterVisibleChoices(runtime.getCurrentChoices(), stateWithoutWakePattern), []);
+
+  const stateWithWakePattern = buildBranchState({
+    currentLocationId: "harbor",
+    flags: {
+      north_channel_decoded: true,
+      north_channel_marker_found: true,
+      black_sail_berth_identified: true,
+      black_sail_north_channel_wake_pattern_noted: true,
+    },
+    quests: {
+      quest_black_sail_trail: { status: "active", currentStepId: "step_investigate_black_sail_berth" },
+    },
+    vars: {
+      current_goal: "investigate_black_sail_berth",
+    },
+  });
+  const visibleChoices = filterVisibleChoices(runtime.getCurrentChoices(), stateWithWakePattern);
+  assert.deepEqual(
+    visibleChoices.map((choice) => choice.id),
+    ["connect_north_channel_wake_to_coal_berth"],
+  );
+
+  const recapChoice = runtime.choose("connect_north_channel_wake_to_coal_berth");
+  assert.equal(recapChoice.node.id, "node_black_sail_north_channel_recap");
+
+  const nextState = applyNarrativeChoiceEffects(stateWithWakePattern, recapChoice.effects, demoQuests);
+  assert.equal(nextState.flags.black_sail_north_channel_recap_used, true);
+  assert.equal(nextState.vars.current_goal, "investigate_black_sail_berth");
+  assert.equal(
+    nextState.quests.quest_black_sail_trail.currentStepId,
+    "step_investigate_black_sail_berth",
+  );
+});
+
 test("drowned lantern exchange window should reveal route recap branch when coal berth route was recorded", () => {
   const runtime = new NarrativeRuntime(demoNarrativeGraph);
   runtime.jumpTo("node_drowned_lantern_exchange_window");

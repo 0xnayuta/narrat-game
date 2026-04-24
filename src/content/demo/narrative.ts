@@ -714,8 +714,56 @@ export const demoNarrativeGraph: NarrativeGraph = {
       choices: [],
     },
     {
+      id: "node_north_channel_return_wake_pattern",
+      text: "Coming back to the north channel after finding the marker, you notice what the first pass hid: the scuffs do not point toward open water. They angle back along the quieter customs side, where a small boat could ride the channel edge, cut behind the outer marker, and vanish toward the old berths without crossing the brighter harbor lanes.",
+      choices: [
+        {
+          id: "mark_the_channel_wake_toward_customs",
+          text: "Mark the wake line leading back toward the customs-side berths",
+          nextNodeId: "node_north_channel_return_wake_pattern_end",
+          effects: {
+            setFlags: {
+              black_sail_north_channel_wake_pattern_noted: true,
+            },
+            setVars: {
+              current_goal: "north_channel_investigated",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_north_channel_return_wake_pattern_end",
+      text: "You fix the angle in memory: not a route out of the harbor, but a route back into its least-watched edge. If Mira is right about Black Sail, the marker may be pointing to where the line touches land.",
+      choices: [],
+    },
+    {
       id: "node_harbor_watch_black_sail_tip",
       text: "Mira's expression hardens. \"Black sailcloth, tar cord, outer marker—then they're not meeting in open water. They favor the old coal berth past the customs sheds. If Black Sail has a physical anchor in this harbor, that's the place to look.\"",
+      choices: [
+        {
+          id: "connect_north_channel_wake_to_coal_berth",
+          text: "Point out how the north channel wake angles back toward the customs-side berths",
+          conditions: {
+            flags: {
+              black_sail_north_channel_wake_pattern_noted: true,
+            },
+          },
+          nextNodeId: "node_black_sail_north_channel_recap",
+          effects: {
+            setFlags: {
+              black_sail_north_channel_recap_used: true,
+            },
+            setVars: {
+              current_goal: "investigate_black_sail_berth",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_black_sail_north_channel_recap",
+      text: "Mira traces your route angle against the harbor map and gives a short nod. \"That fits. Black Sail uses the north channel to stay out of sight, but the wake you saw bends back toward land. The coal berth is not just a storage point—it is where the water route becomes a dock route. Search it with that in mind.\"",
       choices: [],
     },
     {

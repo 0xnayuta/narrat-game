@@ -318,6 +318,35 @@ export const demoEvents: EventDefinition[] = [
     },
   },
   {
+    id: "evt_north_channel_return_wake_pattern",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 8,
+    conditions: {
+      locationIds: ["north_channel"],
+      flags: {
+        north_channel_decoded: true,
+        north_channel_marker_found: true,
+        black_sail_berth_identified: false,
+      },
+      vars: {
+        current_goal: "north_channel_investigated",
+      },
+      questSteps: {
+        quest_black_sail_trail: "step_investigate_north_channel",
+      },
+      eventHistory: {
+        onceTriggered: {
+          evt_north_channel_arrival: true,
+        },
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_north_channel_return_wake_pattern",
+    },
+  },
+  {
     id: "evt_coal_berth_arrival",
     type: "arrival",
     trigger: "on-location-enter",

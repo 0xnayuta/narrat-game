@@ -937,6 +937,56 @@ test("north channel clue should continue into a minimal investigation point", ()
   assert.equal(inspectMarker.scene?.nodeId, "node_north_channel_clue");
 });
 
+test("returning to the north channel after finding the marker should trigger a wake-pattern recap", () => {
+  const session = createDemoSession();
+
+  session.restoreState({
+    player: { id: "player", name: "Player", stats: { health: 100, willpower: 100, stamina: 100 }, flags: {} },
+    time: { day: 2, hour: 1, minute: 10 },
+    currentLocationId: "harbor",
+    flags: {
+      demo_enabled: true,
+      quest_intro_started: true,
+      stall_discovered: true,
+      compass_vendor_reacted: true,
+      harbor_watch_contacted: true,
+      signal_tower_clue_found: true,
+      pier_message_found: true,
+      north_channel_decoded: true,
+      north_channel_marker_found: true,
+    },
+    quests: {
+      quest_intro_walk: { status: "active", currentStepId: "step_examine_stall" },
+      quest_black_sail_trail: { status: "active", currentStepId: "step_investigate_north_channel" },
+    },
+    inventory: {},
+    vars: { current_goal: "north_channel_investigated", gold: 35 },
+    eventHistory: {
+      onceTriggeredByEventId: {
+        evt_north_channel_arrival: true,
+      },
+      cooldownLastTriggeredMinuteByEventId: {},
+      triggerScopes: {},
+    },
+  });
+
+  const wakePattern = session.travelTo("north_channel");
+  assert.equal(wakePattern.triggeredEventId, "evt_north_channel_return_wake_pattern");
+  assert.equal(wakePattern.scene?.nodeId, "node_north_channel_return_wake_pattern");
+  assert.deepEqual(wakePattern.scene?.choices, [
+    {
+      id: "mark_the_channel_wake_toward_customs",
+      text: "Mark the wake line leading back toward the customs-side berths",
+    },
+  ]);
+
+  const markWake = session.choose("mark_the_channel_wake_toward_customs");
+  assert.equal(markWake.triggeredEventId, null);
+  assert.equal(markWake.state.flags.black_sail_north_channel_wake_pattern_noted, true);
+  assert.equal(markWake.state.vars.current_goal, "north_channel_investigated");
+  assert.equal(markWake.scene?.nodeId, "node_north_channel_return_wake_pattern_end");
+});
+
 test("north channel marker should lead back to Mira and identify the black sail berth", () => {
   const session = createDemoSession();
 
