@@ -61,22 +61,38 @@ Both systems consume these primitives:
 ### What changed
 `NarrativeChoiceEffects` previously only supported direct state writes (`setFlags`, `setVars`, `setQuests`).
 
-After enhancement, three convenience effects were added:
+After enhancement, six convenience effects were added:
+- `startQuest?: string[]` — activate an inactive or missing quest at its first step
 - `advanceQuestStep?: string[]` — advance quest to next step in QuestDefinition.stepIds order
+- `resetQuestStep?: string[]` — return quest to its first step without changing status
+- `setQuestStep?: Record<string, string>` — jump to a known step without changing status
 - `completeQuest?: string[]` — set quest status to "completed"
 - `failQuest?: string[]` — set quest status to "failed"
+
+`startQuest` is the preferred replacement for manual `setQuests` activation. When starting at a non-first step, combine `startQuest` with `setQuestStep`.
 
 ### Effect application order
 Effects are applied in a deterministic order (defined in `src/engine/narrative/effects.ts`):
 
 1. **setFlags / setVars / setQuests** — direct state writes
 2. **addVars / addStats** — numeric deltas (run after setVars so base values are set first)
-3. **advanceQuestStep** — step progression (operates on the result of phase 1)
+3. **startQuest / resetQuestStep / setQuestStep / advanceQuestStep** — quest progression actions
 4. **completeQuest / failQuest** — status overrides (take final precedence)
 
-This order means:
-- You can combine `setQuests` (e.g. activate a quest) with `advanceQuestStep` in the same choice
-- `completeQuest` always wins over previous status changes in the same effect set
+Phase 3 runs before phase 4, so `completeQuest` always takes final precedence over `startQuest`, `setQuestStep`, `advanceQuestStep`, and `resetQuestStep` in the same effect set. This means you can combine `startQuest` (activate) with `advanceQuestStep` (advance one step) and `completeQuest` in the same choice, and the final status will correctly be `completed`.
+
+### startQuest semantics
+`startQuest` activates a quest at its first declared step. The behavior depends on the quest's current runtime status:
+
+| Current status | Result | Notes |
+|---|---|---|
+| missing | creates entry, sets `active` / first step | safe for restored/minimal states |
+| `inactive` | sets `active` / first step | idempotent activation |
+| `active` | **preserves current step** | no rewind; idempotent on active quest |
+| `completed` | **preserves status and step** | idempotent; no reopen |
+| `failed` | **preserves status and step** | idempotent; no reopen |
+
+`startQuest` is therefore safe to call repeatedly: it activates inactive quests and leaves active/completed/failed quests untouched.
 
 ### Quest step advancement
 File: `src/engine/quests/QuestService.ts`
@@ -99,14 +115,17 @@ When `advanceQuestStep` is used in effects but `questDefinitions` is not provide
 ### Demo content usage
 - `finish_walk` choice: `completeQuest: ["quest_intro_walk"]` (instead of manual `setQuests`)
 - `explore_stall` choice: `advanceQuestStep: ["quest_intro_walk"]` (instead of manual `setQuests`)
-- `go_market` choice: still uses `setQuests` (changes both status and step simultaneously)
+- `go_market` choice: `startQuest: ["quest_intro_walk"]` + `setQuestStep: { quest_intro_walk: "step_go_market" }` (starts at non-first step)
+- `offer_help_with_sting` choice: `startQuest: ["quest_black_sail_sting"]` (starts at first step; preferred over manual `setQuests`)
 
 ### Testing
 - Pure `advanceQuestStep` tests: next step, last step, single step, unknown quest, empty steps, unknown currentStepId
 - Effect application order tests: setQuests + advanceQuestStep + completeQuest combination
 - Error handling: advanceQuestStep without questDefinitions throws
 - Multiple quest advancement in one effect
-- completeQuest precedence over advanceQuestStep for same quest
+- completeQuest precedence over quest progression actions for same quest
+- startQuest idempotency: preserves active/completed/failed quests
+- startQuest creates missing runtime entry from definitions
 
 ## Conditional choice visibility
 
@@ -165,6 +184,8 @@ File: `tests/choice-visibility.test.cjs` (9 tests)
 4. **advanceQuestStep doesn't auto-complete** — intentional; requires explicit `completeQuest`
 5. **Hidden choices are fully invisible** — no "shown but disabled" (grayed out) option
 6. **Debug reasons only for NPC** — event conditions return boolean only; no mismatch reason reporting
+7. **startQuest targets first step only** — there is no `autoAdvanceFromStep` option; use `startQuest` + `setQuestStep` for non-first starts
+8. **No per-step objective tracking** — quest step advancement is positional, not objective-based
 
 ## Possible future directions
 - Richer predicate operators for vars (e.g. not-equals, in-list, regex)

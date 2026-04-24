@@ -757,12 +757,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "prepare_black_sail_sting",
             },
-            setQuests: {
-              quest_black_sail_sting: {
-                status: "active",
-                currentStepId: "step_prepare_stakeout",
-              },
-            },
+            startQuest: ["quest_black_sail_sting"],
           },
         },
       ],
@@ -920,12 +915,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "search_customs_sheds_contact_line",
             },
-            setQuests: {
-              quest_drowned_lantern: {
-                status: "active",
-                currentStepId: "step_search_customs_sheds",
-              },
-            },
+            startQuest: ["quest_drowned_lantern"],
           },
         },
       ],
@@ -1087,12 +1077,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "track_brine_lark_route",
             },
-            setQuests: {
-              quest_brine_lark: {
-                status: "active",
-                currentStepId: "step_search_tide_warehouse",
-              },
-            },
+            startQuest: ["quest_brine_lark"],
           },
         },
       ],
@@ -1132,12 +1117,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
             setVars: {
               current_goal: "track_brine_lark_route",
             },
-            setQuests: {
-              quest_brine_lark: {
-                status: "active",
-                currentStepId: "step_search_tide_warehouse",
-              },
-            },
+            startQuest: ["quest_brine_lark"],
           },
         },
       ],

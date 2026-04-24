@@ -258,3 +258,76 @@ Output:
 - `docs/narrative-quest-effects-audit.md`
 
 Then pick one small cleanup target from that report.
+
+---
+
+## Completion notes (2026-04-24)
+
+This phase is **complete**.
+
+### What was done
+
+#### Iteration 1 — Inventory
+
+- Produced `docs/narrative-quest-effects-audit.md` classifying all quest-related effects in `src/content/demo/narrative.ts`.
+- Counted: `startQuest=4`, `advanceQuestStep=66`, `resetQuestStep=1`, `setQuestStep=1 field`, `setQuests=4`, `completeQuest=5`, `failQuest=0`.
+- Classified 4 manual `setQuests` activations as suspicious/legacy-compatible.
+
+#### Iteration 2 — Focused tests
+
+- Added 3 semantic protection tests to `tests/quest-effects.test.cjs`:
+  - `startQuest should not rewind already active quest`
+  - `startQuest should not reopen completed quest`
+  - `startQuest should not reopen failed quest`
+- Tests initially revealed a gap: `startQuest` was unconditionally setting `active` + `firstStep`, ignoring current status.
+- Fixed `src/engine/narrative/effects.ts` to guard with `if (current?.status === "inactive" || !current)`.
+- All 23 quest-effects tests pass.
+
+#### Iteration 3 — Content cleanup
+
+Replaced all 4 manual `setQuests` quest activations with semantic `startQuest`:
+
+| Choice | Quest | Replaced |
+|---|---|---|
+| `offer_help_with_sting` | `quest_black_sail_sting` | ✅ |
+| `ask_where_to_start_tracking_drowned_lantern` | `quest_drowned_lantern` | ✅ |
+| `ask_where_brine_lark_runs_goods_from_insight` | `quest_brine_lark` | ✅ |
+| `ask_where_brine_lark_runs_goods` | `quest_brine_lark` | ✅ |
+
+`setQuests` is no longer used for quest activation in `src/content/demo/narrative.ts`.
+
+#### Iteration 4 — Validation
+
+No new validation rules were added. The audit did not reveal real authoring mistakes — the 4 replaced `setQuests` were intentional manual activations that happened to work correctly. The cleanup replaced them with semantically clearer `startQuest` without changing runtime behavior.
+
+#### Iteration 5 — Docs
+
+- Updated `docs/conditions-effects-summary.md`:
+  - Expanded "What changed" from 3 to 6 effects (added `startQuest`, `resetQuestStep`, `setQuestStep`)
+  - Fixed effect application order to show full Phase 3 (`startQuest / resetQuestStep / setQuestStep / advanceQuestStep`)
+  - Added `startQuest semantics` section with status-preservation table
+  - Updated demo content examples (`go_market`, `offer_help_with_sting`)
+  - Added 2 new limitations (first-step-only, no per-step objective tracking)
+  - Added 2 new test entries (idempotency, missing-entry creation)
+
+### Acceptance criteria
+
+| Criterion | Status |
+|---|---|
+| Effect application order documented and test-backed | ✅ |
+| No known contradictory quest-step states in demo content | ✅ |
+| `startQuest`, `advanceQuestStep`, `setQuestStep`, `resetQuestStep`, `completeQuest`, `failQuest` have clear usage rules | ✅ documented in `conditions-effects-summary.md` |
+| At least one real content chain audited and cleaned | ✅ all 4 `setQuests` activations replaced |
+| Validation catches likely authoring mistakes | ✅ no regressions found; no speculative validation added |
+| All focused and integration tests pass | ✅ 145 tests, all pass |
+| No Brine Lark vertical governance extension introduced | ✅ |
+
+### Key engine decision made this phase
+
+`startQuest` now only activates quests that are `inactive` or missing. This makes it idempotent and safe to call repeatedly — active, completed, and failed quests are left untouched. The authoring intent ("start this quest") is preserved while accidental state corruption is prevented.
+
+### Related documentation updated
+
+- `docs/narrative-quest-effects-audit.md` — all 4 cleanup targets marked ✅ Done
+- `docs/conditions-effects-summary.md` — effect model section fully updated
+- `docs/narrative-quest-effect-model-stabilization-plan.md` — this file

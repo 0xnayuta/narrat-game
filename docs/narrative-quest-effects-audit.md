@@ -153,10 +153,10 @@ These are not necessarily bugs. They are candidates for semantic cleanup or stro
 
 | Choice | Current effect | Classification | Suggested cleanup |
 |---|---|---|---|
-| `node_harbor_watch_smuggling_confirmed -> offer_help_with_sting` | `setQuests.quest_black_sail_sting = { status: "active", currentStepId: "step_prepare_stakeout" }` | Suspicious / legacy-compatible | Prefer `startQuest: ["quest_black_sail_sting"]`. Because this starts at the first declared step, no `setQuestStep` is needed if `startQuest` semantics are confirmed. |
-| `node_black_sail_next_lead_clarified -> ask_where_to_start_tracking_drowned_lantern` | `setQuests.quest_drowned_lantern = { status: "active", currentStepId: "step_search_customs_sheds" }` | Suspicious / legacy-compatible | Prefer `startQuest: ["quest_drowned_lantern"]` if the first declared step remains `step_search_customs_sheds`. |
-| `node_drowned_lantern_contact_confirmed_from_insight -> ask_where_brine_lark_runs_goods_from_insight` | `setQuests.quest_brine_lark = { status: "active", currentStepId: "step_search_tide_warehouse" }` | Suspicious / legacy-compatible | Prefer `startQuest: ["quest_brine_lark"]` if the first declared step remains `step_search_tide_warehouse`. |
-| `node_drowned_lantern_contact_confirmed -> ask_where_brine_lark_runs_goods` | `setQuests.quest_brine_lark = { status: "active", currentStepId: "step_search_tide_warehouse" }` | Suspicious / legacy-compatible | Same as above. |
+| `node_harbor_watch_smuggling_confirmed -> offer_help_with_sting` | `setQuests.quest_black_sail_sting = { status: "active", currentStepId: "step_prepare_stakeout" }` | ✅ Done — replaced with `startQuest: ["quest_black_sail_sting"]` | `startQuest` semantics confirmed and tested; no `setQuestStep` needed since first step is `step_prepare_stakeout`. |
+| `node_black_sail_next_lead_clarified -> ask_where_to_start_tracking_drowned_lantern` | `setQuests.quest_drowned_lantern = { status: "active", currentStepId: "step_search_customs_sheds" }` | ✅ Done — replaced with `startQuest: ["quest_drowned_lantern"]` | `startQuest` semantics confirmed; first step is `step_search_customs_sheds`. |
+| `node_drowned_lantern_contact_confirmed_from_insight -> ask_where_brine_lark_runs_goods_from_insight` | `setQuests.quest_brine_lark = { status: "active", currentStepId: "step_search_tide_warehouse" }` | ✅ Done — replaced with `startQuest: ["quest_brine_lark"]` | `startQuest` semantics confirmed; first step is `step_search_tide_warehouse`. |
+| `node_drowned_lantern_contact_confirmed -> ask_where_brine_lark_runs_goods` | `setQuests.quest_brine_lark = { status: "active", currentStepId: "step_search_tide_warehouse" }` | ✅ Done — replaced with `startQuest: ["quest_brine_lark"]` | Same as above. |
 
 Reason for classification:
 
