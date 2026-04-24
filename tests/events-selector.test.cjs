@@ -974,3 +974,131 @@ test("event selector should support eventHistory.lastTriggeredWithinMinutes cond
   );
   assert.equal(mismatched?.id, "history-window-fallback");
 });
+
+test("event selector should exclude candidates inside trigger-scoped cooldown window", () => {
+  const cooldownEvents = [
+    {
+      id: "evt_trigger_scoped_cooldown",
+      type: "ambient",
+      trigger: "on-location-enter",
+      cooldownMinutes: 30,
+      priority: 10,
+      conditions: { locationIds: ["street"] },
+    },
+    {
+      id: "evt_trigger_scoped_fallback",
+      type: "ambient",
+      trigger: "on-location-enter",
+      priority: 1,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const selected = selectEvent(
+    cooldownEvents,
+    {
+      ...baseState,
+      time: { day: 1, hour: 9, minute: 30 }, // minute 570
+      eventHistory: {
+        onceTriggeredByEventId: {},
+        cooldownLastTriggeredMinuteByEventId: { evt_trigger_scoped_cooldown: 300 },
+        // trigger-scope says 10 min ago -> still cooling
+        triggerScopes: { "evt_trigger_scoped_cooldown:on-location-enter": 560 },
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+
+  assert.equal(selected?.id, "evt_trigger_scoped_fallback");
+});
+
+test("event selector should allow candidate when trigger-scoped cooldown is expired", () => {
+  const cooldownEvents = [
+    {
+      id: "evt_trigger_scope_expired",
+      type: "ambient",
+      trigger: "on-location-enter",
+      cooldownMinutes: 30,
+      priority: 10,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const selected = selectEvent(
+    cooldownEvents,
+    {
+      ...baseState,
+      time: { day: 1, hour: 9, minute: 30 }, // minute 570
+      eventHistory: {
+        onceTriggeredByEventId: {},
+        cooldownLastTriggeredMinuteByEventId: { evt_trigger_scope_expired: 560 },
+        // 570 - 500 = 70 >= 30, expired
+        triggerScopes: { "evt_trigger_scope_expired:on-location-enter": 500 },
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+
+  assert.equal(selected?.id, "evt_trigger_scope_expired");
+});
+
+test("event selector should keep cooldown independent across different triggers for same event id", () => {
+  const multiTriggerEvents = [
+    {
+      id: "evt_multi_trigger_window",
+      type: "ambient",
+      trigger: "on-location-enter",
+      cooldownMinutes: 30,
+      priority: 10,
+      conditions: { locationIds: ["street"] },
+    },
+    {
+      id: "evt_multi_trigger_window",
+      type: "ambient",
+      trigger: "on-time-check",
+      cooldownMinutes: 30,
+      priority: 10,
+      conditions: { locationIds: ["street"] },
+    },
+  ];
+
+  const onEnterSelected = selectEvent(
+    multiTriggerEvents,
+    {
+      ...baseState,
+      time: { day: 1, hour: 9, minute: 30 }, // minute 570
+      eventHistory: {
+        onceTriggeredByEventId: {},
+        cooldownLastTriggeredMinuteByEventId: { evt_multi_trigger_window: 560 },
+        triggerScopes: {
+          "evt_multi_trigger_window:on-location-enter": 560, // active
+          "evt_multi_trigger_window:on-time-check": 500, // expired
+        },
+      },
+    },
+    "on-location-enter",
+    () => 0.0,
+  );
+  assert.equal(onEnterSelected, null);
+
+  const onTimeSelected = selectEvent(
+    multiTriggerEvents,
+    {
+      ...baseState,
+      time: { day: 1, hour: 9, minute: 30 },
+      eventHistory: {
+        onceTriggeredByEventId: {},
+        cooldownLastTriggeredMinuteByEventId: { evt_multi_trigger_window: 560 },
+        triggerScopes: {
+          "evt_multi_trigger_window:on-location-enter": 560,
+          "evt_multi_trigger_window:on-time-check": 500,
+        },
+      },
+    },
+    "on-time-check",
+    () => 0.0,
+  );
+  assert.equal(onTimeSelected?.id, "evt_multi_trigger_window");
+});

@@ -362,6 +362,7 @@ test("demo session should support slice-only event history writes", () => {
   assert.deepEqual(first.state.eventHistory, {
     onceTriggeredByEventId: { "slice-only-once-cooldown": true },
     cooldownLastTriggeredMinuteByEventId: { "slice-only-once-cooldown": 485 },
+    triggerScopes: { "slice-only-once-cooldown:on-location-enter": 485 },
   });
 
   session.closeScene();
@@ -588,4 +589,83 @@ test("demo session should support manual travel and choice flow", () => {
   assert.equal(travelMarketAgain.state.currentLocationId, "market");
   assert.equal(travelMarketAgain.triggeredEventId, null);
   assert.equal(travelMarketAgain.scene, null);
+});
+
+test("restoreState should preserve trigger-scoped cooldown windows across travel", () => {
+  const bundle = {
+    id: "cooldown-restore-test",
+    title: "Cooldown Restore Test",
+    version: 1,
+    locations: [
+      {
+        id: "home",
+        name: "Home",
+        description: "Home",
+        connections: [{ to: "street", travelMinutes: 5 }],
+      },
+      {
+        id: "street",
+        name: "Street",
+        description: "Street",
+        connections: [{ to: "home", travelMinutes: 5 }],
+      },
+    ],
+    events: [
+      {
+        id: "evt_cd_primary",
+        type: "ambient",
+        trigger: "on-location-enter",
+        priority: 10,
+        cooldownMinutes: 30,
+        conditions: { locationIds: ["street"] },
+        payload: { narrativeNodeId: "node_primary" },
+      },
+      {
+        id: "evt_cd_fallback",
+        type: "ambient",
+        trigger: "on-location-enter",
+        priority: 1,
+        conditions: { locationIds: ["street"] },
+        payload: { narrativeNodeId: "node_fallback" },
+      },
+    ],
+    narrative: {
+      startNodeId: "node_start",
+      nodes: [
+        { id: "node_start", text: "Start", choices: [] },
+        { id: "node_primary", text: "Primary", choices: [] },
+        { id: "node_fallback", text: "Fallback", choices: [] },
+      ],
+    },
+    quests: [],
+    npcs: [],
+    initialFlags: {},
+  };
+
+  const session = createGameSessionFromBundle(bundle, {
+    eventHistoryWriteStrategy: "slice-only",
+  });
+
+  session.restoreState({
+    ...session.getState(),
+    currentLocationId: "home",
+    time: { day: 1, hour: 9, minute: 30 },
+    eventHistory: {
+      onceTriggeredByEventId: {},
+      cooldownLastTriggeredMinuteByEventId: { evt_cd_primary: 560 },
+      triggerScopes: { "evt_cd_primary:on-location-enter": 560 },
+    },
+  });
+
+  const firstTravel = session.travelTo("street");
+  assert.equal(firstTravel.triggeredEventId, "evt_cd_fallback");
+  assert.equal(firstTravel.scene?.nodeId, "node_fallback");
+
+  session.closeScene();
+  session.travelTo("home");
+  session.wait(20);
+  const secondTravel = session.travelTo("street");
+
+  assert.equal(secondTravel.triggeredEventId, "evt_cd_primary");
+  assert.equal(secondTravel.scene?.nodeId, "node_primary");
 });

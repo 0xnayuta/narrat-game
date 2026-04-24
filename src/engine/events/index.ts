@@ -22,11 +22,13 @@ export {
   DEFAULT_EVENT_HISTORY_WRITE_STRATEGY,
   getEventTriggeredFlagId,
   getEventCooldownVarKey,
+  getTriggerScopeKey,
   readEventHistoryState,
   writeEventHistoryState,
   migrateLegacyEventHistoryToSlice,
   hasTriggeredOnceEvent,
   hasEventCooldownActive,
+  isEventInCooldownWindow,
   markEventTriggered,
   markEventCooldownTimestamp,
 } from "./history";

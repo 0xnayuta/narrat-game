@@ -80,7 +80,7 @@ saveVersions 数组记录所有历史版本（last() 取最新）
 **不做**：
 - 重写整个事件系统
 - 改变 `eventHistory` 的基本 shape
-- 修改已通过测试的 33 个事件测试
+- 破坏已通过的事件测试（当前为 44 个）
 - 改变 `once: true` 语义
 
 **做**（最小范围）：
@@ -132,39 +132,49 @@ export function isEventInCooldownWindow(
 - `once: true` 事件走 `hasTriggeredOnceEvent`（现有逻辑不变）
 - 有 `cooldownMinutes` 的事件走 `isEventInCooldownWindow`
 
-#### Step 4：更新 `triggerEvent` 记录触发历史
+#### Step 4：更新 `triggerEvent` 记录触发历史 ✅（已完成）
 
-在 `src/engine/runtime/GameSession.ts` 或事件触发逻辑中，更新 `EventHistoryEntry` 时同步写入 `triggerScopes`。
+当前事件触发记录逻辑由 `src/engine/runtime/travelEventFlow.ts` 的 `runTriggeredEventFlow` 承载：触发事件后会调用 `markEventTriggered` 与 `markEventCooldownTimestamp`。
 
-#### Step 5：添加测试
+`markEventCooldownTimestamp` 已同步写入：
 
-在 `tests/events-selector.test.cjs` 或 `tests/events-history.test.cjs` 中新增：
+- global cooldown：`cooldownLastTriggeredMinuteByEventId[event.id]`
+- trigger-scoped cooldown：`triggerScopes["eventId:trigger"]`
 
-- cooldownMinutes 窗口内事件不入选
-- cooldownMinutes 窗口外事件入选
-- 不同 trigger 的 cooldown 独立计数
-- 存档/读档后 cooldown 状态恢复正确
+#### Step 5：添加测试 ✅（已完成）
 
-**预期文件改动**：
+已在 `tests/events-history.test.cjs`、`tests/events-selector.test.cjs`、`tests/demo-session.test.cjs` 完成覆盖：
 
-- `src/engine/events/history.ts` — 新增 entry shape + `isEventInCooldownWindow`
-- `src/engine/events/selector.ts` — `getCandidateEvents` 增加窗口检查
-- `src/engine/types/state.ts` — `EventHistoryEntry` 类型定义
-- `tests/events-history.test.cjs` — 新增 5~8 个 cooldown 窗口测试
-- `tests/events-selector.test.cjs` — 新增 3~5 个窗口过滤测试
+- [x] cooldownMinutes 窗口内事件不入选
+- [x] cooldownMinutes 窗口外事件入选
+- [x] 不同 trigger 的 cooldown 独立计数
+- [x] restoreState 后 cooldown 状态恢复正确（集成路径）
+
+**实际文件改动**：
+
+- `src/engine/types/events.ts` — 扩展 `EventHistoryState.triggerScopes` 与 `cooldownMinutes` 注释语义
+- `src/engine/events/history.ts` — 新增 `getTriggerScopeKey`、`isEventInCooldownWindow`，并让 cooldown 写入 global + trigger-scoped 历史
+- `src/engine/events/selector.ts` — `getCandidateEvents` 使用 `isEventInCooldownWindow` 过滤窗口内事件
+- `src/engine/events/index.ts` — 导出新增事件历史 helper
+- `src/engine/state/GameState.ts` — clone `eventHistory.triggerScopes`
+- `src/engine/runtime/travelEventFlow.ts` — 现有 `runTriggeredEventFlow` 调用链负责触发后历史写入（未新增文件级结构）
+- `tests/events-history.test.cjs` — 新增 cooldown 窗口与 per-trigger 历史测试
+- `tests/events-selector.test.cjs` — 新增 selector 窗口过滤与 trigger 独立性测试
+- `tests/demo-session.test.cjs` — 新增 restoreState 后 cooldown 窗口集成测试
+- `tests/save-roundtrip.test.cjs` — 同步 `eventHistory.triggerScopes` 预期
 
 ## 5. 验证方式
 
 ```bash
 # 现有测试不应因本次改动失败
-npm run test:events          # 33 个事件测试
-npm run test:demo-session    # 7 个 session 测试
+npm run test:events          # 44 个事件测试
+npm run test:demo-session    # 8 个 session 测试
 npm run test:demo-flow       # 1 个 demo 流程测试
 npm run test:quest-effects   # 23 个 quest 效果测试
 npm run type-check           # 类型检查
 
 # 新增测试
-npm run test:events          # 窗口相关新增测试应通过
+npm run test:events          # 44/44，通过窗口相关新增测试
 ```
 
 **手动验证路径**：
@@ -181,7 +191,7 @@ npm run test:events          # 窗口相关新增测试应通过
 | 修改 `EventHistoryState` shape 可能破坏存档兼容性 | 低 — 新增字段对旧存档是可选的，不会破坏 load | 如果 `npm run test:save` 失败，回退 history.ts 改动 |
 | `selectEvent` 性能下降（新增时间计算） | 极低 — 纯数学计算，O(1) | 如果性能测试发现问题，在 `getCandidateEvents` 加 early return |
 | 影响现有 `once: true` 语义 | 低 — `once` 走独立路径，不走 cooldown | 如果测试失败，确认 `once` 和 `cooldownMinutes` 互斥 |
-| 破坏现有 33 个事件测试 | 低 — 只扩展条件，不改变已有过滤逻辑 | 如果 `npm run test:events` 有失败，缩小改动范围到仅新增函数 |
+| 破坏现有 44 个事件测试 | 低 — 只扩展条件，不改变已有过滤逻辑 | 如果 `npm run test:events` 有失败，缩小改动范围到仅新增函数 |
 
 **回退命令**：
 

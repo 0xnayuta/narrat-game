@@ -56,7 +56,12 @@ export interface EventConditions {
  */
 export interface EventHistoryState {
   onceTriggeredByEventId: Record<string, boolean>;
+  /** Global cooldown: eventId → last triggered absolute minute. */
   cooldownLastTriggeredMinuteByEventId: Record<string, number>;
+  /** Per-trigger cooldown: "eventId:trigger" → last triggered absolute minute.
+   *  Allows the same event id to have independent cooldown windows per trigger type.
+   *  Key format: "{eventId}:{trigger}" (e.g. "evt_xxx:on-location-enter"). */
+  triggerScopes: Record<string, number>;
 }
 
 /**
@@ -74,11 +79,12 @@ export interface EventDefinition {
    */
   weight?: number;
   /**
-   * Cooldown in minutes since last trigger of the same event id.
-   * Invalid values (NaN/negative) are treated as 0 (disabled).
+   * Cooldown in minutes since last trigger.
+   * - Unset or 0: no cooldown
+   * - Positive: event is excluded from selection if within the window
+   * When both global and trigger-specific cooldown keys exist, trigger-specific takes precedence.
    */
   cooldownMinutes?: number;
   conditions?: EventConditions;
   payload?: Record<string, unknown>;
-  // TODO: Move cooldown history out of generic vars into a dedicated event history slice.
 }

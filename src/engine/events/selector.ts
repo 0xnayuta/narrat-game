@@ -1,12 +1,11 @@
 /**
  * Responsibility: Event candidate filtering and minimal selection strategy.
- * TODO: Extend cooldown to richer policies (windowed history, per-trigger scopes).
  */
 
 import type { EventDefinition, EventTrigger } from "../types/events";
 import type { GameState } from "../types";
 import { matchesAllEventConditions } from "./conditions";
-import { hasEventCooldownActive, hasTriggeredOnceEvent } from "./history";
+import { hasTriggeredOnceEvent, isEventInCooldownWindow } from "./history";
 
 export type RandomFloat = () => number;
 
@@ -22,7 +21,7 @@ export function getCandidateEvents(
     if (hasTriggeredOnceEvent(state, event)) {
       return false;
     }
-    if (hasEventCooldownActive(state, event)) {
+    if (isEventInCooldownWindow(state, event)) {
       return false;
     }
     return matchesAllEventConditions(state, event.conditions);

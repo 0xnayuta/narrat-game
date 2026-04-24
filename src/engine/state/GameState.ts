@@ -54,6 +54,7 @@ function cloneGameState(state: GameState): GameState {
           cooldownLastTriggeredMinuteByEventId: {
             ...state.eventHistory.cooldownLastTriggeredMinuteByEventId,
           },
+          triggerScopes: { ...state.eventHistory.triggerScopes },
         }
       : undefined,
   };

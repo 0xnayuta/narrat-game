@@ -49,6 +49,7 @@ test("save serialize/deserialize should round-trip GameState", () => {
       cooldownLastTriggeredMinuteByEventId: {
         evt_market_morning: 505,
       },
+      triggerScopes: {},
     },
   });
   assert.equal(restored.vars["event.cooldown.evt_market_morning.lastTriggeredMinute"], 505);
@@ -83,6 +84,7 @@ test("save deserialize should accept optional eventHistory slice", () => {
   assert.deepEqual(restored.eventHistory, {
     onceTriggeredByEventId: { evt_once_demo: true },
     cooldownLastTriggeredMinuteByEventId: { evt_cd_demo: 540 },
+    triggerScopes: {},
   });
 });
 
@@ -115,5 +117,6 @@ test("save deserialize should migrate legacy event history keys into eventHistor
   assert.deepEqual(restored.eventHistory, {
     onceTriggeredByEventId: { evt_once_legacy: true },
     cooldownLastTriggeredMinuteByEventId: { evt_cd_legacy: 555 },
+    triggerScopes: {},
   });
 });

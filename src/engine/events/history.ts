@@ -1,6 +1,6 @@
 /**
- * Responsibility: Minimal event history helpers backed by GameState flags/vars.
- * TODO: Move to a dedicated event history slice if save/runtime complexity grows.
+ * Responsibility: Event history helpers backed by GameState flags/vars.
+ * Supports global cooldown (eventId → minute) and per-trigger cooldown (eventId:trigger → minute).
  */
 
 import type { EventDefinition, EventHistoryState, GameState, TimeState } from "../types";
@@ -64,6 +64,7 @@ function readLegacyEventHistoryState(state: GameState): EventHistoryState {
   return {
     onceTriggeredByEventId,
     cooldownLastTriggeredMinuteByEventId,
+    triggerScopes: {},
   };
 }
 
@@ -83,7 +84,11 @@ export function readEventHistoryState(state: GameState): EventHistoryState {
   const legacy = readLegacyEventHistoryState(state);
 
   if (!state.eventHistory) {
-    return legacy;
+    return {
+      onceTriggeredByEventId: legacy.onceTriggeredByEventId,
+      cooldownLastTriggeredMinuteByEventId: legacy.cooldownLastTriggeredMinuteByEventId,
+      triggerScopes: {},
+    };
   }
 
   const onceTriggeredByEventId: Record<string, boolean> = {
@@ -106,10 +111,26 @@ export function readEventHistoryState(state: GameState): EventHistoryState {
     }
   }
 
+  const triggerScopes: Record<string, number> = {};
+  for (const [key, minute] of Object.entries(state.eventHistory.triggerScopes ?? {})) {
+    if (typeof minute === "number" && Number.isFinite(minute)) {
+      triggerScopes[key] = Math.trunc(minute);
+    }
+  }
+
   return {
     onceTriggeredByEventId,
     cooldownLastTriggeredMinuteByEventId,
+    triggerScopes,
   };
+}
+
+/**
+ * Builds the trigger-scoped key for per-trigger cooldown storage.
+ * Format: "{eventId}:{trigger}" (e.g. "evt_xxx:on-location-enter").
+ */
+export function getTriggerScopeKey(eventId: string, trigger: string): string {
+  return `${eventId}:${trigger}`;
 }
 
 /**
@@ -130,6 +151,7 @@ export function writeEventHistoryState(
   const nextEventHistory: EventHistoryState = {
     onceTriggeredByEventId: { ...baseHistory.onceTriggeredByEventId },
     cooldownLastTriggeredMinuteByEventId: { ...baseHistory.cooldownLastTriggeredMinuteByEventId },
+    triggerScopes: { ...baseHistory.triggerScopes },
   };
   let eventHistoryChanged = false;
 
@@ -170,6 +192,17 @@ export function writeEventHistoryState(
     }
   }
 
+  for (const [scopeKey, lastMinute] of Object.entries(history.triggerScopes)) {
+    if (typeof lastMinute !== "number" || !Number.isFinite(lastMinute)) {
+      continue;
+    }
+    const minute = Math.trunc(lastMinute);
+    if (nextEventHistory.triggerScopes[scopeKey] !== minute) {
+      nextEventHistory.triggerScopes[scopeKey] = minute;
+      eventHistoryChanged = true;
+    }
+  }
+
   if (
     (strategy !== "dual-write" || (nextFlags === state.flags && nextVars === state.vars)) &&
     !eventHistoryChanged
@@ -201,6 +234,7 @@ export function migrateLegacyEventHistoryToSlice(state: GameState): GameState {
       cooldownLastTriggeredMinuteByEventId: {
         ...mergedHistory.cooldownLastTriggeredMinuteByEventId,
       },
+      triggerScopes: { ...mergedHistory.triggerScopes },
     },
   };
 }
@@ -230,6 +264,45 @@ export function hasEventCooldownActive(state: GameState, event: EventDefinition)
   return nowMinutes - lastTriggeredValue < cooldownMinutes;
 }
 
+/**
+ * Checks whether an event is within its cooldown window.
+ *
+ * Strategy:
+ * - If the event has a trigger-scoped entry (eventId:trigger), use it (per-trigger window).
+ * - Otherwise fall back to the global cooldown entry (eventId).
+ * - If neither entry exists, the event is not in cooldown (allows first trigger).
+ *
+ * This function is used by the event selector to filter out candidates within cooldown.
+ */
+export function isEventInCooldownWindow(
+  state: GameState,
+  event: EventDefinition,
+): boolean {
+  const cooldownMinutes = getEventCooldownMinutes(event);
+  if (cooldownMinutes <= 0) {
+    return false;
+  }
+
+  const history = readEventHistoryState(state);
+  const nowMinutes = toAbsoluteMinutes(state.time);
+
+  // Per-trigger scope takes precedence.
+  const scopeKey = getTriggerScopeKey(event.id, event.trigger);
+  const scopeMinute = history.triggerScopes[scopeKey];
+  if (typeof scopeMinute === "number" && Number.isFinite(scopeMinute)) {
+    return nowMinutes - scopeMinute < cooldownMinutes;
+  }
+
+  // Fall back to global entry.
+  const globalMinute = history.cooldownLastTriggeredMinuteByEventId[event.id];
+  if (typeof globalMinute === "number" && Number.isFinite(globalMinute)) {
+    return nowMinutes - globalMinute < cooldownMinutes;
+  }
+
+  // No entry means no cooldown triggered yet.
+  return false;
+}
+
 export function markEventCooldownTimestamp(
   state: GameState,
   event: EventDefinition,
@@ -241,12 +314,17 @@ export function markEventCooldownTimestamp(
   }
 
   const nowMinutes = toAbsoluteMinutes(state.time);
+  const scopeKey = getTriggerScopeKey(event.id, event.trigger);
   return writeEventHistoryState(
     state,
     {
       onceTriggeredByEventId: {},
       cooldownLastTriggeredMinuteByEventId: {
         [event.id]: nowMinutes,
+      },
+      // Always write trigger-scoped entry so per-trigger and global stay in sync.
+      triggerScopes: {
+        [scopeKey]: nowMinutes,
       },
     },
     strategy,
@@ -269,6 +347,7 @@ export function markEventTriggered(
         [event.id]: true,
       },
       cooldownLastTriggeredMinuteByEventId: {},
+      triggerScopes: {},
     },
     strategy,
   );
