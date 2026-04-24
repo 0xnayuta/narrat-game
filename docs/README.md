@@ -15,7 +15,8 @@ docs/
 │   └── data-flow.md                 ← 运行时数据流
 ├── 04-demo/                          ← Demo 说明
 │   ├── demo-scope.md                 ← Demo 范围与目标
-│   └── demo-walkthrough.md          ← 手动验证路径
+│   ├── demo-walkthrough.md          ← 手动验证路径
+│   └── mainline-compression-plan.md ← 主线剧情压缩方案
 ├── 05-development/                   ← 开发指南
 │   ├── testing.md                    ← 测试命令与入口
 │   ├── agent-workflow.md             ← Agent 工作约束（AGENTS.md 摘要）
@@ -38,6 +39,7 @@ docs/
 | `docs/dol-reference-plan.md` | 当前 DoL 参考专题与实现计划 |
 | `docs/narrative-quest-effects-audit.md` | quest 效果使用审计 |
 | `docs/04-demo/demo-scope.md` | Demo 范围（含 Brine Lark 当前状态） |
+| `docs/04-demo/mainline-compression-plan.md` | 主线剧情压缩方向与内容整理边界 |
 
 ## 文档生命周期
 
@@ -51,5 +53,6 @@ docs/
 - 新加入项目？先读 `docs/00-overview/project-goal.md`
 - 想了解 engine 分层？读 `docs/01-architecture/module-boundaries.md`
 - 想运行 demo？读 `docs/04-demo/demo-scope.md` + `docs/04-demo/demo-walkthrough.md`
+- 想整理主线剧情？读 `docs/04-demo/mainline-compression-plan.md`
 - 想参考 DoL？读 `docs/99-reference/reference-policy.md` + `docs/dol-reference-plan.md`
 - 想了解 engine 效果模型？读 `docs/conditions-effects-summary.md`

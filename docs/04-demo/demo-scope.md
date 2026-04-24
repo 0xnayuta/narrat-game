@@ -26,6 +26,10 @@
 - **扩展链**：Black Sail trail → sting（7+3 步）、Drowned Lantern（3 步）、Brine Lark（已压缩）
 - **NPC**：Vendor（市场）、Mira（港口）
 
+## 主线压缩方向
+
+当前内容已能完整闭环，但手动体验显示剧情有重复和纵向过长的问题。后续主线整理以 `docs/04-demo/mainline-compression-plan.md` 为依据：优先讲清 Black Sail（港口走私端）→ Drowned Lantern（黎明接头 alias）→ Brine Lark（水路 runner）的三段边界，并避免继续扩展 Brine Lark 高层治理链。
+
 ## Black Sail 横向回顾点
 
 当前 Black Sail trail 主线保持 7 步不变，横向补点用于强化中段路线理解，不新增 quest step：
