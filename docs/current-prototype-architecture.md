@@ -183,8 +183,11 @@ File: `src/engine/types/narrative.ts`
 Fields:
 - `setFlags?: Record<string, boolean>`
 - `setVars?: Record<string, string | number | boolean>`
-- `setQuests?: Record<string, { status; currentStepId? }>`
+- `setQuests?: Record<string, { status; currentStepId? }>` (low-level override; prefer `startQuest`)
+- `startQuest?: string[]` (activates inactive or missing quest at its first step; preserves active/completed/failed status)
 - `advanceQuestStep?: string[]` (advances to next step in QuestDefinition.stepIds order)
+- `resetQuestStep?: string[]` (returns quest to its first step without changing status)
+- `setQuestStep?: Record<string, string>` (jumps to a known step without changing status)
 - `completeQuest?: string[]` (sets status to "completed")
 - `failQuest?: string[]` (sets status to "failed")
 - `addVars?: Record<string, number>` (numeric deltas; missing/non-number keys treated as 0; applied after setVars)
@@ -271,8 +274,10 @@ Content author notes:
 5. Choice effects are applied in deterministic order:
    1. `setFlags` / `setVars` / `setQuests` — direct state writes
    2. `addVars` / `addStats` — numeric deltas (applied after setVars so base values are set first)
-   3. `advanceQuestStep` — step progression (requires `QuestDefinition[]`)
+   3. `startQuest` / `resetQuestStep` / `setQuestStep` / `advanceQuestStep` — quest progression actions (Phase 3 runs before Phase 4, so `completeQuest` takes final precedence)
    4. `completeQuest` / `failQuest` — status overrides (final precedence)
+
+   `startQuest` is idempotent: it activates inactive or missing quests at their first step, but leaves active, completed, or failed quests untouched.
 6. Post-choice event check runs with trigger `after-choice`
 7. If a follow-up event hits, it replaces the current scene
 
@@ -334,7 +339,10 @@ These are used by:
 
 File: `src/engine/quests/QuestService.ts`
 
-- `advanceQuestStep(questId, quests, stepIndex)` — pure function, returns next step result
+- `advanceQuestStep(questId, quests, stepIndex)` — pure function, returns `{ status, currentStepId, wasAtLastStep }`
+- `getFirstQuestStepId(questId, stepIndex)` — returns the first step of a quest definition
+- `setQuestStep(questId, stepId, quests, stepIndex)` — jumps to a known step, preserves status
+- `resetQuestStep(questId, quests, stepIndex)` — returns to first step, preserves status
 - `buildQuestStepIndex(definitions)` — builds questId → stepIds lookup
 - At last step: stays at current step, sets `wasAtLastStep = true` (does NOT auto-complete)
 - Content authors must explicitly use `completeQuest` effect for quest completion
@@ -358,10 +366,11 @@ The current prototype demonstrates:
 - once-only events and per-event cooldown
 - post-choice follow-up events
 - narrative node rendering with multiple choice effects
-- quest progression (setQuests, advanceQuestStep, completeQuest, failQuest)
-- NPC interactions gated by flags, quest status, quest steps, vars, time-of-day
+- quest progression (startQuest, advanceQuestStep, resetQuestStep, setQuestStep, completeQuest, failQuest)
+- `startQuest` is idempotent and preserves active/completed/failed quests
+- NPC interactions gated by flags, quest status, quest steps, vars, time-of-day, eventHistory
 - NPC → choice → after-choice event closed loop
-- conditional choice visibility (choices gated by flags, vars, quest status, quest step)
+- conditional choice visibility (choices gated by flags, vars, quest status, quest step, eventHistory)
 - explicit scene lifecycle
 - save/load with event history migration
 - slice-only event history as default
@@ -372,12 +381,13 @@ Two complete content loops exist in the demo:
 
 ### Main loop
 1. Travel to street → arrival event
-2. Choose "Head to market" → activates quest, sets vars
+2. Choose "Head to market" → `startQuest` + `setQuestStep` (activates quest at non-first step)
 3. Travel to market → market event
-4. Choose "Look around the stalls" → completes quest
-5. NPC "Talk to Vendor" unlocks (quest completed + correct vars + morning)
-6. Choose "Ask how business is going" → sets vendor_met flag + vars
-7. After-choice event `evt_vendor_aftermath` triggers
+4. Choose "Look around the stalls" → `advanceQuestStep`
+5. Choose "Finish the walk" → `completeQuest`
+6. NPC "Talk to Vendor" unlocks (quest completed + correct vars + morning)
+7. Choose "Ask how business is going" → sets vendor_met flag + vars
+8. After-choice event `evt_vendor_aftermath` triggers
 
 ### Side loop
 1. At market with active quest at step_go_market → stall discovery event
@@ -389,22 +399,22 @@ Two complete content loops exist in the demo:
 
 | Suite | File | Count | Scope |
 |---|---|---|---|
-| test:events | events-selector + events-history | 25 | Event filtering, selection, history, cooldown |
+| test:events | events-selector + events-history | 33 | Event filtering, selection, history, cooldown |
 | test:save | save-roundtrip | 3 | Save/load, event history migration |
-| test:npc-matcher | npc-interaction-matcher | 7 | NPC condition matching + debug reasons |
+| test:npc-matcher | npc-interaction-matcher | 18 | NPC condition matching + debug reasons + eventHistory |
 | test:narrative | narrative-runtime | 3 | Narrative graph navigation |
 | test:demo-session | demo-session | 7 | Session integration (RNG, cooldown, slice-only, flow) |
 | test:demo-flow | demo-flow | 1 | Full demo content chain |
-| test:quest-effects | quest-effects | 13 | Quest step advancement + effect application order |
-| test:npc-event-loop | npc-event-loop | 3 | NPC → choice → event closed loop |
-
-| test:choice-visibility | choice-visibility | 10 | Conditional choice filtering + session integration |
-
+| test:quest-effects | quest-effects | 23 | Quest step advancement + effect application order + startQuest semantics |
+| test:npc-event-loop | npc-event-loop | 33 | NPC → choice → event closed loop + horizontal content paths |
+| test:choice-visibility | choice-visibility | 17 | Conditional choice filtering + session integration |
 | test:add-vars | add-vars-stats | 10 | addVars / addStats numeric deltas |
-
 | test:initial-vars | initial-vars | 3 | ContentBundle initialVars + demo gold |
+| test:npc | npc-service | 4 | NPC service + debug info |
+| test:content | content-bundle | 1 | Content bundle validation |
+| test:demo-branch | demo-content-branch | 8 | Branch visibility + gameplay paths |
 
-**Total: 85 tests**
+**Total: 145 tests**
 
 ## Files currently kept as skeletons
 Some files are intentionally retained but are **not part of the active main path**.

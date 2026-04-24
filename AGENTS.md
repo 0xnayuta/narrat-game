@@ -11,14 +11,21 @@
 - 运行时边界：`GameSession`
 - UI 边界：`DemoApp`
 
-当前内容侧还处于：
+当前内容侧已完成：
 
-- **主链结构清理 + 可扩展内容骨架稳定化** 阶段
-- 已对 `quest_brine_lark` 做过一轮主链压缩清理
-- 当前默认目标不再是继续无限上追治理层级，而是：
-  1. 维护已压缩后的稳定主链
-  2. 让 narrative / quest / 文档保持一致
-  3. 为后续横向分支、条件系统、效果模型接入做准备
+- **阶段 1**：`eventHistory` / 共享条件系统落地 + 内容横向验证
+  - `eventHistory` 作为 content-rule 输入接入 events / narrative choices / NPC interactions
+  - 横向内容模式（小观察 → 轻记录 → 后续小分支）已验证并迁移到 Black Sail / Drowned Lantern / Brine Lark
+- **阶段 2**：`Narrative / Quest Effect Model Stabilization`
+  - `startQuest` 语义修复（幂等：保留 active/completed/failed）
+  - 4 个 manual `setQuests` 激活全部替换为语义化的 `startQuest`
+  - `docs/conditions-effects-summary.md` 和 `docs/current-prototype-architecture.md` 已同步更新
+
+当前默认目标：
+
+1. 保持 engine 稳定，不引入新抽象
+2. 在已有稳定 engine 基础上做横向内容扩展
+3. 不再扩展 Brine Lark 垂直治理链
 
 Brine Lark 当前状态：
 
@@ -35,9 +42,9 @@ Brine Lark 当前状态：
 
 事件系统当前状态：
 
-- Phase A：`priority` 已完成
-- Phase B：`weight` + 可注入 RNG 已完成
-- Phase C：`cooldownMinutes` + `eventHistory` 迁移路径已完成
+- Phase A：`priority` ✅
+- Phase B：`weight` + 可注入 RNG ✅
+- Phase C：`cooldownMinutes` + `eventHistory` 迁移路径 ✅
 
 当前默认事件历史策略：
 
@@ -61,15 +68,13 @@ Brine Lark 当前状态：
 
 ## 现阶段优先事项
 
-1. 条件系统增强（尤其是 vars / quests / 更明确谓词边界）。
-2. Narrative / Quest 效果模型增强。
-3. NPC / 任务 / 事件联动，逐步让 `eventHistory` 真正参与内容规则。
-4. 在新增能力前，优先保持现有运行路径和测试稳定。
-5. 内容侧优先维护**已压缩后的主链清晰度**，不要重新把主链扩回过密的垂直治理层。
-6. 若继续推进 `Brine Lark`，优先：
-   - 保持当前主链一致性
-   - 从中层稳定节点做横向扩展
-   - 或把该链条接入条件 / 效果 / 事件系统
+当前 engine 已稳定，以下为可选方向（按需推进，不要一次做多个）：
+
+1. 横向内容扩展：在 Black Sail / Drowned Lantern / Brine Lark 的中层节点上添加更多观察点和 recap
+2. 内容链完整性补全：补齐各 chain 的边界节点、结局节点文本
+3. NPC 互动丰富化：利用已有的 `eventHistory` 和条件系统扩展 Mira 等 NPC 的互动选项
+4. 在新增内容前，优先保持现有测试通过（`npm run test`）
+5. 不要引入新的 engine 抽象（如 object-based quest steps、objective counters、plugin DSL）
 
 ## 工作方式
 
