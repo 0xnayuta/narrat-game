@@ -1358,7 +1358,17 @@ test("started black sail stakeout should lead into a minimal contact and net-clo
     { id: "ask_who_handles_the_dawn_exchange", text: "Ask Mira who is most likely handling that dawn exchange" },
   ]);
 
-  const identifySuspect = session.choose("ask_who_handles_the_dawn_exchange");
+  const defaultBoundary = session.choose("ask_who_handles_the_dawn_exchange");
+  assert.equal(defaultBoundary.triggeredEventId, null);
+  assert.equal(defaultBoundary.state.flags.drowned_lantern_contact_suspect_identified, true);
+  assert.equal(defaultBoundary.state.vars.current_goal, "verify_drowned_lantern_contact_suspect");
+  assert.equal(defaultBoundary.state.quests.quest_drowned_lantern?.currentStepId, "step_identify_drowned_lantern_contact");
+  assert.equal(defaultBoundary.scene?.nodeId, "node_drowned_lantern_exchange_window_default_boundary");
+  assert.deepEqual(defaultBoundary.scene?.choices, [
+    { id: "use_the_default_dawn_runner_profile", text: "Use the dawn-runner profile to name the most likely contact" },
+  ]);
+
+  const identifySuspect = session.choose("use_the_default_dawn_runner_profile");
   assert.equal(identifySuspect.triggeredEventId, null);
   assert.equal(identifySuspect.state.flags.drowned_lantern_contact_suspect_identified, true);
   assert.equal(identifySuspect.state.vars.current_goal, "verify_drowned_lantern_contact_suspect");

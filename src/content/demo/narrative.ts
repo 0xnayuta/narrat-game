@@ -1193,7 +1193,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
         {
           id: "ask_who_handles_the_dawn_exchange",
           text: "Ask Mira who is most likely handling that dawn exchange",
-          nextNodeId: "node_drowned_lantern_contact_suspect",
+          nextNodeId: "node_drowned_lantern_exchange_window_default_boundary",
           effects: {
             setFlags: {
               drowned_lantern_contact_suspect_identified: true,
@@ -1202,6 +1202,17 @@ export const demoNarrativeGraph: NarrativeGraph = {
               current_goal: "verify_drowned_lantern_contact_suspect",
             },
           },
+        },
+      ],
+    },
+    {
+      id: "node_drowned_lantern_exchange_window_default_boundary",
+      text: "Mira does not pretend the tide slip is enough to name a face by itself. \"Without a second observation, we keep this narrow and honest. Dawn-side exchange tells us the role before it tells us the person: someone close to ledgers, tide marks, and short handoffs, but not someone tied to one cargo crew. That still rules out most berth hands. We are looking for a runner.\"",
+      choices: [
+        {
+          id: "use_the_default_dawn_runner_profile",
+          text: "Use the dawn-runner profile to name the most likely contact",
+          nextNodeId: "node_drowned_lantern_contact_suspect",
         },
       ],
     },

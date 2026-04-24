@@ -13,7 +13,7 @@
 | 地点切换（23 个地点） | DemoApp Travel 区域 |
 | NPC 交互（2 个 NPC，10 个 interactions） | DemoApp NPC 按钮 |
 | 事件触发（22 个事件，4 种 trigger） | UI "Last event" 区域 + DebugPanel |
-| 叙事节点执行（2553 行，120+ choices） | TextPanel + ChoiceList |
+| 叙事节点执行（2564 行，120+ choices） | TextPanel + ChoiceList |
 | 任务推进（4 条任务链） | HudStats + DebugPanel |
 | 存档/读档 | DemoApp Save/Load 按钮 |
 | 条件过滤（flags / vars / quests / questSteps / eventHistory） | ChoiceList 自动过滤 |
@@ -40,6 +40,7 @@
 
 - **Customs Tide Stairs lower landing**：进入 `customs_tide_stairs` 时触发 `evt_customs_stairs_return_glance`，记录 `customs_stairs_exchange_point_noted`，可通过 Mira recap 折回 `node_drowned_lantern_exchange_window`。
 - **Coal Berth route recap**：进入 `coal_berth` 时触发 `evt_drowned_lantern_coal_berth_route_recap`，记录 `drowned_lantern_coal_berth_route_noted`，在 `node_drowned_lantern_exchange_window` 解锁 route-pattern recap 分支。
+- **Exchange-window default fallback**：`node_drowned_lantern_exchange_window_default_boundary` 为没有额外 observation 的普通路径补一段 dawn-runner profile 边界说明，再进入既有 contact suspect 节点。
 - **Case boundary recap**：`node_drowned_lantern_case_boundary` / `node_drowned_lantern_case_boundary_from_insight` 汇总 Black Sail → Drowned Lantern → Brine Lark 的边界，不新增 quest step。
 - **Mira coal-route fresh feedback**：`harbor-watch-drowned-lantern-coal-route-feedback` 使用 `eventHistory.lastTriggeredWithinMinutes.evt_drowned_lantern_coal_berth_route_recap` 给出短窗口 NPC 反馈，过期后回落到普通 repeat。
 
