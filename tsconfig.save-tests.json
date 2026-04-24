@@ -5,6 +5,7 @@
     "noEmit": false,
     "outDir": ".tmp-save-tests",
     "module": "commonjs",
+    "moduleResolution": "node",
     "target": "es2019",
     "declaration": false,
     "sourceMap": false

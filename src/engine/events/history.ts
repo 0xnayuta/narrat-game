@@ -222,7 +222,7 @@ export function migrateLegacyEventHistoryToSlice(state: GameState): GameState {
   const legacy = readLegacyEventHistoryState(state);
   const hasLegacyOnce = Object.keys(legacy.onceTriggeredByEventId).length > 0;
   const hasLegacyCooldown = Object.keys(legacy.cooldownLastTriggeredMinuteByEventId).length > 0;
-  if (!hasLegacyOnce && !hasLegacyCooldown) {
+  if (!state.eventHistory && !hasLegacyOnce && !hasLegacyCooldown) {
     return state;
   }
 
