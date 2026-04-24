@@ -2,6 +2,8 @@ import { NarratPlugin, useAchievements, narratEventsEmitter } from "narrat";
 import type { Client } from "steamworks.js";
 import { USE_STEAM } from "./constants";
 
+declare const require: (moduleId: "steamworks.js") => { init: () => Client };
+
 function fakeGameloopForSteam() {
   const canvas = document.getElementById(
     "fake-refresh-steam",
@@ -30,7 +32,7 @@ export class SteamPlugin extends NarratPlugin {
 
   async initializeSteam() {
     const steamworks = require("steamworks.js");
-    this.client = steamworks.init() as any;
+    this.client = steamworks.init();
     console.log(
       `Steamworks initialized browser side: ${this.client!.localplayer.getName()}`,
     );
