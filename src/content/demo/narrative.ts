@@ -1981,7 +1981,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
         {
           id: "watch_what_stably_triggers_the_hidden_punt_to_move_again",
           text: "Watch what stably triggers the hidden punt to move again",
-          nextNodeId: "node_brine_lark_reedway_cut_release_trigger",
+          nextNodeId: "node_brine_lark_reedway_cut_activity_boundary",
           effects: {
             setFlags: {
               brine_lark_reedway_cut_activity_observed: true,
@@ -1993,6 +1993,31 @@ export const demoNarrativeGraph: NarrativeGraph = {
           },
         },
       ],
+    },
+    {
+      id: "node_brine_lark_reedway_cut_activity_boundary",
+      text: "You have observed the concealment berth pattern at Reedway Cut: a punt enters, submerges into the reed-shadow, and waits while the route clears. Mira takes a final look at the hidden punt before you both withdraw. \"That's the first stable layer. Submergence behavior, not transfer. The punt knows how to disappear into the bank and stay invisible until conditions align. We've mapped the entry behavior. If we follow this further, the next behavior is the release—how the punt wakes and exits. But this is a good boundary point for what we've established so far.\"",
+      choices: [
+        {
+          id: "complete_observation_at_reedway_cut_concealment_berth",
+          text: "Conclude the Reedway Cut observation here",
+          nextNodeId: "node_brine_lark_reedway_cut_activity_end",
+          effects: {
+            setFlags: {
+              brine_lark_reedway_cut_activity_completed: true,
+            },
+            setVars: {
+              current_goal: "reedway_cut_activity_observed",
+            },
+            completeQuest: ["quest_brine_lark"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_reedway_cut_activity_end",
+      text: "The Reedway Cut observation is complete. The concealment berth behavior has been documented and the quest is concluded.",
+      choices: [],
     },
     {
       id: "node_brine_lark_reedway_cut_release_trigger",

@@ -420,3 +420,67 @@ test("drowned lantern exchange window should reveal insight branch when customs 
   assert.equal(afterFollow.quests.quest_brine_lark.status, "active");
   assert.equal(afterFollow.quests.quest_brine_lark.currentStepId, "step_search_tide_warehouse");
 });
+
+test("Brine Lark Reedway Cut Activity boundary should complete quest from default path", () => {
+  const runtime = new NarrativeRuntime(demoNarrativeGraph);
+  runtime.jumpTo("node_brine_lark_reedway_cut_activity");
+
+  // Set up state arriving from upstream (culvert_carrier node)
+  // quest is active at step_identify_culvert_carrier, which is the step before Reedway Cut Activity
+  const state = buildBranchState({
+    currentLocationId: "harbor",
+    flags: {
+      brine_lark_followup_started: true,
+      brine_lark_breaker_culvert_activity_observed: true,
+      brine_lark_waterline_receiver_identified: true,
+      brine_lark_culvert_rhythm_noted: true,
+      brine_lark_culvert_recap_used: true,
+      brine_lark_breaker_culvert_activity_observed: true,
+    },
+    quests: {
+      quest_brine_lark: { status: "active", currentStepId: "step_identify_culvert_carrier" },
+    },
+    vars: {
+      current_goal: "observe_reedway_cut_activity",
+    },
+  });
+
+  // Reedway Cut Activity node has one choice: watch what triggers the hidden punt
+  const visibleChoices = filterVisibleChoices(runtime.getCurrentChoices(), state);
+  assert.deepEqual(
+    visibleChoices.map((choice) => choice.id),
+    ["watch_what_stably_triggers_the_hidden_punt_to_move_again"],
+  );
+
+  // Make the choice — this advances quest and points to boundary node
+  const activityChoice = runtime.choose("watch_what_stably_triggers_the_hidden_punt_to_move_again");
+  assert.equal(activityChoice.node.id, "node_brine_lark_reedway_cut_activity_boundary");
+
+  const afterActivity = applyNarrativeChoiceEffects(state, activityChoice.effects, demoQuests);
+  assert.equal(afterActivity.flags.brine_lark_reedway_cut_activity_observed, true);
+  assert.equal(afterActivity.vars.current_goal, "identify_reedway_cut_release_trigger");
+  assert.equal(afterActivity.quests.quest_brine_lark.status, "active");
+  assert.equal(afterActivity.quests.quest_brine_lark.currentStepId, "step_observe_reedway_cut_activity");
+
+  // At the boundary node, the "conclude observation" choice is visible
+  runtime.jumpTo("node_brine_lark_reedway_cut_activity_boundary");
+  const boundaryChoices = filterVisibleChoices(runtime.getCurrentChoices(), afterActivity);
+  assert.deepEqual(
+    boundaryChoices.map((choice) => choice.id),
+    ["complete_observation_at_reedway_cut_concealment_berth"],
+  );
+
+  // Making the boundary choice completes the quest
+  const boundaryChoice = runtime.choose("complete_observation_at_reedway_cut_concealment_berth");
+  assert.equal(boundaryChoice.node.id, "node_brine_lark_reedway_cut_activity_end");
+
+  const afterBoundary = applyNarrativeChoiceEffects(afterActivity, boundaryChoice.effects, demoQuests);
+  assert.equal(afterBoundary.flags.brine_lark_reedway_cut_activity_completed, true);
+  assert.equal(afterBoundary.vars.current_goal, "reedway_cut_activity_observed");
+  assert.equal(afterBoundary.quests.quest_brine_lark.status, "completed");
+
+  // The end node has no choices (terminal)
+  runtime.jumpTo("node_brine_lark_reedway_cut_activity_end");
+  const endChoices = filterVisibleChoices(runtime.getCurrentChoices(), afterBoundary);
+  assert.deepEqual(endChoices, []);
+});

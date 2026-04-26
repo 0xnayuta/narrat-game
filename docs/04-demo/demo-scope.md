@@ -48,25 +48,40 @@
 - **Case boundary recap**：`node_drowned_lantern_case_boundary` / `node_drowned_lantern_case_boundary_from_insight` 汇总 Black Sail → Drowned Lantern → Brine Lark 的边界，不新增 quest step。
 - **Mira coal-route fresh feedback**：`harbor-watch-drowned-lantern-coal-route-feedback` 使用 `eventHistory.lastTriggeredWithinMinutes.evt_drowned_lantern_coal_berth_route_recap` 给出短窗口 NPC 反馈，过期后回落到普通 repeat。
 
-## Brine Lark 链（已压缩）
+## Brine Lark 链（边界已落地）
 
-**当前代码状态**：主链已从原始长链压缩到 43 步 retained 层，不再向高层治理层扩展。
+### 当前默认路径（已实施）
 
-**后续默认体验目标**：按 `docs/04-demo/brine-lark-demo-boundary-plan.md`，优先把默认可玩链收束到 `node_brine_lark_reedway_cut_activity` 后的 demo boundary；高层治理段保留为背景 / 历史素材，不再作为默认主线推进目标。
+按 `docs/04-demo/brine-lark-demo-boundary-plan.md` 实施：
 
-### 主链保留节点（43 步）
+```
+Tide Warehouse
+→ shift change / receiving clerk
+→ ledger alcove / tag pattern
+→ outer mooring / marker set
+→ Customs Tide Stairs
+→ waterline receiver
+→ Breaker Culvert activity
+→ culvert carrier
+→ Reedway Cut activity
+→ [boundary] node_brine_lark_reedway_cut_activity_boundary
+     └── completeQuest: ["quest_brine_lark"]
+→ [end] node_brine_lark_reedway_cut_activity_end (choices: [])
+```
 
-从 `node_brine_lark_outer_marker_set` 到 `node_brine_lark_prime_minister`，分三段：
+默认路径在 Reedway Cut Activity 节点分叉：
+- **选择"观察 release trigger"** → 进入 boundary 节点 → 选择"结束观察" → Quest 完成
+- **高层治理链**（release trigger 之后的节点）→ 保留为背景 / 历史素材，不再作为默认主线推进
 
-| 段落 | 节点范围 |
-|---|---|
-| 现场 / 转运段 | outer marker set → reaction → first reader → downstream node → Customs Tide Stairs → waterline receiver → Breaker Culvert activity → culvert carrier → Reedway Cut activity → reedway cut release trigger → inland release signal node |
-| 沼泽 / 港口控制段 | Sluice Control House → sluice house controller → Marsh Control Tower → marsh warden → Harbor Signal Point → harbor coordinator → Harbor Window Office → Harbor Command → schedule master |
-| 上层治理段 | Port Authority → maritime inspector → Maritime Oversight Board → oversight secretary → Maritime Ministry → maritime minister → Transport Cabinet → Executive Office → prime minister |
+### 代码现状 vs 后续目标
 
-### 绕过的节点（代码中仍存在，不走默认链）
-
-`skiff_downstream_node`、`punt_waterway_node`、`sluice_blind_operator`、`window_clerk`、`Harbor Master`、`coastal_command`、`coastal_commander`、`Navigation Master`、`Harbor Authority Council`、`harbor_clerk`、`Harbor Authority`、`harbor_authority_registrar`
+| 层次 | 状态 | 说明 |
+|---|---|---|
+| **默认路径节点** | ✅ 已在代码中落地 | Reedway Cut Activity → Boundary → Quest Complete |
+| **Boundary choice** | ✅ 已有 | `complete_observation_at_reedway_cut_concealment_berth` → `completeQuest` |
+| **stepIds** | ✅ 已修剪完成 | 22 步（`step_search_tide_warehouse` → `step_observe_reedway_cut_activity`） |
+| **高层治理节点文本** | 📦 保留在 narrative.ts | release trigger → sluice → marsh → harbor command → ... → prime minister（不在 stepIds 中） |
+| **绕过的节点** | 📦 保留在代码中 | `skiff_downstream_node`、`punt_waterway_node`、`sluice_blind_operator` 等 |
 
 ### 横向 eventHistory 回顾点
 
@@ -74,11 +89,9 @@
 
 ### 扩展规则
 
-- 不从压缩后的高层治理链继续向上延伸
+- 不从高层治理链继续向上延伸
 - 优先从中间稳定节点做横向扩展（小观察 → 轻记录 → 后续小分支）
-- 绕过的节点保留在代码中作为背景素材，只有获得独特玩法价值时才重新激活
-
-**详细状态追踪**：`docs/_archive/brine-lark/main-chain-cleanup.md`（归档，不再维护）
+- 绕过的节点和高层治理节点保留在代码中作为背景素材，只有获得独特玩法价值时才重新激活
 
 ## Demo 不包含的内容
 
