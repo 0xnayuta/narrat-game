@@ -1,4 +1,4 @@
-# WSL2 / Ubuntu 开发环境迁移
+# WSL2 / Ubuntu 开发环境配置
 
 ## 目标目录
 
@@ -8,7 +8,7 @@
 /root/repos/narrat-game
 ```
 
-不要直接在 Windows 挂载盘目录中运行依赖安装或构建，也不要从 Windows 复制 `node_modules` 到 WSL2。
+不要直接在 Windows 挂载盘目录中运行依赖安装或构建。
 
 ## 基础环境
 
@@ -35,41 +35,6 @@ pnpm install
 ```
 
 使用本机已有的 pnpm，不强制通过 corepack 安装。
-
-## 从 Windows 迁移时排除的目录
-
-迁移源码时不要复制这些生成产物或平台相关目录：
-
-```text
-node_modules/
-dist/
-out/
-out-steam/
-.tmp-*/
-build/
-tmp/
-tests/tmp/
-```
-
-尤其是 `node_modules/`，其中可能包含 Electron、oxlint、steamworks.js 等平台相关二进制，必须在 WSL2 内重新安装。
-
-## 运行 Demo UI
-
-```bash
-pnpm run dev:demo-ui
-```
-
-通常可以从 Windows 浏览器访问：
-
-```text
-http://localhost:5173
-```
-
-如果遇到 localhost 转发问题，可临时使用 Vite host 参数：
-
-```bash
-pnpm run dev:demo-ui -- --host 0.0.0.0
-```
 
 ## 迁移后验证命令
 
@@ -106,7 +71,7 @@ apt install -y libnss3 libatk-bridge2.0-0 libgtk-3-0 libxss1 libasound2t64
 apt install -y dpkg fakeroot rpm
 ```
 
-Windows 包建议仍在 Windows 环境或 Windows CI runner 中构建；WSL2 默认优先验证 Web Demo、测试、普通 build 和 Linux package。
+WSL2 默认优先验证 Web Demo、测试、普通 build 和 Linux package。
 
 ## 外部参考仓库
 
@@ -117,3 +82,30 @@ DoL 参考仓库在 WSL2 下建议放置于：
 ```
 
 该仓库仅用于只读机制参考，不得直接复制源码到本项目运行路径。
+
+## Windows 构建（通过 CI）
+
+Windows 构建通过 GitHub Actions 在 Windows runner 上执行，不在本机 WSL2 环境中运行。
+
+### CI 工作流
+
+GitHub Actions 工作流位于 `.github/workflows/windows-build.yml`，包含两个任务：
+
+- `windows-build`：非 Steam 版 Windows 构建
+- `windows-steam-build`：Steam 版 Windows 构建
+
+### 触发方式
+
+- 每次 push 到 `main` 分支
+- 每次 pull request 到 `main` 分支
+
+### 在本地准备好的事
+
+在 WSL2 开发环境中，确保以下内容就绪即可：
+
+```bash
+pnpm run test
+pnpm run build
+```
+
+全部通过后提交代码，CI 会自动在 Windows runner 上执行完整打包。

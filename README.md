@@ -66,7 +66,7 @@ pnpm install
 pnpm run dev:demo-ui
 ```
 
-Do not copy `node_modules` from Windows into WSL2. Reinstall dependencies in Ubuntu so platform-specific packages such as Electron and Steamworks are resolved correctly.
+Do not reuse Windows `node_modules` in WSL2. Reinstall dependencies so platform-specific packages such as Electron and Steamworks are resolved correctly.
 
 More details: `docs/05-development/wsl2-setup.md`.
 
