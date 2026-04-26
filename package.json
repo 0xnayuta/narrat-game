@@ -2,6 +2,7 @@
   "name": "narrat-game",
   "version": "4.0.0",
   "private": true,
+  "packageManager": "pnpm@9.15.9",
   "description": "A game made with narrat",
   "main": "electron-main.js",
   "engines": {
@@ -96,11 +97,11 @@
     "build-package-mac-universal": "npm run build && npm run package-mac-universal",
     "build-package-linux": "npm run build && npm run package-linux",
     "=========== ITCH.IO PUBLISH COMMANDS ===========": "",
-    "push-windows": "butler push .\\out\\my-game-win32-x64\\ my-itch-io-account/my-game:windows",
+    "push-windows": "butler push ./out/my-game-win32-x64/ my-itch-io-account/my-game:windows",
     "push-mac-intel": "butler push ./out/my-game-darwin-x64/ my-itch-io-account/my-game:mac-intel",
     "push-mac-apple": "butler push ./out/my-game-darwin-arm64/ my-itch-io-account/my-game:mac-apple-silicon",
     "push-mac-universal": "butler push ./out/my-game-darwin-universal/ my-itch-io-account/my-game:mac-universal",
-    "push-linux": "butler push .\\out\\my-game-linux-x64\\ my-itch-io-account/my-game:linux"
+    "push-linux": "butler push ./out/my-game-linux-x64/ my-itch-io-account/my-game:linux"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",

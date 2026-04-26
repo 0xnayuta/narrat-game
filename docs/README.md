@@ -21,7 +21,8 @@ docs/
 ├── 05-development/                   ← 开发指南
 │   ├── testing.md                    ← 测试命令与入口
 │   ├── agent-workflow.md             ← Agent 工作约束（AGENTS.md 摘要）
-│   └── temp-files.md                ← 临时产物策略
+│   ├── temp-files.md                ← 临时产物策略
+│   └── wsl2-setup.md                ← WSL2 / Ubuntu 开发环境迁移
 ├── 06-decisions/                     ← 重要决策记录
 │   └── adr-0001-engine-layering.md  ← 引擎分层决策
 └── 99-reference/                     ← 参考资料（外部仓库策略）
@@ -55,6 +56,7 @@ docs/
 - 新加入项目？先读 `docs/00-overview/project-goal.md`
 - 想了解 engine 分层？读 `docs/01-architecture/module-boundaries.md`
 - 想运行 demo？读 `docs/04-demo/demo-scope.md` + `docs/04-demo/demo-walkthrough.md`
+- 想在 WSL2 / Ubuntu 下开发？读 `docs/05-development/wsl2-setup.md`
 - 想整理主线剧情？读 `docs/04-demo/mainline-compression-plan.md`
 - 想确认 Brine Lark 默认终点？读 `docs/04-demo/brine-lark-demo-boundary-plan.md`
 - 想参考 DoL？读 `docs/99-reference/reference-policy.md` + `docs/dol-reference-plan.md`

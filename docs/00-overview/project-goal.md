@@ -22,7 +22,7 @@
    - 不要在一次迭代里同时推进多个大专题
 
 3. **外部参考**
-   - DoL（`G:\source\repos\degrees-of-lewdity`）仅作定向专题参考
+   - DoL 仅作定向专题参考：Windows `G:\source\repos\degrees-of-lewdity`；WSL2 / Ubuntu `/root/repos/degrees-of-lewdity`
    - 禁止直接复制源码；先提炼机制，再按本项目边界独立实现
    - 详见 `docs/99-reference/reference-policy.md`
 

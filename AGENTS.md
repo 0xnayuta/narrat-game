@@ -107,7 +107,9 @@ Brine Lark 当前状态：
 ## 外部参考约束
 
 1. 外部仓库只读，禁止直接复制源码到本项目。
-2. DoL 参考目录：`G:\source\repos\degrees-of-lewdity`（仅用于阅读与分析）。
+2. DoL 参考目录（仅用于阅读与分析）：
+   - Windows：`G:\source\repos\degrees-of-lewdity`
+   - WSL2 / Ubuntu：`/root/repos/degrees-of-lewdity`
 3. 必须先提炼机制，再按本项目边界独立实现。
 4. 参考结果不得破坏 `content / engine / ui` 分层。
 5. 如需参考细则，遵循 `docs/99-reference/reference-policy.md`。

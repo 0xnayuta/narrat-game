@@ -23,8 +23,9 @@ The old Narrat template entry is still present, but it is no longer the main foc
 This is the recommended entry for current work:
 
 ```bash
-npm install
-npm run dev:demo-ui
+corepack enable
+pnpm install
+pnpm run dev:demo-ui
 ```
 
 This runs the current prototype UI with:
@@ -40,51 +41,76 @@ This runs the current prototype UI with:
 If you want to run the old template path:
 
 ```bash
-npm install
-npm run dev
+corepack enable
+pnpm install
+pnpm run dev
 ```
+
+## WSL2 / Ubuntu setup
+
+The recommended WSL2 target path is:
+
+```bash
+/root/repos/narrat-game
+```
+
+Use Node 22 and install dependencies inside WSL2:
+
+```bash
+cd /root/repos/narrat-game
+nvm install
+nvm use
+corepack enable
+pnpm install
+pnpm run dev:demo-ui
+```
+
+Do not copy `node_modules` from Windows into WSL2. Reinstall dependencies in Ubuntu so platform-specific packages such as Electron and Steamworks are resolved correctly.
+
+More details: `docs/05-development/wsl2-setup.md`.
 
 ## Architecture document
 
 Current main-path architecture is documented here:
 
-- `docs/current-prototype-architecture.md`
+- `docs/01-architecture/architecture-overview.md`
+- `docs/01-architecture/module-boundaries.md`
+- `docs/01-architecture/data-flow.md`
 
-Read that file if you want to understand:
+Read those files if you want to understand:
 - which runtime path is active
 - content layer vs engine layer vs app/UI layer
 - what is part of the live prototype
-- which files are still skeleton-only
 
 ## Useful scripts
 
 ### Development
 
 ```bash
-npm run dev
-npm run dev:demo-ui
+pnpm run dev
+pnpm run dev:demo-ui
 ```
 
 ### Type check
 
 ```bash
-npm run type-check
+pnpm run type-check
 ```
 
 ### Tests
 
 ```bash
-npm run test:content
-npm run test:demo-session
-npm run test:demo-flow
-npm run test:time
-npm run test:save
+pnpm run test:content
+pnpm run test:demo-session
+pnpm run test:demo-flow
+pnpm run test:time
+pnpm run test:save
 ```
 
 ### Build demo UI path
 
 ```bash
-npx cross-env VITE_DEMO_UI=true vite build
+pnpm exec cross-env VITE_DEMO_UI=true vite build
 ```
 
 ### Existing build/package scripts

@@ -7,5 +7,9 @@ out/
 out-steam/
 build/
 dist/
+tmp/
+tests/tmp/
+electron-env.json
+package-lock.json
 steamworks_sdk_162
 steamworks_sdk_161

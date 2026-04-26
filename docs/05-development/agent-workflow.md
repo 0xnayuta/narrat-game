@@ -32,7 +32,7 @@
 
 ## DoL 参考约束
 
-- 只读参考仓库（`G:\source\repos\degrees-of-lewdity`）
+- 只读参考仓库：Windows `G:\source\repos\degrees-of-lewdity`；WSL2 / Ubuntu `/root/repos/degrees-of-lewdity`
 - 禁止直接复制源码
 - 先提炼机制，再按本项目边界独立实现
 - 详见 `docs/99-reference/reference-policy.md`
