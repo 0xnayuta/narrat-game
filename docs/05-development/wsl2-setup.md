@@ -17,25 +17,24 @@ apt update
 apt install -y git curl build-essential
 ```
 
-项目要求 Node 22：
+项目要求 Node 22+。项目不固定 pnpm 版本号，会使用本机已安装的最新 pnpm 版本。
 
 ```bash
 cd /root/repos/narrat-game
 nvm install
 nvm use
 node -v
+# 确保本机 pnpm 可用（推荐 10+）
+pnpm -v
 ```
 
 ## 依赖安装
 
-仓库使用 `pnpm-lock.yaml`，推荐通过 Corepack 使用 pnpm：
-
 ```bash
-corepack enable
 pnpm install
 ```
 
-不要提交或依赖 `package-lock.json`。
+使用本机已有的 pnpm，不强制通过 corepack 安装。
 
 ## 从 Windows 迁移时排除的目录
 
@@ -72,9 +71,17 @@ http://localhost:5173
 pnpm run dev:demo-ui -- --host 0.0.0.0
 ```
 
-## 验证命令
+## 迁移后验证命令
 
-迁移后建议至少运行：
+建议运行全部测试以验证迁移完整性：
+
+```bash
+pnpm run test
+```
+
+该命令会串行运行全部测试套件，全部通过即表示迁移验证完成。
+
+也可以单独运行关键测试：
 
 ```bash
 pnpm run type-check

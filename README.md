@@ -54,13 +54,14 @@ The recommended WSL2 target path is:
 /root/repos/narrat-game
 ```
 
-Use Node 22 and install dependencies inside WSL2:
+Use Node 22+ and the latest pnpm available on your machine:
 
 ```bash
 cd /root/repos/narrat-game
 nvm install
 nvm use
-corepack enable
+# ensure pnpm is available (version 10+ recommended)
+pnpm -v
 pnpm install
 pnpm run dev:demo-ui
 ```
@@ -100,11 +101,25 @@ pnpm run type-check
 ### Tests
 
 ```bash
+# run all test suites at once (recommended)
+pnpm run test
+
+# run individual test suites
 pnpm run test:content
 pnpm run test:demo-session
 pnpm run test:demo-flow
+pnpm run test:events
 pnpm run test:time
 pnpm run test:save
+pnpm run test:npc
+pnpm run test:npc-matcher
+pnpm run test:narrative
+pnpm run test:quest-effects
+pnpm run test:npc-event-loop
+pnpm run test:choice-visibility
+pnpm run test:add-vars
+pnpm run test:initial-vars
+pnpm run test:demo-branch
 ```
 
 ### Build demo UI path
