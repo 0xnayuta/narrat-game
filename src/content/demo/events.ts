@@ -494,4 +494,73 @@ export const demoEvents: EventDefinition[] = [
       narrativeNodeId: "node_black_sail_contact",
     },
   },
+  // R-C2: New location events
+  {
+    id: "evt_pier_return_glance",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 6,
+    conditions: {
+      locationIds: ["pier"],
+      flags: {
+        pier_message_found: true,
+      },
+      vars: {
+        current_goal: "investigate_north_channel",
+      },
+      questSteps: {
+        quest_black_sail_trail: "step_follow_pier_signal",
+      },
+      eventHistory: {
+        onceTriggered: {
+          evt_pier_arrival: true,
+        },
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_pier_return_glance",
+    },
+  },
+  {
+    id: "evt_customs_stamps_shed_arrival",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 10,
+    conditions: {
+      locationIds: ["customs_stamps_shed"],
+      flags: {
+        drowned_lantern_search_started: true,
+      },
+      vars: {
+        current_goal: "search_customs_sheds_contact_line",
+      },
+      questSteps: {
+        quest_drowned_lantern: "step_search_customs_sheds",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_customs_stamps_shed_arrival",
+    },
+  },
+  {
+    id: "evt_tide_warehouse_arrival",
+    type: "arrival",
+    trigger: "on-location-enter",
+    once: true,
+    priority: 10,
+    conditions: {
+      locationIds: ["tide_warehouse"],
+      flags: {
+        brine_lark_followup_started: true,
+      },
+      questSteps: {
+        quest_brine_lark: "step_search_tide_warehouse",
+      },
+    },
+    payload: {
+      narrativeNodeId: "node_tide_warehouse_arrival",
+    },
+  },
 ];

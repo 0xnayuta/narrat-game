@@ -48,8 +48,8 @@ Engine 已稳定，当前阶段分为三个子阶段：
 
 | 轮次 | 名称 | 状态 | 目标 |
 |------|------|------|------|
-| **R-C1** | NPC 互动深度扩展 | 🔲 待启动 | 为 Mira 添加 3-5 个基于 eventHistory 的新鲜反馈交互 |
-| **R-C2** | 新地点/事件扩展 | 🔲 待启动 | 按 `demo-walkthrough.md` 流程扩展内容 |
+| **R-C1** | NPC 互动深度扩展 | ✅ 完成（5个新交互已添加） | 为 Mira 添加 3-5 个基于 eventHistory 的新鲜反馈交互 |
+| **R-C2** | 新地点/事件扩展 | ✅ 完成（2个新地点+3个新事件+2个hint节点已添加） | 按 `demo-walkthrough.md` 流程扩展内容 |
 
 ---
 
@@ -61,11 +61,11 @@ Engine 已稳定，当前阶段分为三个子阶段：
 | ✅ Engine Phase 1-4 完成 | （历史记录） | eventHistory / windowed cooldown / triggerScopes |
 | ✅ DoL 参考仓库就绪 | 2026-04-26 | `/opt/data/workspace/repos/degrees-of-lewdity/` |
 | ✅ R-A1 完成 | 2026-04-26 | 默认路径文档已写入 `round-R-A1-default-path-mapping.md` |
-| 🔲 R-A2 完成 | — | Drowned Lantern 内容密度审查 |
-| 🔲 R-B1 完成 | — | 存档 migration registry 注册 |
-| 🔲 R-B2 完成 | — | RNG 种子策略确认 |
-| 🔲 R-C1 完成 | — | Mira 互动深度扩展 |
-| 🔲 R-C2 完成 | — | 新地点/事件落地 |
+| ✅ R-A2 完成 | 2026-04-26 | Drowned Lantern 内容密度审查（Coal Berth反馈精简/Exchange window合并/Case boundary合并） |
+| ✅ R-B1 完成 | 2026-04-26 | 存档 migration registry 梳理（管道已就绪，v2迁移TODO已知） |
+| ✅ R-B2 完成 | 2026-04-26 | RNG 种子策略确认（建议Mulberry32，暂缓到阶段C） |
+| ✅ R-C1 完成 | 2026-04-26 | Mira 5个新交互已添加（pier cross-ref / tower return / stakeout failure / sheds recap / coal berth cross-ref） |
+| ✅ R-C2 完成 | 2026-04-26 | 新增 customs_stamps_shed 和 tide_warehouse 地点；新增 3 个 on-location-enter 事件（evt_pier_return_glance / evt_customs_stamps_shed_arrival / evt_tide_warehouse_arrival）；更新 Drowned Lantern 和 Brine Lark 起点为 travel-first 模式 |
 | 🔲 全部完成 | — | 全链路验证 + 文档最终同步 |
 
 ---
@@ -74,7 +74,7 @@ Engine 已稳定，当前阶段分为三个子阶段：
 
 > 每次开始新轮次时更新此 section。
 
-**R-A1 已完成。下一轮：R-A2 — Drowned Lantern 内容密度审查。**
+**阶段 A、B、C1、C2 已完成。下一轮：R-C3 — 内容节点横向扩展。**
 
 ---
 
@@ -83,11 +83,11 @@ Engine 已稳定，当前阶段分为三个子阶段：
 | 轮次 | 详细文档 |
 |------|---------|
 | R-A1 | `round-R-A1-default-path-mapping.md` |
-| R-A2 | （待创建） |
-| R-B1 | （待创建） |
-| R-B2 | （待创建） |
-| R-C1 | （待创建） |
-| R-C2 | （待创建） |
+| R-A2 | `round-R-A2-drowned-lantern-review.md` |
+| R-B1 | `round-R-B1-migration-registry.md` |
+| R-B2 | `round-R-B2-rng-seed-strategy.md` |
+| R-C1 | `round-R-C1-npc-interaction-deepening.md` |
+| R-C2 | `round-R-C2-new-location-events.md` |
 
 ---
 

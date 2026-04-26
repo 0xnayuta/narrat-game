@@ -171,6 +171,87 @@ export const demoNpcs: NPCDefinition[] = [
         },
       },
       {
+        id: "harbor-watch-pier-cross-reference",
+        label: "Ask Mira what the pier message angle implies for the harbor",
+        nodeId: "node_harbor_watch_pier_cross_reference",
+        requiredFlags: {
+          harbor_watch_contacted: true,
+          pier_angle_noted: true,
+        },
+        requiredQuestSteps: {
+          quest_black_sail_trail: "step_follow_pier_signal",
+        },
+        eventHistory: {
+          onceTriggered: {
+            evt_pier_arrival: true,
+          },
+        },
+      },
+      {
+        id: "harbor-watch-signal-tower-return-recap",
+        label: "Return to Mira after searching the signal tower",
+        nodeId: "node_harbor_watch_signal_tower_return_recap",
+        requiredFlags: {
+          harbor_watch_contacted: true,
+          signal_tower_clue_found: true,
+        },
+        requiredQuestSteps: {
+          quest_black_sail_trail: "step_search_signal_tower",
+        },
+        eventHistory: {
+          onceTriggered: {
+            evt_signal_tower_return_approach: true,
+          },
+        },
+      },
+      {
+        id: "harbor-watch-stakeout-failure-recap",
+        label: "Tell Mira the stakeout did not produce a capture",
+        nodeId: "node_harbor_watch_stakeout_failure_recap",
+        requiredFlags: {
+          harbor_watch_contacted: true,
+          stakeout_attempted: true,
+          black_sail_courier_captured: false,
+          stakeout_failure_feedback_heard: false,
+        },
+        requiredQuestSteps: {
+          quest_black_sail_sting: "step_hold_stakeout",
+        },
+      },
+      {
+        id: "harbor-watch-customs-sheds-recap",
+        label: "Tell Mira about the customs sheds tide slip",
+        nodeId: "node_harbor_watch_customs_sheds_recap",
+        requiredFlags: {
+          harbor_watch_contacted: true,
+          drowned_lantern_tide_slip_found: true,
+          drowned_lantern_sheds_feedback_heard: false,
+        },
+        requiredQuestSteps: {
+          quest_drowned_lantern: "step_search_customs_sheds",
+        },
+        eventHistory: {
+          onceTriggered: {
+            evt_drowned_lantern_coal_berth_route_recap: false,
+          },
+        },
+      },
+      {
+        id: "harbor-watch-coal-berth-cross-reference",
+        label: "Tell Mira the coal berth confirms the north-channel pattern",
+        nodeId: "node_harbor_watch_coal_berth_cross_reference",
+        requiredFlags: {
+          harbor_watch_contacted: true,
+          coal_berth_clue_found: true,
+          black_sail_north_channel_wake_pattern_noted: true,
+          drowned_lantern_coal_route_feedback_heard: true,
+          coal_berth_cross_reference_heard: false,
+        },
+        requiredQuestSteps: {
+          quest_drowned_lantern: "step_identify_drowned_lantern_contact",
+        },
+      },
+      {
         id: "harbor-watch-repeat",
         label: "Speak with Mira again",
         nodeId: "node_harbor_watch_repeat",

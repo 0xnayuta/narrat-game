@@ -40,8 +40,22 @@ export const demoLocations: LocationDefinition[] = [
       { to: "north_channel", travelMinutes: 15 },
       { to: "coal_berth", travelMinutes: 10 },
       { to: "customs_tide_stairs", travelMinutes: 10 },
+      { to: "customs_stamps_shed", travelMinutes: 5 },
+      { to: "tide_warehouse", travelMinutes: 10 },
       { to: "breaker_culvert", travelMinutes: 15 },
     ],
+  },
+  {
+    id: "customs_stamps_shed",
+    name: "Customs Stamps Shed",
+    description: "A narrow dry-storage annex behind the customs post where stamped forms, tide slips, and transfer manifests are filed before being forwarded to the harbor authority office.",
+    connections: [{ to: "harbor", travelMinutes: 5 }],
+  },
+  {
+    id: "tide_warehouse",
+    name: "Tide Warehouse",
+    description: "A low brick warehouse behind the customs ropeshed, used for temporary storage of cargo tags and tide slips during shift changes. Damp corners and stacked salt crates provide good concealment for someone working the relay circuit.",
+    connections: [{ to: "harbor", travelMinutes: 10 }],
   },
   {
     id: "signal_tower",

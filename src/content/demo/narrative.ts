@@ -685,6 +685,30 @@ export const demoNarrativeGraph: NarrativeGraph = {
       choices: [],
     },
     {
+      id: "node_pier_return_glance",
+      text: "You return to the pier where you found the tin capsule. The railing is still damp, and the gap where the capsule was wedged is empty now. The water below the pier moves in the same slow rhythm as before—but the pier itself feels different the second time, as though the act of finding the message has changed what you are reading when you look at the boards and the posts.",
+      choices: [
+        {
+          id: "note_the_second_pier_glance",
+          text: "Mark the second-reading of the pier and note it as a pattern",
+          nextNodeId: "node_pier_return_glance_end",
+          effects: {
+            setFlags: {
+              pier_angle_noted: true,
+            },
+            setVars: {
+              current_goal: "investigate_north_channel",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_pier_return_glance_end",
+      text: "You note the angle and the second-reading as a pattern, then leave the pier before the tide turns.",
+      choices: [],
+    },
+    {
       id: "node_harbor_watch_channel_tip",
       text: "Mira reads the note once and exhales. \"Black Sail is no ship name. It's a smuggler mark. North channel means the narrow waterway past the outer marker. If they move on third bell, that's where you watch next.\"",
       choices: [],
@@ -1021,20 +1045,22 @@ export const demoNarrativeGraph: NarrativeGraph = {
       text: "Mira folds the stub and points back toward the darker end of the harbor. \"Start with the customs-side sheds near the old berth. Couriers working under contact names need somewhere dry to trade ledgers, rope seals, and tide slips. If Drowned Lantern still has feet on the docks, that is where the trail should pick up again.\"",
       choices: [
         {
-          id: "search_customs_sheds_for_drowned_lantern_trace",
-          text: "Search the customs-side sheds for any trace of the contact",
-          nextNodeId: "node_drowned_lantern_shed_trace",
+          id: "go_to_customs_stamps_shed",
+          text: "Go to the Customs Stamps Shed to continue the search",
+          nextNodeId: "node_drowned_lantern_shed_trace_hint",
           effects: {
-            setFlags: {
-              drowned_lantern_shed_trace_found: true,
-            },
             setVars: {
-              current_goal: "inspect_drowned_lantern_shed_trace",
+              current_goal: "search_customs_sheds_contact_line",
             },
-            advanceQuestStep: ["quest_drowned_lantern"],
+            startQuest: ["quest_drowned_lantern"],
           },
         },
       ],
+    },
+    {
+      id: "node_drowned_lantern_shed_trace_hint",
+      text: "You make your way to the Customs Stamps Shed behind the customs post.",
+      choices: [],
     },
     {
       id: "node_drowned_lantern_shed_trace",
@@ -1144,6 +1170,101 @@ export const demoNarrativeGraph: NarrativeGraph = {
               current_goal: "identify_drowned_lantern_exchange_window",
             },
             advanceQuestStep: ["quest_drowned_lantern"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_watch_pier_cross_reference",
+      text: "Mira looks up from the ledger as you approach. \"The piers. What did you find?\" She listens as you describe the tin capsule and the torn sailcloth, then traces a finger along the harbor map. \"The angle is the key. A message left at the piers for someone who reads it from the water is also a message left from the harbor's blind side. Whoever reads that angle is working the water's edge, not the docks. That narrows the field considerably.\"",
+      choices: [
+        {
+          id: "ask_mira_which_runnerts_read_that_angle",
+          text: "Ask Mira which runner role reads that angle",
+          nextNodeId: "node_harbor_watch_channel_tip",
+          effects: {
+            setFlags: {
+              pier_angle_cross_referenced: true,
+            },
+            setVars: {
+              current_goal: "investigate_north_channel",
+            },
+            advanceQuestStep: ["quest_black_sail_trail"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_watch_signal_tower_return_recap",
+      text: "\"Back already.\" Mira sets the harbor map flat. \"The tower. What did the oilskin give you?\" She takes the scrap and studies the tide-marking cipher without rushing. \"Old guild work, as I thought. But the marks are layered—the outer ring is a standard harbor signal, the inner ring is something else. Whoever left this was using the guild routine as cover for a second message.\"",
+      choices: [
+        {
+          id: "report_tower_oilskin_to_mira",
+          text: "Show Mira the oilskin scrap from the tower",
+          nextNodeId: "node_harbor_watch_night_tip",
+          effects: {
+            setVars: {
+              current_goal: "wait_for_harbor_signal",
+            },
+            advanceQuestStep: ["quest_black_sail_trail"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_watch_stakeout_failure_recap",
+      text: "Mira reads your face before you speak. \"No luck at the berth?\" She keeps her voice even. \"That tells us something too. If the route was hot, they would have moved. But the tide rewrites the marks faster than a rumor, and if they knew we were watching, they simply did not show. It means we need a different angle—not the berth itself, but what happens before and after.\"",
+      choices: [
+        {
+          id: "ask_mira_for_a_different_approach_to_black_sail",
+          text: "Ask Mira for a different approach to finding Black Sail",
+          nextNodeId: "node_harbor_watch_night_tip",
+          effects: {
+            setFlags: {
+              stakeout_failure_feedback_heard: true,
+            },
+            setVars: {
+              current_goal: "wait_for_harbor_signal",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_watch_customs_sheds_recap",
+      text: "Mira takes the tide slip and holds it to the light. \"The drowned lantern mark. You found this in the customs sheds.\" She folds it carefully and tucks it into her coat ledger. \"This is the first concrete piece of the Drowned Lantern contact. Someone is using the sheds as a dry relay point for paper handoffs before dawn. That is more than a rumor now—it is a working habit we can watch.\"",
+      choices: [
+        {
+          id: "ask_mira_where_to_watch_for_the_dawn_exchange",
+          text: "Ask Mira where to watch for the dawn exchange",
+          nextNodeId: "node_drowned_lantern_exchange_window",
+          effects: {
+            setFlags: {
+              drowned_lantern_sheds_feedback_heard: true,
+            },
+            setVars: {
+              current_goal: "identify_drowned_lantern_exchange_window",
+            },
+            advanceQuestStep: ["quest_drowned_lantern"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_harbor_watch_coal_berth_cross_reference",
+      text: "Mira nods when you describe the landing marks at the coal berth. \"The north-channel angle and the berth landing. You have both ends of the same route now.\" She taps the harbor map once. \"If Black Sail is moving cargo from the water to the berth without touching the ordinary loading pattern, they are using the berth as a transfer point, not a storage point. The rope and soot you found is the proof. That is what we take to the next tide.\"",
+      choices: [
+        {
+          id: "close_the_coal_berth_cross_reference",
+          text: "Close the coal berth cross-reference and move to the next lead",
+          nextNodeId: "node_drowned_lantern_contact_suspect",
+          effects: {
+            setFlags: {
+              coal_berth_cross_reference_heard: true,
+            },
+            setVars: {
+              current_goal: "trace_brine_lark_network",
+            },
           },
         },
       ],
@@ -1297,8 +1418,61 @@ export const demoNarrativeGraph: NarrativeGraph = {
       text: "Mira answers without hesitation. \"Watch the tide warehouse behind the customs ropeshed. A runner like Brine Lark needs a place to swap tags, dry slips, and vanish before the dock crews change. If that name is still active, that warehouse is the next board to lift.\"",
       choices: [
         {
-          id: "search_tide_warehouse_for_brine_lark_trace",
-          text: "Search the tide warehouse behind the customs ropeshed",
+          id: "go_to_tide_warehouse",
+          text: "Go to the Tide Warehouse to begin the search",
+          nextNodeId: "node_brine_lark_warehouse_hint",
+          effects: {
+            setVars: {
+              current_goal: "track_brine_lark_route",
+            },
+          },
+        },
+      ],
+    },
+    {
+      id: "node_brine_lark_warehouse_hint",
+      text: "You head toward the Tide Warehouse behind the customs ropeshed.",
+      choices: [],
+    },
+    {
+      id: "node_customs_stamps_shed_arrival",
+      text: "The Customs Stamps Shed is narrow and dry, lined with filing racks of stamped forms and tide slips waiting to be forwarded to the harbor authority office. The air smells of ink and damp paper. Behind the ledger racks, in a gap between a customs chest and the wall, you notice a wax-sealed tide slip that has not yet been filed. The drowned-lantern mark on the seal matches what Mira showed you.",
+      choices: [
+        {
+          id: "take_the_drowned_lantern_tide_slip",
+          text: "Take the tide slip and examine it",
+          nextNodeId: "node_customs_stamps_shed_discovery",
+          effects: {
+            setFlags: {
+              drowned_lantern_tide_slip_found: true,
+              drowned_lantern_shed_trace_found: true,
+            },
+            setVars: {
+              current_goal: "inspect_drowned_lantern_shed_trace",
+            },
+            advanceQuestStep: ["quest_drowned_lantern"],
+          },
+        },
+      ],
+    },
+    {
+      id: "node_customs_stamps_shed_discovery",
+      text: "The tide slip is dated to two nights ago and stamped with the drowned-lantern mark. A notation on the back reads a time and a place: the customs tide stairs, just before first light. Someone used the stamps shed as a quiet relay point to pass the slip from one runner to the next before the morning customs rounds.",
+      choices: [
+        {
+          id: "bring_the_tide_slip_back_to_mira",
+          text: "Bring the tide slip back to Mira",
+          nextNodeId: "node_harbor_watch_customs_sheds_recap",
+        },
+      ],
+    },
+    {
+      id: "node_tide_warehouse_arrival",
+      text: "The tide warehouse is low and close, brick walls sweating in the harbor damp. Stacked salt crates line the walls and a split rope coil sits in one corner. Against the far wall, behind the storage racks, a chalked tally mark has been left on the brick — fresh enough to still show the dust displacement around its edges. The mark matches the pattern Mira described for Brine Lark's relay signature.",
+      choices: [
+        {
+          id: "examine_the_tide_warehouse_tally_mark",
+          text: "Examine the tally mark and the surrounding area carefully",
           nextNodeId: "node_brine_lark_warehouse_trace",
           effects: {
             setFlags: {
