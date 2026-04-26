@@ -1106,7 +1106,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
     },
     {
       id: "node_harbor_watch_drowned_lantern_coal_route_feedback",
-      text: "Mira studies your coal-berth route sketch and keeps one finger on the short lane back toward the customs sheds. \"That is useful while it is fresh. The berth is not the answer by itself, but it tells us the runner stays close enough to water to vanish and close enough to paperwork to keep a dry excuse. Do not treat the Drowned Lantern as a place. Treat it as the moment someone crosses from paper cover to water cover before dawn.\"",
+      text: "Mira glances at your sketch. \"The berth route. Still useful — courier behavior, not cargo behavior. The runner stays close enough to water to vanish and close enough to paperwork to keep a dry excuse. The Drowned Lantern is the moment before dawn, not a place.\"",
       choices: [
         {
           id: "note_miras_coal_route_warning",
@@ -1167,8 +1167,9 @@ export const demoNarrativeGraph: NarrativeGraph = {
               drowned_lantern_stairs_insight_used: true,
             },
             setVars: {
-              current_goal: "verify_drowned_lantern_contact_suspect",
+              current_goal: "trace_brine_lark_network",
             },
+            completeQuest: ["quest_drowned_lantern"],
           },
         },
         {
@@ -1179,15 +1180,17 @@ export const demoNarrativeGraph: NarrativeGraph = {
               drowned_lantern_coal_berth_route_noted: true,
             },
           },
-          nextNodeId: "node_drowned_lantern_exchange_window_route_confirmed",
+          nextNodeId: "node_drowned_lantern_contact_suspect",
           effects: {
             setFlags: {
               drowned_lantern_contact_suspect_identified: true,
               drowned_lantern_route_pattern_used: true,
+              brine_lark_identified_as_target: true,
             },
             setVars: {
-              current_goal: "verify_drowned_lantern_contact_suspect",
+              current_goal: "trace_brine_lark_network",
             },
+            completeQuest: ["quest_drowned_lantern"],
           },
         },
         {
@@ -1223,7 +1226,7 @@ export const demoNarrativeGraph: NarrativeGraph = {
         {
           id: "confirm_brine_lark_direct_from_stairs_insight",
           text: "Tell Mira the tide stairs exchange points straight at a dawn runner, not a cargo hand",
-          nextNodeId: "node_drowned_lantern_contact_confirmed_from_insight",
+          nextNodeId: "node_drowned_lantern_contact_confirmed",
           effects: {
             setFlags: {
               brine_lark_identified_as_target: true,
@@ -1236,56 +1239,8 @@ export const demoNarrativeGraph: NarrativeGraph = {
         },
       ],
     },
-    {
-      id: "node_drowned_lantern_exchange_window_route_confirmed",
-      text: "Mira follows your route sketch from the sheds to the coal berth and gives a small, grim nod. \"That is courier behavior, not cargo behavior. Someone is keeping the paperwork dry, staying close enough to water to vanish, and never standing where the heavy crews have to remember them. That points us toward the same kind of dawn runner.\"",
-      choices: [
-        {
-          id: "name_the_route_runner_as_the_contact_suspect",
-          text: "Name the route runner as the Drowned Lantern contact suspect",
-          nextNodeId: "node_drowned_lantern_contact_suspect",
-          effects: {
-            setFlags: {
-              drowned_lantern_contact_suspect_identified: true,
-            },
-            setVars: {
-              current_goal: "verify_drowned_lantern_contact_suspect",
-            },
-          },
-        },
-      ],
-    },
-    {
-      id: "node_drowned_lantern_contact_confirmed_from_insight",
-      text: "Mira does not hesitate. \"Then it is the tally-keeper. The one they call Brine Lark. A dawn runner who carries tags, names, and tide slips between crews without ever touching cargo. If your stairs observation is right, he is the one using that landing at first light.\"",
-      choices: [
-        {
-          id: "close_the_drowned_lantern_file_from_insight",
-          text: "Close the Drowned Lantern file before following Brine Lark",
-          nextNodeId: "node_drowned_lantern_case_boundary_from_insight",
-        },
-      ],
-    },
-    {
-      id: "node_drowned_lantern_case_boundary_from_insight",
-      text: "You and Mira set the pieces in order: Black Sail used the berth, the Drowned Lantern name covered the dawn runner, and the lower tide stairs exposed how that runner kept paper and cargo moving without joining either crew. The alias is no longer the mystery—it is the handoff role between Black Sail and the next line. What remains is to follow the runner who fits it.",
-      choices: [
-        {
-          id: "ask_where_brine_lark_runs_goods_from_insight",
-          text: "Ask where Brine Lark is most likely to surface next",
-          nextNodeId: "node_brine_lark_start_point",
-          effects: {
-            setFlags: {
-              brine_lark_followup_started: true,
-            },
-            setVars: {
-              current_goal: "track_brine_lark_route",
-            },
-            startQuest: ["quest_brine_lark"],
-          },
-        },
-      ],
-    },
+    // MERGED: node_drowned_lantern_exchange_window_route_confirmed → node_drowned_lantern_exchange_window_confirmed
+    // MERGED: node_drowned_lantern_case_boundary_from_insight → node_drowned_lantern_case_boundary
     {
       id: "node_drowned_lantern_contact_suspect",
       text: "Mira thinks for a long moment before answering. \"Not the cargo hands. This reads like the work of a dawn runner who never stays with the same boat twice. If I had to place it, I'd start with the tally-keeper they call Brine Lark—the sort who carries tags, names, and tide slips between crews without ever touching the cargo itself.\"",

@@ -332,20 +332,26 @@ test("drowned lantern exchange window should reveal route recap branch when coal
     ["connect_coal_berth_lane_to_the_dawn_exchange", "ask_who_handles_the_dawn_exchange"],
   );
 
+  // MERGED: coal berth lane now goes directly to node_drowned_lantern_contact_suspect
+  // (node_drowned_lantern_exchange_window_route_confirmed was merged into contact_suspect flow)
   const routeChoice = runtime.choose("connect_coal_berth_lane_to_the_dawn_exchange");
-  assert.equal(routeChoice.node.id, "node_drowned_lantern_exchange_window_route_confirmed");
+  assert.equal(routeChoice.node.id, "node_drowned_lantern_contact_suspect");
 
   const afterRouteChoice = applyNarrativeChoiceEffects(stateWithRouteRecap, routeChoice.effects, demoQuests);
   assert.equal(afterRouteChoice.flags.drowned_lantern_route_pattern_used, true);
   assert.equal(afterRouteChoice.flags.drowned_lantern_contact_suspect_identified, true);
-  assert.equal(afterRouteChoice.vars.current_goal, "verify_drowned_lantern_contact_suspect");
+  assert.equal(afterRouteChoice.vars.current_goal, "trace_brine_lark_network");
   assert.equal(
-    afterRouteChoice.quests.quest_drowned_lantern.currentStepId,
-    "step_identify_drowned_lantern_contact",
+    afterRouteChoice.quests.quest_drowned_lantern.status,
+    "completed",
   );
 
-  const nameRunner = runtime.choose("name_the_route_runner_as_the_contact_suspect");
-  assert.equal(nameRunner.node.id, "node_drowned_lantern_contact_suspect");
+  // Continue through the merged contact_suspect → contact_confirmed → case_boundary path
+  const nameRunner = runtime.choose("mark_brine_lark_as_the_next_target");
+  assert.equal(nameRunner.node.id, "node_drowned_lantern_contact_confirmed");
+
+  const closeFile = runtime.choose("close_the_drowned_lantern_file");
+  assert.equal(closeFile.node.id, "node_drowned_lantern_case_boundary");
 });
 
 test("drowned lantern exchange window should reveal insight branch when customs stairs observation was recorded", () => {
@@ -390,31 +396,28 @@ test("drowned lantern exchange window should reveal insight branch when customs 
   assert.equal(choicesWithInsight[0].id, "suggest_the_customs_stairs_lower_landing");
   assert.equal(choicesWithInsight[1].id, "ask_who_handles_the_dawn_exchange");
 
-  // Choosing the insight branch sets the correct flags while preserving the current quest step
+  // Choosing the insight branch sets the correct flags while completing the quest
+  // MERGED: stairs insight now goes directly to node_drowned_lantern_contact_confirmed
+  // (node_drowned_lantern_contact_confirmed_from_insight was merged into contact_confirmed)
   const insightChoice = runtime.choose("suggest_the_customs_stairs_lower_landing");
   const afterInsight = applyNarrativeChoiceEffects(stateWithInsight, insightChoice.effects, demoQuests);
   assert.equal(afterInsight.flags.drowned_lantern_stairs_insight_used, true);
   assert.equal(afterInsight.flags.drowned_lantern_contact_suspect_identified, true);
-  assert.equal(afterInsight.vars.current_goal, "verify_drowned_lantern_contact_suspect");
-  assert.equal(afterInsight.quests.quest_drowned_lantern.currentStepId, "step_identify_drowned_lantern_contact");
+  assert.equal(afterInsight.vars.current_goal, "trace_brine_lark_network");
+  assert.equal(afterInsight.quests.quest_drowned_lantern.status, "completed");
   assert.equal(insightChoice.node.id, "node_drowned_lantern_exchange_window_confirmed");
 
-  // The insight path now has a real downstream choice — directly confirm Brine Lark
+  // The merged path: confirmed → contact_confirmed → case_boundary (same as default path)
   const confirmChoice = runtime.choose("confirm_brine_lark_direct_from_stairs_insight");
-  assert.equal(confirmChoice.node.id, "node_drowned_lantern_contact_confirmed_from_insight");
+  assert.equal(confirmChoice.node.id, "node_drowned_lantern_contact_confirmed");
 
-  const afterConfirm = applyNarrativeChoiceEffects(afterInsight, confirmChoice.effects, demoQuests);
-  assert.equal(afterConfirm.flags.brine_lark_identified_as_target, true);
-  assert.equal(afterConfirm.vars.current_goal, "trace_brine_lark_network");
-  assert.equal(afterConfirm.quests.quest_drowned_lantern.status, "completed");
+  const closeFile = runtime.choose("close_the_drowned_lantern_file");
+  assert.equal(closeFile.node.id, "node_drowned_lantern_case_boundary");
 
-  const closeFile = runtime.choose("close_the_drowned_lantern_file_from_insight");
-  assert.equal(closeFile.node.id, "node_drowned_lantern_case_boundary_from_insight");
-
-  const followBrineLark = runtime.choose("ask_where_brine_lark_runs_goods_from_insight");
+  const followBrineLark = runtime.choose("ask_where_brine_lark_runs_goods");
   assert.equal(followBrineLark.node.id, "node_brine_lark_start_point");
 
-  const afterFollow = applyNarrativeChoiceEffects(afterConfirm, followBrineLark.effects, demoQuests);
+  const afterFollow = applyNarrativeChoiceEffects(afterInsight, followBrineLark.effects, demoQuests);
   assert.equal(afterFollow.flags.brine_lark_followup_started, true);
   assert.equal(afterFollow.vars.current_goal, "track_brine_lark_route");
   assert.equal(afterFollow.quests.quest_brine_lark.status, "active");
