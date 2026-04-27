@@ -47,6 +47,8 @@
 
 ## 当前建议优先参考专题
 
-1. 事件选择策略（priority / weight / cooldown）
-2. 任务推进稳定性（步骤推进约束与可测性）
-3. 存档演进策略（迁移注册与 schema 膨胀控制）
+1. **事件选择策略**（priority / weight / cooldown） — ✅ 已完成
+2. **任务推进稳定性**（步骤推进约束与可测性） — ✅ 已完成
+3. **存档演进策略**（迁移注册与 schema 膨胀控制） — ✅ 已完成
+4. **DoL-like Daily Loop 机制**（时间系统 / 地点行动 / NPC schedule / hourly upkeep） — 🔲 进行中（R-D1）
+5. **经济与物品系统**（商店、消耗品、装备） — 待定

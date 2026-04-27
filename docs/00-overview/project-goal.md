@@ -2,11 +2,11 @@
 
 ## 目标
 
-基于现有仓库，逐步搭建一个可持续扩展、可测试、可维护的**网页文本 RPG 新引擎原型**。
+基于现有仓库，逐步搭建一个可持续扩展、可测试、可维护的**网页文本 RPG 新引擎原型**，并逐步构建 DoL-like 日常循环玩法内容。
 
-路线：**引擎级重写 + 内容逐步替换**。
+路线：**引擎稳定化 → DoL-like 核心玩法切片 → 基于玩法层扩展内容**。
 
-"可运行 demo"的意思不是内容很多，而是已经形成一个**可重复验证的小闭环**，能够真实展示引擎的核心链路，并暴露架构问题。
+"可运行 demo"的意思不是内容很多，而是已经形成一个**可重复验证的小闭环**，能够真实展示引擎的核心链路和 DoL-like 日常玩法，并暴露架构问题。
 
 ## 核心约束
 
@@ -33,5 +33,8 @@
 | 内容边界 | `ContentBundle` |
 | 运行时边界 | `GameSession` |
 | UI 边界 | `DemoApp` |
+| 当前主路径 | `content/daily-demo/` — DoL-like Daily Loop Vertical Slice |
 
-当前阶段：基础引擎搭建 + DoL 参考就绪（见 `docs/00-overview/roadmap.md`）。
+当前阶段：Phase 5 — DoL-like Daily Loop，详见 `docs/05-development/round-R-D1-daily-loop-slice.md`。
+
+> ⚠️ 现有 `content/demo/` 保持不变作为稳定回归样本。不再向 Brine Lark 高层链扩展。

@@ -8,23 +8,27 @@
 ## 📌 项目现状
 
 - **Engine**：Phase 1-4 完成，事件系统稳定
-- **测试**：196 个用例全部通过，type-check 通过
-- **Demo**：23 地点 / 22 事件 / 4 任务链 / 2 NPC / 120+ choices，闭环完整
+- **Phase 5**：DoL-like Daily Loop Vertical Slice 进行中（R-D1）
+- **测试**：197 个用例全部通过，type-check 通过
+- **现有 Demo**：`content/demo/`（剧情链 demo）保持不变，作为稳定回归样本
+- **新内容**：`content/daily-demo/`（DoL-like 日常循环）开发中
 - **参考仓库**：`../degrees-of-lewdity`（只读）
 
 ---
 
 ## 🎯 整体路线
 
-**内容整理优先，不做新 engine 抽象。**
+**暂停横向剧情链扩展，转向 DoL-like 核心玩法切片。**
 
-Engine 已稳定，当前阶段分为三个子阶段：
+现有 `content/demo/` 保持不变作为回归样本。新玩法在 `content/daily-demo/` 独立构建。
 
 | 阶段 | 方向 | 重点 |
 |------|------|------|
-| **A — 内容整理与文档同步** | 整理现有内容，标记默认路径 | 分类、边界、文档标准化 |
-| **B — Engine 稳定性小改进** | 填补已知技术债 | 存档迁移、RNG 策略 |
-| **C — 内容层扩展** | 基于稳定 engine 做内容扩展 | NPC 互动深度、新地点/事件 |
+| **D — DoL-like Daily Loop** | 日常循环 + 状态 + 地点行动 + NPC/时间调度 | 时间语义、地点行动、NPC schedule、hourly upkeep |
+| **E — 经济与物品** | 商店、消耗品、基础装备（可选） | 经济循环、物品交互 |
+| **F — 玩法层内容扩展** | 基于稳定玩法层扩内容 | 新地点、新 NPC、新事件 |
+
+> ⚠️ 不再继续扩 Black Sail / Drowned Lantern / Brine Lark 的剧情节点密度。
 
 ---
 
@@ -51,6 +55,23 @@ Engine 已稳定，当前阶段分为三个子阶段：
 | **R-C1** | NPC 互动深度扩展 | ✅ 完成（5个新交互已添加） | 为 Mira 添加 3-5 个基于 eventHistory 的新鲜反馈交互 |
 | **R-C2** | 新地点/事件扩展 | ✅ 完成（2个新地点+3个新事件+2个hint节点已添加） | 按 `demo-walkthrough.md` 流程扩展内容 |
 
+### 阶段 D — DoL-like Daily Loop（进行中）
+
+| 轮次 | 名称 | 状态 | 目标 |
+|------|------|------|------|
+| **R-D1** | Daily Loop Vertical Slice | 🔲 进行中 | 时间语义 / 地点行动 / NPC schedule / hourly upkeep / 完整闭环 |
+
+### 阶段 E — 经济与物品（待定）
+
+- 商店系统
+- 消耗品
+- 基础装备（可选）
+
+### 阶段 F — 玩法层内容扩展（待定）
+
+- 新地点 / 新 NPC / 新事件
+- 基于稳定玩法层做内容扩展
+
 ---
 
 ## 🏅 里程碑
@@ -65,7 +86,8 @@ Engine 已稳定，当前阶段分为三个子阶段：
 | ✅ R-B1 完成 | 2026-04-26 | 存档 migration registry 梳理（管道已就绪，v2迁移TODO已知） |
 | ✅ R-B2 完成 | 2026-04-26 | RNG 种子策略确认（建议Mulberry32，暂缓到阶段C） |
 | ✅ R-C1 完成 | 2026-04-26 | Mira 5个新交互已添加（pier cross-ref / tower return / stakeout failure / sheds recap / coal berth cross-ref） |
-| ✅ R-C2 完成 | 2026-04-26 | 新增 customs_stamps_shed 和 tide_warehouse 地点；新增 3 个 on-location-enter 事件（evt_pier_return_glance / evt_customs_stamps_shed_arrival / evt_tide_warehouse_arrival）；更新 Drowned Lantern 和 Brine Lark 起点为 travel-first 模式 |
+| ✅ R-C2 完成 | 2026-04-26 | 新增 customs_stamps_shed 和 tide_warehouse 地点；新增 3 个 on-location-enter 事件；更新 Drowned Lantern 和 Brine Lark 起点为 travel-first 模式 |
+| 🔲 R-D1 进行中 | — | Daily Loop Vertical Slice |
 | 🔲 全部完成 | — | 全链路验证 + 文档最终同步 |
 
 ---
@@ -74,7 +96,9 @@ Engine 已稳定，当前阶段分为三个子阶段：
 
 > 每次开始新轮次时更新此 section。
 
-**阶段 A、B、C1、C2 已完成。下一轮：R-C3 — 内容节点横向扩展。**
+**Phase 5（R-D1）进行中。目标：DoL-like Daily Loop Vertical Slice。**
+
+详见 `docs/05-development/round-R-D1-daily-loop-slice.md`。
 
 ---
 
@@ -88,6 +112,7 @@ Engine 已稳定，当前阶段分为三个子阶段：
 | R-B2 | `round-R-B2-rng-seed-strategy.md` |
 | R-C1 | `round-R-C1-npc-interaction-deepening.md` |
 | R-C2 | `round-R-C2-new-location-events.md` |
+| R-D1 | `round-R-D1-daily-loop-slice.md` |
 
 ---
 
