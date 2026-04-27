@@ -1045,22 +1045,20 @@ export const demoNarrativeGraph: NarrativeGraph = {
       text: "Mira folds the stub and points back toward the darker end of the harbor. \"Start with the customs-side sheds near the old berth. Couriers working under contact names need somewhere dry to trade ledgers, rope seals, and tide slips. If Drowned Lantern still has feet on the docks, that is where the trail should pick up again.\"",
       choices: [
         {
-          id: "go_to_customs_stamps_shed",
-          text: "Go to the Customs Stamps Shed to continue the search",
-          nextNodeId: "node_drowned_lantern_shed_trace_hint",
+          id: "search_customs_sheds_for_drowned_lantern_trace",
+          text: "Search the customs-side sheds for any trace of the contact",
+          nextNodeId: "node_drowned_lantern_shed_trace",
           effects: {
-            setVars: {
-              current_goal: "search_customs_sheds_contact_line",
+            setFlags: {
+              drowned_lantern_shed_trace_found: true,
             },
-            startQuest: ["quest_drowned_lantern"],
+            setVars: {
+              current_goal: "inspect_drowned_lantern_shed_trace",
+            },
+            advanceQuestStep: ["quest_drowned_lantern"],
           },
         },
       ],
-    },
-    {
-      id: "node_drowned_lantern_shed_trace_hint",
-      text: "You make your way to the Customs Stamps Shed behind the customs post.",
-      choices: [],
     },
     {
       id: "node_drowned_lantern_shed_trace",
@@ -1418,21 +1416,20 @@ export const demoNarrativeGraph: NarrativeGraph = {
       text: "Mira answers without hesitation. \"Watch the tide warehouse behind the customs ropeshed. A runner like Brine Lark needs a place to swap tags, dry slips, and vanish before the dock crews change. If that name is still active, that warehouse is the next board to lift.\"",
       choices: [
         {
-          id: "go_to_tide_warehouse",
-          text: "Go to the Tide Warehouse to begin the search",
-          nextNodeId: "node_brine_lark_warehouse_hint",
+          id: "search_tide_warehouse_for_brine_lark_trace",
+          text: "Search the tide warehouse behind the customs ropeshed",
+          nextNodeId: "node_brine_lark_warehouse_trace",
           effects: {
-            setVars: {
-              current_goal: "track_brine_lark_route",
+            setFlags: {
+              brine_lark_warehouse_trace_found: true,
             },
+            setVars: {
+              current_goal: "inspect_brine_lark_warehouse_trace",
+            },
+            advanceQuestStep: ["quest_brine_lark"],
           },
         },
       ],
-    },
-    {
-      id: "node_brine_lark_warehouse_hint",
-      text: "You head toward the Tide Warehouse behind the customs ropeshed.",
-      choices: [],
     },
     {
       id: "node_customs_stamps_shed_arrival",

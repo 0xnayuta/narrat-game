@@ -2,13 +2,16 @@
 
 ## 目标目录
 
-推荐在 WSL2 / Ubuntu 中使用独立目录：
-
-```bash
-/root/repos/narrat-game
-```
-
-不要直接在 Windows 挂载盘目录中运行依赖安装或构建。
+> **注**：本项目采用相对路径引用，假设 narrat-game 与参考仓库（如 degrees-of-lewdity）在同一父目录下。
+>
+> 目录结构示例：
+> ```
+> repos/
+> ├── narrat-game/      ← 当前项目
+> └── degrees-of-lewdity/ ← DoL 参考仓库（可选）
+> ```
+>
+> 在脚本和文档中，使用相对路径而非硬编码绝对路径。
 
 ## 基础环境
 
@@ -20,7 +23,9 @@ apt install -y git curl build-essential
 项目要求 Node 22+。项目不固定 pnpm 版本号，会使用本机已安装的最新 pnpm 版本。
 
 ```bash
-cd /root/repos/narrat-game
+cd ..
+# 或者直接进入项目目录（假设你在 repos/ 父目录）
+cd narrat-game
 nvm install
 nvm use
 node -v
@@ -75,11 +80,13 @@ WSL2 默认优先验证 Web Demo、测试、普通 build 和 Linux package。
 
 ## 外部参考仓库
 
-DoL 参考仓库在 WSL2 下建议放置于：
+DoL 参考仓库建议放置于：
 
 ```bash
-/root/repos/degrees-of-lewdity
+../degrees-of-lewdity
 ```
+
+即与 narrat-game 同级目录。
 
 该仓库仅用于只读机制参考，不得直接复制源码到本项目运行路径。
 

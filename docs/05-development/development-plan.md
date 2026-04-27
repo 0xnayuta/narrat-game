@@ -10,7 +10,7 @@
 - **Engine**：Phase 1-4 完成，事件系统稳定
 - **测试**：196 个用例全部通过，type-check 通过
 - **Demo**：23 地点 / 22 事件 / 4 任务链 / 2 NPC / 120+ choices，闭环完整
-- **参考仓库**：`/opt/data/workspace/repos/degrees-of-lewdity/`（只读）
+- **参考仓库**：`../degrees-of-lewdity`（只读）
 
 ---
 
@@ -59,7 +59,7 @@ Engine 已稳定，当前阶段分为三个子阶段：
 |--------|---------|------|
 | ✅ 基线建立（pnpm install + test 100% 通过） | 2026-04-26 | 16 个测试套件全部通过 |
 | ✅ Engine Phase 1-4 完成 | （历史记录） | eventHistory / windowed cooldown / triggerScopes |
-| ✅ DoL 参考仓库就绪 | 2026-04-26 | `/opt/data/workspace/repos/degrees-of-lewdity/` |
+| ✅ DoL 参考仓库就绪 | 2026-04-26 | `../degrees-of-lewdity` |
 | ✅ R-A1 完成 | 2026-04-26 | 默认路径文档已写入 `round-R-A1-default-path-mapping.md` |
 | ✅ R-A2 完成 | 2026-04-26 | Drowned Lantern 内容密度审查（Coal Berth反馈精简/Exchange window合并/Case boundary合并） |
 | ✅ R-B1 完成 | 2026-04-26 | 存档 migration registry 梳理（管道已就绪，v2迁移TODO已知） |

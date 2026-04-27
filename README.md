@@ -46,18 +46,29 @@ pnpm install
 pnpm run dev
 ```
 
+## 项目位置
+
+假设项目在以下目录结构中：
+
+```
+repos/
+├── narrat-game/      ← 当前项目
+└── degrees-of-lewdity/ ← DoL 参考仓库（可选）
+```
+
+所有脚本使用相对路径引用。
+
 ## WSL2 / Ubuntu setup
 
-The recommended WSL2 target path is:
-
 ```bash
-/root/repos/narrat-game
+# 假设当前在 repos/ 父目录
+cd narrat-game
 ```
 
 Use Node 22+ and the latest pnpm available on your machine:
 
 ```bash
-cd /root/repos/narrat-game
+cd narrat-game
 nvm install
 nvm use
 # ensure pnpm is available (version 10+ recommended)

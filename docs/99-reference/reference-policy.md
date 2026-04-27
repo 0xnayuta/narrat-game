@@ -6,7 +6,7 @@
 ## 参考目录（当前指定）
 
 - DoL 外部源码参考目录：
-  - WSL2 / Ubuntu：`/root/repos/degrees-of-lewdity`
+  - DoL 外部源码参考目录：`../degrees-of-lewdity`
 - 用途：仅用于阅读、检索和机制提炼。
 - 禁止：将该目录代码直接复制到本项目运行路径。
 
@@ -14,7 +14,7 @@
 
 1. **只读参考**
    - 外部参考仓库（如 DoL）仅用于阅读与分析。
-   - 当前 DoL 参考目录为 WSL2 / Ubuntu `/root/repos/degrees-of-lewdity`。
+   - 当前 DoL 参考目录为 `../degrees-of-lewdity`。
    - 不将外部仓库源码直接纳入本项目运行路径。
 
 2. **禁止直接复制代码**
